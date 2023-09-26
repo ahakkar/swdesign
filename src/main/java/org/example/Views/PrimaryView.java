@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import org.example.App;
-import org.example.Services.PrimaryService;
+import org.example.model.services.PrimaryService;
 
 import java.io.IOException;
 

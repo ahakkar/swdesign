@@ -1,8 +1,8 @@
-package org.example.factory;
+package org.example.contoller.factory;
 
 import java.util.List;
 
-import org.example.Models.DataPoint;
+import org.example.model.data.DataPoint;
 
 /**
  * Data Transfer Object, DTO to pass params to chart creator classes

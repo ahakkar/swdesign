@@ -1,8 +1,8 @@
-package org.example.Services;
+package org.example.model.services;
 
 import java.util.ArrayList;
 
-import org.example.Models.DataPoint;
+import org.example.model.data.DataPoint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

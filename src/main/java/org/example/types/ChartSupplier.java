@@ -1,6 +1,6 @@
 package org.example.types;
 
-import org.example.factory.ChartParams;
+import org.example.contoller.factory.ChartParams;
 
 import javafx.scene.chart.XYChart;
 

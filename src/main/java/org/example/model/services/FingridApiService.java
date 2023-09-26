@@ -1,4 +1,4 @@
-package org.example.Services;
+package org.example.model.services;
 
 import java.io.IOException;
 import java.time.LocalDate;

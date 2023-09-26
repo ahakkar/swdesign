@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.chart.XYChart;
 
-import org.example.factory.ChartParams;
-import org.example.factory.AreaChartImpl;
-import org.example.factory.LineChartImpl;
-import org.example.factory.ScatterChartImpl;
+import org.example.contoller.factory.ChartParams;
+import org.example.contoller.factory.AreaChartImpl;
+import org.example.contoller.factory.LineChartImpl;
+import org.example.contoller.factory.ScatterChartImpl;
 
 /**
  * Enum for supported chart types

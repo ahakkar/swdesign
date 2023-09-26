@@ -1,4 +1,4 @@
-package org.example.Models;
+package org.example.model.data;
 
 import java.util.Date;
 

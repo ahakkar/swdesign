@@ -9,11 +9,13 @@ module org.example {
 
     opens org.example to javafx.fxml;
     exports org.example;
-    exports org.example.factory;
+    exports org.example.contoller.factory;
     exports org.example.types;
-    exports org.example.Models;
-    exports org.example.Controllers;
-    exports org.example.Services;
-    opens org.example.Controllers to javafx.fxml;
-    opens org.example.Models to com.fasterxml.jackson.databind;
+    exports org.example.model;
+    exports org.example.contoller;
+    exports org.example.model.services;
+    opens org.example.contoller to javafx.fxml;
+    opens org.example.model to com.fasterxml.jackson.databind;
+    exports org.example.model.data;
+    opens org.example.model.data to com.fasterxml.jackson.databind;
 }

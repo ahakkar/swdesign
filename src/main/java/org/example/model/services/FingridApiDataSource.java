@@ -1,10 +1,10 @@
-package org.example.Services;
+package org.example.model.services;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.example.Models.DataPoint;
+import org.example.model.data.DataPoint;
 
 /**
  * Implements Fingrid's api interface

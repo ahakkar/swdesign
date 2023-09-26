@@ -1,4 +1,4 @@
-package org.example.Services;
+package org.example.model.services;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,8 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.Models.DataPoint;
-import org.example.Models.PrimaryModel;
+import org.example.model.data.DataPoint;
+import org.example.model.data.PrimaryModel;
 
 public class PrimaryService {
 

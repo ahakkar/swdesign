@@ -1,10 +1,10 @@
-package org.example.factory;
+package org.example.contoller.factory;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import org.example.Models.DataPoint;
-import org.example.Services.PrimaryService;
+import org.example.model.data.DataPoint;
+import org.example.model.services.PrimaryService;
 import org.example.types.ChartType;
 
 import javafx.scene.chart.XYChart;

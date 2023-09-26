@@ -1,10 +1,10 @@
-package org.example.Services;
+package org.example.model.services;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.example.Models.DataPoint;
+import org.example.model.data.DataPoint;
 
 /**
  * Interface for Controller to use to get the data from Fingrid's api it needs

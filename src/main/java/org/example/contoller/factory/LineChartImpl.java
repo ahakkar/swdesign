@@ -1,9 +1,9 @@
-package org.example.factory;
+package org.example.contoller.factory;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.example.Models.DataPoint;
+import org.example.model.data.DataPoint;
 
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.LineChart;

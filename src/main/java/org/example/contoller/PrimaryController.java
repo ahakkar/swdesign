@@ -1,4 +1,4 @@
-package org.example.Controllers;
+package org.example.contoller;
 
 import java.time.LocalDate;
 
@@ -9,8 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import javafx.scene.chart.XYChart;
 
-import org.example.Services.PrimaryService;
-import org.example.factory.ChartFactory;
+import org.example.model.services.PrimaryService;
+import org.example.contoller.factory.ChartFactory;
 import org.example.types.AxisType;
 import org.example.types.ChartType;
 import javafx.scene.control.ToggleButton;
