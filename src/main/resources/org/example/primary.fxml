@@ -23,7 +23,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="800.0" minWidth="1024.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.contoller.PrimaryController">
+<VBox alignment="CENTER" minHeight="800.0" minWidth="1024.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.PrimaryController">
     <children>
         <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
@@ -31,8 +31,8 @@
                <children>
                   <AnchorPane minHeight="55.0">
                      <children>
-                              <Button fx:id="createDiagramButton" layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
-                        <Button fx:id="createDiagramButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
+                              <Button layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
+                        <Button layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
                      </children>
                   </AnchorPane>
                   <ScrollPane>

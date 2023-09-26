@@ -1,30 +1,33 @@
-package org.example.contoller.factory;
+package org.example.controller.factory;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+
 import org.example.model.data.DataPoint;
 
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.util.StringConverter;
 
-public class AreaChartImpl extends AreaChart<Number, Number> {
+public class LineChartImpl extends LineChart<Number, Number> {
 
     private XYChart<Number, Number> chart;
     private ChartParams params;
 
-    public AreaChartImpl() {
-        super(new NumberAxis(), new NumberAxis());
+
+    public LineChartImpl() {
+        super(new NumberAxis(), new NumberAxis());        
     }
 
     /**
      * Generates a line chart and displays it on screen
      */
-    public XYChart<Number, Number> createChart(ChartParams params) {       
+    public XYChart<Number, Number> createChart(ChartParams params) { 
+        
         NumberAxis xAxis = new NumberAxis();
-        NumberAxis yAxis = new NumberAxis();
-        chart = new AreaChart<>(xAxis, yAxis);
+        NumberAxis yAxis = new NumberAxis();        
+        chart = new LineChart<>(xAxis, yAxis);
 
         this.params = params;
 
@@ -57,9 +60,6 @@ public class AreaChartImpl extends AreaChart<Number, Number> {
      * @param hideNodes  should we hide the "circle" from each data node
      */
     public XYChart<Number, Number> populateChartData(Boolean hideNodes) {
-
-    System.out.println("calling chart creation method");
-
         try {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             
@@ -124,7 +124,7 @@ public class AreaChartImpl extends AreaChart<Number, Number> {
             // Return an empty LineChart if chart creation fails
             NumberAxis xAxis = new NumberAxis();
             NumberAxis yAxis = new NumberAxis();
-            return new AreaChart<>(xAxis, yAxis);
+            return new LineChart<>(xAxis, yAxis);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.example.contoller.factory;
+package org.example.controller.factory;
 
 import java.util.List;
 

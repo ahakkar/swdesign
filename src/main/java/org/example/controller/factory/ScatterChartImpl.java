@@ -1,23 +1,17 @@
-package org.example.contoller.factory;
-
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
-import org.example.model.data.DataPoint;
+package org.example.controller.factory;
 
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.LineChart;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
-import javafx.util.StringConverter;
 
-public class LineChartImpl extends LineChart<Number, Number> {
+public class ScatterChartImpl extends ScatterChart<Number, Number> {
 
     private XYChart<Number, Number> chart;
     private ChartParams params;
 
 
-    public LineChartImpl() {
-        super(new NumberAxis(), new NumberAxis());        
+    public ScatterChartImpl() {
+        super(new NumberAxis(), new NumberAxis());
     }
 
     /**
@@ -26,13 +20,12 @@ public class LineChartImpl extends LineChart<Number, Number> {
     public XYChart<Number, Number> createChart(ChartParams params) { 
         
         NumberAxis xAxis = new NumberAxis();
-        NumberAxis yAxis = new NumberAxis();        
-        chart = new LineChart<>(xAxis, yAxis);
+        NumberAxis yAxis = new NumberAxis();
 
+        chart = new ScatterChart<>(xAxis, yAxis);
         this.params = params;
 
-        // Populate the empty chart with data fetched from API
-        chart = populateChartData(true);
+        chart = populateChartData(false);
 
         updateChartAxisLabels();   
         
@@ -60,50 +53,17 @@ public class LineChartImpl extends LineChart<Number, Number> {
      * @param hideNodes  should we hide the "circle" from each data node
      */
     public XYChart<Number, Number> populateChartData(Boolean hideNodes) {
+
         try {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             
             series.setName(params.getChartDesc());
-            int i = 0;
-
-            // First populate the chart with datapoints
-            for (DataPoint dataPoint : params.getDataPoints()) {
-                Number xValue = i;
-                Number yValue = dataPoint.getValue();
+            for (int i = 0; i < 100; i++) {
+                Number xValue = Math.random() * 100;
+                Number yValue = Math.random() * 100;
                 series.getData().add(new XYChart.Data<>(xValue, yValue));
-                i++;
             }
 
-            // Customize the x-axis labels
-            if (chart.getXAxis() instanceof NumberAxis) {
-                NumberAxis xAxis = (NumberAxis) chart.getXAxis();
-
-                xAxis.setTickLabelFormatter(new StringConverter<Number>() {
-                    @Override
-                    public String toString(Number number) {
-                        int index = number.intValue();
-                        if (index < 0 || index >= params.getDataPoints().size()) {
-                            return ""; 
-                        }
-
-                        if (index % 2 == 0) {    
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-                            OffsetDateTime dateTime = OffsetDateTime.parse(params.getDataPoints().get(index).getStartTime(), formatter);
-
-                            return dateTime.format(DateTimeFormatter.ofPattern("HH:mm"));   
-                        }
-                        
-                        return "";
-                    }
-
-                    @Override
-                    public Number fromString(String string) {
-                        return 0;
-                    }
-                });
-            }
-
-            chart.getData().clear();
             chart.getData().add(series);
 
             // Only then you can apparently hide the datapoints' nodes..
@@ -124,7 +84,7 @@ public class LineChartImpl extends LineChart<Number, Number> {
             // Return an empty LineChart if chart creation fails
             NumberAxis xAxis = new NumberAxis();
             NumberAxis yAxis = new NumberAxis();
-            return new LineChart<>(xAxis, yAxis);
+            return new ScatterChart<>(xAxis, yAxis);
         }
     }
 }
