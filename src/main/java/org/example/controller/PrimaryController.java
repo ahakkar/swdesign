@@ -110,6 +110,10 @@ public class PrimaryController {
         // chartTypeChoiceBox.getValue() + " was selected");
     }
 
+    @FXML
+    private void testSomething() {
+        primaryService.getSomething();
+    }
 
     private void initializeChartTypeChoiceBox() {
         // allows storing ChartType enums directly as values of the ChoiceBox
@@ -314,4 +318,6 @@ public class PrimaryController {
 
         chartPlaceholder.getChildren().add(chart);
     }
+
+
 }

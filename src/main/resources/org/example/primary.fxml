@@ -29,10 +29,11 @@
             <items>
             <VBox minWidth="385.0">
                <children>
-                  <AnchorPane minHeight="55.0">
+                  <AnchorPane minHeight="100.0">
                      <children>
-                              <Button layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
+                        <Button layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
                         <Button layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
+                         <Button layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#testSomething" prefHeight="30.0" prefWidth="160.0" text="TEST" />
                      </children>
                   </AnchorPane>
                   <ScrollPane>
