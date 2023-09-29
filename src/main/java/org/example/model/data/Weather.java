@@ -1,6 +1,11 @@
 package org.example.model.data;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+import org.example.utils.WeatherDataException;
 
 /**
  * Weather
@@ -10,30 +15,54 @@ import java.time.LocalDateTime;
 public class Weather 
 {
     private final String town;
-    private final LocalDateTime time;
-    private Double temperature;
-    private Double wind;
-    private Double rain;
+    // ArrayList contains weather information in the following manner:
+    // [0] = Temperature, [1] = Wind, [2] = Rain
+    private TreeMap<LocalDateTime,ArrayList<Double>> weatherData;
 
-    public Weather(String town, LocalDateTime time)
+    public Weather(String town)
     {
         this.town = town;
-        this.time = time;
+        this.weatherData = new TreeMap<>();
     }
 
-    public void setTemperature(Double temperature)
+    private void setValue(int valueType, Double value, LocalDateTime time)
     {
-        this.temperature = temperature;
+        try
+        {
+            ArrayList<Double> dataValues;
+            if ( weatherData.containsKey(time) == true )
+            {
+                dataValues = weatherData.get(time);
+                dataValues.remove(valueType);
+                dataValues.add(valueType, value);
+            }
+            else
+            {
+                dataValues = new ArrayList<>();
+                dataValues.add(valueType, value);
+                weatherData.put(time,dataValues);
+            }
+        }
+        catch( InvalidParameterException e )
+        {
+            System.out.print("Faulty data/no data at:" + time.toString());
+        }
+
     }
 
-    public void setWind(Double wind)
+    public void setTemperature(LocalDateTime time, Double temperature)
     {
-        this.wind = wind;
+        this.setValue(0, temperature, time);
     }
 
-    public void setRain(Double rain)
+    public void setWind(LocalDateTime time, Double wind)
     {
-        this.rain = rain;
+        this.setValue(0, wind, time);
+    }
+
+    public void setRain(LocalDateTime time, Double rain)
+    {
+        this.setValue(0, rain, time);
     }
 
     public String getTown()
@@ -41,24 +70,34 @@ public class Weather
         return town;
     }
 
-    public LocalDateTime getTime()
+    public Double getTemperature(LocalDateTime time) 
+        throws WeatherDataException
     {
-        return time;
+        if ( weatherData.containsKey(time) == true )
+        {
+            return weatherData.get(time).get(0);
+        }
+        throw new WeatherDataException("No temperature data found at" + time.toString());
     }
 
-    public Double getTemperature()
+    public Double getWind(LocalDateTime time) 
+        throws WeatherDataException
     {
-        return temperature;
+        if ( weatherData.containsKey(time) == true )
+        {
+            return weatherData.get(time).get(1);
+        }
+        throw new WeatherDataException("No wind data found at" + time.toString());
     }
 
-    public Double getWind()
+    public Double getRain(LocalDateTime time) 
+        throws WeatherDataException
     {
-        return wind;
-    }
-
-    public Double getRain()
-    {
-        return rain;
+        if ( weatherData.containsKey(time) == true )
+        {
+            return weatherData.get(time).get(2);
+        }
+        throw new WeatherDataException("No rain data found at" + time.toString());
     }
 
 }
