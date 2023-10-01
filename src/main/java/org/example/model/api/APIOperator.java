@@ -5,7 +5,7 @@ import org.example.model.data.*;
 public class APIOperator {
 
     protected static ApiDataResult getData(ApiDataRequest request) throws InterruptedException {
-        if (request.getDataClass() == Weather.class) {
+        if (request.getDataClass() == WeatherModel.class) {
             // Tästä voidaan päätellä, että kutsutaan Ilmatieteenlaitoksen APIa @MARKUS
         } else if (request.getDataClass() == EnergyModel.class) {
             // Tästä voidaan päätellä, että kutsutaan Fingridin APIa @HEIKKI
