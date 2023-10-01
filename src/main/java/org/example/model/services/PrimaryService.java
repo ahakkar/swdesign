@@ -62,7 +62,7 @@ public class PrimaryService implements APIDataListener {
         int i;
         for (i = 1; i <= 10; i++) {
             System.out.println("PrimaryService: starting api call " + i);
-            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null, null, null));
+            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null, null, null, null));
         }
         System.out.println("PrimaryService: called the apiqueue " + (i - 1) + " times");
     }

@@ -12,23 +12,25 @@ public class ApiDataRequest
     private final LocalDateTime starttime;
     private final LocalDateTime endtime;
     private final Duration interval;
-    private String dataType;
+    private final String dataType;
 
-    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime, Duration interval) 
+    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime, Duration interval, String dataType) 
     {
         this.dataClass = dataClass;
         this.location = location;
         this.starttime = starttime;
         this.endtime = endtime;
         this.interval = interval;
+        this.dataType = dataType;
     }
 
-    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval) 
+    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval, String dataType) 
     {
         this.dataClass = dataClass;
         this.starttime = starttime;
         this.endtime = endtime;
         this.interval = interval;
+        this.dataType = dataType;
     }
 
     public Class getDataClass() {
