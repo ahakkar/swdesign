@@ -47,7 +47,7 @@ public class EnergyModelTest {
             new EnergyModel("invalid_data_type", "MWh", Duration.ofHours(1));
         } catch (IllegalArgumentException e) {
             assertEquals(
-                    "Invalid dataType. Allowed values are: total_consumption, total_production, hydro_production, nuclear_production, wind_production",
+                    "Invalid energy data type: invalid_data_type",
                     e.getMessage());
         }
     }
@@ -98,7 +98,7 @@ public class EnergyModelTest {
                     new Double[] { 1.0, 2.0, 3.0 });
         } catch (IllegalArgumentException e) {
             assertEquals(
-                    "Invalid dataType. Allowed values are: total_consumption, total_production, hydro_production, nuclear_production, wind_production",
+                    "Invalid data type: undefined_data_type",
                     e.getMessage());
         }
     }

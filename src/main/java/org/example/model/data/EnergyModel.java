@@ -14,6 +14,12 @@ import java.util.Locale;
  */
 public class EnergyModel extends AbstractDataModel<Double> {
 
+    static {
+        for (DataType type : DataType.values()) {
+            supportedDataTypes.add(type.name());
+        }
+    }
+
     /**
      * DataType - Enum for energy data types.
      */
@@ -25,38 +31,13 @@ public class EnergyModel extends AbstractDataModel<Double> {
         NUCLEAR_PRODUCTION,
         WIND_PRODUCTION;
 
-        /**
-         * Parse data type from string.
-         * 
-         * @throws IllegalArgumentException if data type is invalid
-         * @param dataType - Data type as string
-         * @return - Data type as enum
-         */
-        public static DataType parseDataType(String dataType) {
-            for (DataType type : DataType.values()) {
-                if (type.name().equalsIgnoreCase(dataType)) {
-                    return type;
-                }
+        public static DataType parseDataType(String name) {
+            try {
+                return DataType.valueOf(name.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid energy data type: " + name);
             }
-            throw new IllegalArgumentException(
-                    "Invalid dataType. Allowed values are: " + String.join(", ", getNames()));
         }
-
-        /**
-         * Get names of data types as string array.
-         * 
-         * @return - Data types as string array
-         */
-        public static String[] getNames() {
-            DataType[] types = values();
-            String[] names = new String[types.length];
-
-            for (int i = 0; i < types.length; i++) {
-                names[i] = types[i].name().toLowerCase(Locale.ROOT);
-            }
-            return names;
-        }
-
     }
 
     /**
@@ -73,7 +54,7 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @inheritDoc - AbstractDataModel
      */
     public EnergyModel(String dataType, String unit, String firstEntryTimestamp, Duration interval, Double[] values) {
-        super(DataType.parseDataType(dataType).name().toLowerCase(Locale.ROOT), unit, firstEntryTimestamp, interval,
+        super(AbstractDataModel.parseDataType(supportedDataTypes, dataType), unit, firstEntryTimestamp, interval,
                 values);
     }
 

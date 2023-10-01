@@ -3,6 +3,7 @@ package org.example.model.data;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -228,14 +229,29 @@ public class AbstractDataModelTest {
     /**
      * Simple class to represent the abstracts class for the tests.
      */
-    private static class ExampleDataModel extends AbstractDataModel<Double> {
-        public ExampleDataModel(String dataType, String unit, Duration interval) {
-            super(dataType, unit, interval);
+    public static class ExampleDataModel extends AbstractDataModel<Double> {
+
+        static {
+            for (DataType type : DataType.values()) {
+                supportedDataTypes.add(type.name());
+            }
+        }
+
+        public enum DataType {
+            TEMPERATURE,
+            HUMIDITY,
+            PRESSURE
         }
 
         public ExampleDataModel(String dataType, String unit, String firstEntryTimestamp, Duration interval,
                 Double[] values) {
-            super(dataType, unit, firstEntryTimestamp, interval, values);
+            super(AbstractDataModel.parseDataType(supportedDataTypes, dataType), unit, firstEntryTimestamp, interval,
+                    values);
+        }
+
+        public ExampleDataModel(String dataType, String unit, Duration interval) {
+            super(dataType, unit, interval);
         }
     }
+
 }
