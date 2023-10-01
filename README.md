@@ -7,6 +7,11 @@ Project Members:
 - Heikki Hohtari
 - Janne Taskinen
 
+### Demo of the prototype
+You can view demo of the prototype by following this [link](https://tuni-my.sharepoint.com/personal/janne_taskinen_tuni_fi/_layouts/15/stream.aspx?id=%2Fpersonal%2Fjanne%5Ftaskinen%5Ftuni%5Ffi%2FDocuments%2FSoftware%20Design%2FRyhm%C3%A4kansio%2F2023%2D09%2D29%2020%2D40%2D13%2Emp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0RpcmVjdCJ9fQ&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0RpcmVjdCJ9fQ&ga=1).
+
+To test this prototype yourself read section "How to test the program" on this readme file.
+
 ### Design document
 The latest version of the design document can be found from projects root directory "DesignDocument.docx"
 
