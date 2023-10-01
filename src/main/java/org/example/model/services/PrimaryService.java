@@ -1,8 +1,5 @@
 package org.example.model.services;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,7 +7,14 @@ import java.util.List;
 
 import org.example.model.api.APIDataListener;
 import org.example.model.api.APIQueue;
-import org.example.model.data.*;
+import org.example.model.data.ApiDataRequest;
+import org.example.model.data.ApiDataResult;
+import org.example.model.data.DataPoint;
+import org.example.model.data.PrimaryModel;
+import org.example.model.data.WeatherModel;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class PrimaryService implements APIDataListener {
 
@@ -58,7 +62,7 @@ public class PrimaryService implements APIDataListener {
         int i;
         for (i = 1; i <= 10; i++) {
             System.out.println("PrimaryService: starting api call " + i);
-            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class));
+            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null, null, null));
         }
         System.out.println("PrimaryService: called the apiqueue " + (i - 1) + " times");
     }
