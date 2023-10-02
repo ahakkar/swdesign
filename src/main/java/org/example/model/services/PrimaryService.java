@@ -25,19 +25,19 @@ public class PrimaryService implements APIDataListener {
         apiQueue.addListener(this);
     }
 
-    public static PrimaryService getInstance(){
+    public static PrimaryService getInstance() {
 
-        synchronized (PrimaryService.class){
-            if (instance == null){
+        synchronized (PrimaryService.class) {
+            if (instance == null) {
                 instance = new PrimaryService();
             }
             return instance;
         }
     }
 
-
     /**
-     * Fetch electricity consumption data from Fingrid 
+     * Fetch electricity consumption data from Fingrid
+     * 
      * @return
      */
     public List<DataPoint> getFingridFixedData(String dataType, LocalDate start, LocalDate end) {
@@ -49,29 +49,25 @@ public class PrimaryService implements APIDataListener {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }  
-        
+        }
+
         return results;
     }
 
-
-    public void getSomething(){
+    public void getSomething() {
         int i;
-        for (i = 1; i <= 10; i++){
+        for (i = 1; i <= 10; i++) {
             System.out.println("PrimaryService: starting api call " + i);
-            apiQueue.newDataRequired(new ApiDataRequest(Weather.class));
+            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class));
         }
         System.out.println("PrimaryService: called the apiqueue " + (i - 1) + " times");
     }
-
 
     @Override
     public void newApiDataAvailable() {
         System.out.println("PrimaryService got notification about new API data available");
         ApiDataResult result = apiQueue.getApiDataResult();
         System.out.println("Result data: " + result.test);
-
-
 
     }
 }
