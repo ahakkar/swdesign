@@ -1,10 +1,16 @@
 package org.example.model.data;
 
+<<<<<<< HEAD
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class ApiDataRequest 
 {
+=======
+import org.example.types.APIType;
+
+public class ApiDataRequest {
+>>>>>>> parent of f95acf8 (separate primary and req controllers)
 
     // TODO Tarvittavien attribuuttien lisäys, jotta Data manager voi kertoa APIOperatorille (APIQueuen kautta), mitä dataa tarvitaan
     private final Class dataClass;
