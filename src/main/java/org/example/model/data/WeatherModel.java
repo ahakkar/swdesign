@@ -4,11 +4,11 @@ import java.time.Duration;
 import java.util.Locale;
 
 /**
- * EnergyModel - Class for storing energy data.
+ * WeatherModel - Class for storing weather data.
  * 
- * This class is used for storing energy data.
+ * This class is used for storing weather data.
  * It extends AbstractDataModel and adds the data types
- * and units used in the energy data.
+ * and units used in the weather data.
  * 
  * @author Markus Hissa
  */
@@ -23,7 +23,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     }
 
     /**
-     * DataType - Enum for energy data types.
+     * DataType - Enum for weather data types.
      */
     public enum DataType {
         // You can add more types here in the future
@@ -43,7 +43,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     }
 
     /**
-     * Constructor for EnergyModel
+     * Constructor for WeatherModel
      * 
      * @param dataType - Data type for example "Temperature"
      * @param unit     - Unit for example "Celsius"
@@ -58,7 +58,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     }
 
     /**
-     * Constructor for EnergyModel
+     * Constructor for WeatherModel
      * Can be used to initialize data model with data points without making
      * a map of data points beforehand. User should give the first timestamp and
      * the interval between data points. The timestamp is then incremented by
