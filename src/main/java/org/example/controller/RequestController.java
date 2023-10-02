@@ -7,10 +7,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
-import javafx.scene.chart.Chart;
 import javafx.scene.chart.XYChart;
 
 import org.example.model.services.PrimaryService;
+import org.example.controller.factory.ChartFactory;
 import org.example.types.AxisType;
 import org.example.types.ChartType;
 import javafx.scene.control.ToggleButton;
@@ -28,7 +28,6 @@ import javafx.scene.control.CheckBox;
 public class RequestController {
 
     private final PrimaryService primaryService = PrimaryService.getInstance();
-    private final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
 
     @FXML
     private ChoiceBox<ChartType> chartTypeChoiceBox;
@@ -103,28 +102,6 @@ public class RequestController {
         initLoadPresetButton();
         initDateBoxes();
 
-    }
-
-    /**
-     * Decides what happens when user clicks the Create Diagram button. Probably
-     * one of the most important methods in this class.
-     */
-    @FXML
-    public void createDiagramButtonAction() {
-
-        // TODO display a spinning widget while chart is being generated
-        // TODO listen for/get notified when chartgen is complete  
-        requestDispatcher.handleDataRequest(); // TODO populate request params from data with UI
-    }
-
-
-    /**
-     * PrimaryController calls this method to display a generated chart ons creen
-     * @param chart Chart a pie/xychart ready to be displayed
-     */
-    public void displayChart(Chart chart) {
-        // TODO put chart on screen
-        //replacePlaceholderChart(chart);
     }
 
     @FXML
@@ -265,6 +242,28 @@ public class RequestController {
                     "This action would draw two vertical lines on the chart of the upper and lower quartile of Y value.");
             alert.showAndWait();
         });
+    }
+
+    /**
+     * Decides what happens when user clicks the Create Diagram button. Probably
+     * one of the most important methods in this class.
+     */
+    @FXML
+    public void createDiagramButtonAction() {
+        ChartFactory cf = 
+            new ChartFactory(
+                primaryService,
+                yAxisChoiceBox.getValue().getVariableId(),
+                fromDatePicker.getValue(),
+                toDatePicker.getValue()
+            ); 
+
+        XYChart<?, ?> chart = 
+            cf.generateChart(
+                chartTypeChoiceBox.getValue(),
+                xAxisChoiceBox.getValue(),
+                yAxisChoiceBox.getValue().toString());
+        replacePlaceholderChart(chart);
     }
 
 /*     private void generateNewDiagramButton() {
