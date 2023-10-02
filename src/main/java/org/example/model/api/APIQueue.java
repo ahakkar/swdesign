@@ -1,6 +1,7 @@
 package org.example.model.api;
 
 import org.example.model.data.*;
+import org.example.types.APIType;
 
 import java.util.ArrayList;
 import java.util.concurrent.*;

@@ -2,7 +2,8 @@ package org.example;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.example.controller.PrimaryController;
+import org.example.Views.PrimaryView;
+import org.example.utils.EnvironmentVariables;
 
 import java.io.IOException;
 
@@ -11,14 +12,16 @@ import java.io.IOException;
  */
 public class App extends Application {
 
+    // Load env variables (== api keys at this stage from file)
     @Override
     public void start(Stage stage) throws IOException {
-        PrimaryController pc = PrimaryController.getInstance();
-        pc.init(stage);
+        EnvironmentVariables.getInstance();
+        EnvironmentVariables.load(".env");
+        new PrimaryView(stage);
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 
 }
