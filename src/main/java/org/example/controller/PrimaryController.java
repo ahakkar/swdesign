@@ -9,7 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import javafx.scene.chart.XYChart;
 
-import org.example.model.services.PrimaryService;
+import org.example.model.services.DataManager;
 import org.example.controller.factory.ChartFactory;
 import org.example.types.AxisType;
 import org.example.types.ChartType;
@@ -27,7 +27,7 @@ import javafx.scene.control.CheckBox;
  */
 public class PrimaryController {
 
-    private final PrimaryService primaryService = PrimaryService.getInstance();
+    private final DataManager dataManager = DataManager.getInstance();
 
     @FXML
     private ChoiceBox<ChartType> chartTypeChoiceBox;
@@ -112,7 +112,7 @@ public class PrimaryController {
 
     @FXML
     private void testSomething() {
-        primaryService.getSomething();
+        dataManager.getSomething();
     }
 
     private void initializeChartTypeChoiceBox() {
@@ -252,7 +252,7 @@ public class PrimaryController {
     public void createDiagramButtonAction() {
         ChartFactory cf = 
             new ChartFactory(
-                primaryService,
+                    dataManager,
                 yAxisChoiceBox.getValue().getVariableId(),
                 fromDatePicker.getValue(),
                 toDatePicker.getValue()
