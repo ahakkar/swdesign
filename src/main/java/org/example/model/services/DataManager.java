@@ -11,6 +11,10 @@ import org.example.model.api.APIDataListener;
 import org.example.model.api.APIQueue;
 import org.example.model.data.*;
 
+/**
+ * 
+ * @author Janne Taskinen
+ */
 public class DataManager implements APIDataListener {
 
     private static DataManager instance;
@@ -23,6 +27,7 @@ public class DataManager implements APIDataListener {
         apiQueue = APIQueue.getInstance();
         apiQueue.addListener(this);
         dataModels = new ArrayList<>();
+        this.listeners = new ArrayList<>();
     }
 
     public static DataManager getInstance() {
@@ -53,6 +58,7 @@ public class DataManager implements APIDataListener {
 
         return results;
     }
+
 
     /**
      * TEST / DEBUGGING METHOD
@@ -170,4 +176,37 @@ public class DataManager implements APIDataListener {
         System.out.println("Result data: " + result.test);
 
     }
+
+
+    /**
+     * Use to register a class as a listener
+     * @param listener
+     */
+    public void registerListener(DataManagerListener listener) {
+        if (listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+            // TODO remove Registered %s as DataManager's listener debug print
+            System.out.printf("Registered %s as DataManager's listener", listener.toString());
+        }
+    }
+
+
+    /**
+     * Remove a listener
+     * @param listener
+     */
+    public void removeListener(DataManagerListener listener) {
+        listeners.remove(listener);
+    }
+
+
+    /**
+     * Notify all registered listeners when something happens
+     */
+    public void notifyListeners() {
+        for (DataManagerListener listener : listeners) {
+            listener.onDataReady(null, null); // TODO pass actual data
+        }
+    }
+    
 }

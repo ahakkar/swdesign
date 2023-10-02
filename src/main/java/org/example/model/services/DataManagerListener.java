@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DataManagerListener {
 
-    void newDataAvailable(List<AbstractDataModel<Double>> data, List<DataQuery> query);
+    void onDataReady(List<AbstractDataModel<Double>> data, List<DataQuery> query);
 }

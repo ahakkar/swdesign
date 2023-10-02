@@ -1,323 +1,97 @@
 package org.example.controller;
 
-import java.time.LocalDate;
+import java.io.IOException;
+import java.util.List;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.layout.AnchorPane;
-import javafx.util.StringConverter;
-import javafx.scene.chart.XYChart;
-
-import org.example.model.services.DataManager;
+import org.example.App;
 import org.example.controller.factory.ChartFactory;
-import org.example.types.AxisType;
-import org.example.types.ChartType;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Label;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
+import org.example.model.data.AbstractDataModel;
+import org.example.model.services.DataManager;
+import org.example.model.services.DataManagerListener;
+import org.example.model.services.DataQuery;
+import org.example.types.Scenes;
+import org.example.utils.EnvironmentVariables;
 
-import javafx.scene.control.CheckBox;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.Chart;
+import javafx.stage.Stage;
 
 /**
- * Controller for View (.fxml)
+ * Loads views and controllers. Starts from mainworkspace
  * 
  * @author Antti Hakkarainen
  */
-public class PrimaryController {
-
+public class PrimaryController implements DataManagerListener {
+    private static PrimaryController instance;
     private final DataManager dataManager = DataManager.getInstance();
+    private static Scene scene;
+    private Stage stage;
 
-    @FXML
-    private ChoiceBox<ChartType> chartTypeChoiceBox;
+    public PrimaryController() {}
 
-    @FXML
-    private ChoiceBox<String> xAxisChoiceBox;
-
-    @FXML
-    private ChoiceBox<AxisType> yAxisChoiceBox;
-
-    @FXML
-    private DatePicker fromDatePicker;
-
-    @FXML
-    private DatePicker toDatePicker;
-
-    @FXML
-    private AnchorPane chartPlaceholder;
-
-    @FXML
-    private ChoiceBox<String> relativeTimeChoiceBox;
-
-    @FXML
-    private ToggleButton relativeTimeToggle;
-
-    @FXML
-    private Label relativeTimeLabel;
-
-    @FXML
-    private Label startTimeLabel;
-
-    @FXML
-    private Label endTimeLabel;
-
-    @FXML
-    private Button removeCurrentChartButton;
-
-    @FXML
-    private Button exportCurrentButton;
-
-    @FXML
-    private CheckBox showYAverageCheckBox;
-
-    @FXML
-    private CheckBox showYQ;
-
-    @FXML
-    private Button createDiagramButton;
-
-    @FXML
-    private Button savePresetButton;
-
-    @FXML
-    private Button loadPresetButton;
-
-    /**
-     * Populate choicebox values and select defaults
-     */
-    @FXML
-    public void initialize() {
-        initializeChartTypeChoiceBox();
-        initializeXAxisChoiceBox();
-        initializeYAxisChoiceBox();
-        initializeRelativeTimeChoiceBox();
-        initializeRelativeTimeToggle();
-        initRemoveCurrentChartButton();
-        exportCurrentButton();
-        showYAverageCheckBoxClick();
-        showYQClick();
-        //generateNewDiagramButton();
-        savePresetButton();
-        initLoadPresetButton();
-        initDateBoxes();
-
-    }
-
-    @FXML
-    private void chartTypeChoiceBoxAction() {
-        // System.out.println("Chart type Choice Box: Value " +
-        // chartTypeChoiceBox.getValue() + " was selected");
-    }
-
-    @FXML
-    private void testSomething() {
-        dataManager.getSomething();
-    }
-
-    private void initializeChartTypeChoiceBox() {
-        // allows storing ChartType enums directly as values of the ChoiceBox
-        chartTypeChoiceBox.setConverter(new StringConverter<ChartType>() {
-            public String toString(ChartType type) {
-                return (type == null) ? "" : type.toString();
-            }
-
-            public ChartType fromString(String label) {
-                return null;
-            }
-        });
-
-        chartTypeChoiceBox.getItems().addAll(ChartType.values());
-        chartTypeChoiceBox.setValue(ChartType.LINE_CHART);
-    }
-
-    private void initializeXAxisChoiceBox() {
-        xAxisChoiceBox.getItems().add("Time");
-        xAxisChoiceBox.setValue("Time");
-    }
-
-    private void initializeYAxisChoiceBox() {
-        yAxisChoiceBox.setConverter(new StringConverter<AxisType>() {
-            public String toString(AxisType type) {
-                return (type == null) ? "" : type.toString();  
-            }
-
-            public AxisType fromString(String label) {
-                return null; 
-            }            
-        });
-
-        yAxisChoiceBox.getItems().addAll(AxisType.values());
-        yAxisChoiceBox.setValue(AxisType.CONSUMPTION);
-    }
-
-    private void initializeRelativeTimeChoiceBox() {
-
-        relativeTimeChoiceBox.getItems().addAll(
-                "Last 24 hours",
-                "Last 3 days",
-                "Last 7 days",
-                "Last month",
-                "Last year");
-        relativeTimeChoiceBox.setValue("Last 24 hours");
+    public static PrimaryController getInstance() {
+        if (instance == null) {
+            instance = new PrimaryController();
+        }
+        return instance;
     }
 
     /**
-     * Adds relativeTimeToggle logic
-     * When toggle is selected:
-     * - relativeTimeChoiceBox is shown
-     * - fromDatePicker and toDatePicker are hidden
-     * - shows and hides their labels accordingly
-     * When toggle is not selected:
-     * - relativeTimeChoiceBox is hidden
-     * - fromDatePicker and toDatePicker are shown
-     * - shows and hides their labels accordingly
+     * Loads up enviroment variables (api keys) and the initial view
+     * 
+     * @param stage created in App.class
+     * @throws IOException
      */
-    private void initializeRelativeTimeToggle() {
-        relativeTimeToggle.setOnAction((event) -> {
-            if (relativeTimeToggle.isSelected()) {
-                relativeTimeToggle.setText("Relative time");
-                relativeTimeChoiceBox.setVisible(true);
-                fromDatePicker.setVisible(false);
-                toDatePicker.setVisible(false);
-                relativeTimeLabel.setVisible(true);
-                startTimeLabel.setVisible(false);
-                endTimeLabel.setVisible(false);
-            } else {
-                relativeTimeToggle.setText("Real time");
-                relativeTimeChoiceBox.setVisible(false);
-                fromDatePicker.setVisible(true);
-                toDatePicker.setVisible(true);
-                relativeTimeLabel.setVisible(false);
-                startTimeLabel.setVisible(true);
-                endTimeLabel.setVisible(true);
-            }
-        });
-        // Instantly trigger this event to set the default state
-        relativeTimeToggle.fire();
+    public void init(Stage stage) throws IOException {
+        if (this.stage == null) {
+            this.stage = stage;
+        }
+
+        EnvironmentVariables.getInstance();
+        EnvironmentVariables.load(".env");
+
+        LoadScene(Scenes.MainWorkspace.toString());        
+        dataManager.registerListener(this);
     }
+
+       
+    private void LoadScene(String sceneName) throws IOException {
+        scene = new Scene(loadFXML(sceneName), 1400, 1000);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    private static Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        return fxmlLoader.load();
+    }
+
 
     /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
+     * Is called when datamanager has the data on hand and ready to be used.
+     * PrimaryController must be registered as datamanager's observer beforehand.
      */
-    private void initRemoveCurrentChartButton() {
-        removeCurrentChartButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText("This action would remove the currently displayed chart tab.");
-            alert.showAndWait();
-        });
+    public void onDataReady(List<AbstractDataModel<Double>> data, List<DataQuery> query) {
+        // createChart();
     }
 
-    private void exportCurrentButton() {
-        exportCurrentButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText("This action would export the chart we see in the view as image or pdf.");
-            alert.showAndWait();
-        });
-    }
-
-    private void showYAverageCheckBoxClick() {
-        showYAverageCheckBox.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would draw a vertical line on the chart where the average of Y value is.");
-            alert.showAndWait();
-        });
-    }
-
-    private void showYQClick() {
-        showYQ.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would draw two vertical lines on the chart of the upper and lower quartile of Y value.");
-            alert.showAndWait();
-        });
-    }
 
     /**
-     * Decides what happens when user clicks the Create Diagram button. Probably
-     * one of the most important methods in this class.
+     * Get chart data from datamanager, use ChartFactory to generate chart,
+     * command RequestController to display it
      */
-    @FXML
-    public void createDiagramButtonAction() {
-        ChartFactory cf = 
-            new ChartFactory(
-                    dataManager,
-                yAxisChoiceBox.getValue().getVariableId(),
-                fromDatePicker.getValue(),
-                toDatePicker.getValue()
-            ); 
+    private void createChart() {
+        // TODO get chart data from datamanager
+        //ApiDataResult chartData = primaryService.getApiData();
 
-        XYChart<?, ?> chart = 
-            cf.generateChart(
-                chartTypeChoiceBox.getValue(),
-                xAxisChoiceBox.getValue(),
-                yAxisChoiceBox.getValue().toString());
-        replacePlaceholderChart(chart);
-    }
+        // TODO use chartfactory to generate a new chart based on the data
+        //ChartFactory cf = new ChartFactory(); 
+        //XYChart<?, ?> chart = cf.generateChart(chartData);
 
-/*     private void generateNewDiagramButton() {
-        generateNewDiagramButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action works the same as regenerate, but it would open a new tab for the new diagram. That is we will not lose the old diagram.");
-            alert.showAndWait();
-        });
-    } */
-
-    private void savePresetButton() {
-        savePresetButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
-            alert.showAndWait();
-        });
-    }
-
-    private void initLoadPresetButton() {
-        loadPresetButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
-            alert.showAndWait();
-        });
-    }
-
-    /**
-     * TODO adjust default values
-     */
-    private void initDateBoxes() {
-        fromDatePicker.setValue(LocalDate.now().minusDays(1));
-        toDatePicker.setValue(LocalDate.now());
-    }
-
-    private void replacePlaceholderChart(XYChart<?, ?> chart) {
-        chartPlaceholder.getChildren().clear();
-
-        // Glue added the chart to anchorpane's borders
-        AnchorPane.setTopAnchor(chart, 0.0);
-        AnchorPane.setRightAnchor(chart, 0.0);
-        AnchorPane.setBottomAnchor(chart, 0.0);
-        AnchorPane.setLeftAnchor(chart, 0.0);
-
-        chartPlaceholder.getChildren().add(chart);
-    }
-
-
+        // TODO update view with chart
+            
+    };
 }
