@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import org.example.App;
-import org.example.model.services.PrimaryService;
+import org.example.model.services.DataManager;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ public class PrimaryView {
 
     private static Scene scene;
     public PrimaryView(Stage stage) throws IOException {
-        PrimaryService.getInstance();
+        DataManager.getInstance();
         scene = new Scene(loadFXML("primary"), 1400, 1000);
         stage.setScene(scene);
         stage.show();

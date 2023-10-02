@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.example.model.data.DataPoint;
-import org.example.model.services.PrimaryService;
+import org.example.model.services.DataManager;
 import org.example.types.ChartType;
 
 import javafx.scene.chart.XYChart;
@@ -17,13 +17,13 @@ import javafx.scene.chart.XYChart;
  */
 public class ChartFactory {
 
-    private final PrimaryService service;
+    private final DataManager service;
     private String variableId;
     private LocalDate fromDate;
     private LocalDate toDate;
 
     public ChartFactory(
-        PrimaryService service,
+        DataManager service,
         String variableId,
         LocalDate fromDate,
         LocalDate toDate
