@@ -6,6 +6,7 @@ module org.example {
 
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires java.xml;
 
     opens org.example to javafx.fxml;
     exports org.example;
