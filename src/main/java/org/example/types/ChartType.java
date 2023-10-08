@@ -2,12 +2,13 @@ package org.example.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.chart.XYChart;
 
-import org.example.controller.factory.ChartParams;
 import org.example.controller.factory.AreaChartImpl;
+import org.example.controller.factory.ChartParams;
 import org.example.controller.factory.LineChartImpl;
 import org.example.controller.factory.ScatterChartImpl;
+
+import javafx.scene.chart.XYChart;
 
 /**
  * Enum for supported chart types
@@ -17,7 +18,8 @@ import org.example.controller.factory.ScatterChartImpl;
 public enum ChartType {
     LINE_CHART("Line chart", params -> new LineChartImpl().createChart(params)),
     AREA_CHART("Area chart", params -> new AreaChartImpl().createChart(params)),
-    SCATTER_DOT_CHART("Scatter chart", params -> new ScatterChartImpl().createChart(params));
+    SCATTER_DOT_CHART("Scatter chart", params -> new ScatterChartImpl().createChart(params)),
+    PIE_CHART("Pie chart", null);
 
     private final String label;
     private final ChartSupplier chartSupplier;
