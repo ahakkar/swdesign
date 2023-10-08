@@ -17,4 +17,5 @@ module org.example {
     //opens org.example.model.data to com.fasterxml.jackson.databind;
     exports org.example.model.data;
     opens org.example.model.data to com.fasterxml.jackson.databind;
+    opens org.example.model.services to com.fasterxml.jackson.databind;
 }

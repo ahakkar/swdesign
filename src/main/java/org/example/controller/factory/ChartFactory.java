@@ -34,28 +34,4 @@ public class ChartFactory {
         this.toDate = toDate;
     }
 
-    public XYChart<?, ?> generateChart(
-        ChartType chartType,
-        String xAxisDesc,
-        String yAxisDesc
-    ) {
-        // Get data from API
-        List<DataPoint> dataPoints = 
-            service.getFingridFixedData(
-                variableId,
-                fromDate,
-                toDate
-            );
-        
-        // Wrap the params to a DTO class so they are easier to pass around
-        ChartParams params = 
-            new ChartParams(
-                dataPoints, 
-                chartType.toString(), 
-                xAxisDesc,
-                yAxisDesc
-            );
-
-        return chartType.createChart(params);        
-    };   
 }

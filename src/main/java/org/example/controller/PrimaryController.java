@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.List;
 
 import org.example.App;
-import org.example.controller.factory.ChartFactory;
 import org.example.model.data.AbstractDataModel;
+import org.example.model.data.DataResult;
 import org.example.model.services.DataManager;
 import org.example.model.services.DataManagerListener;
-import org.example.model.services.DataQuery;
+import org.example.model.data.DataRequest;
 import org.example.types.Scenes;
 import org.example.utils.EnvironmentVariables;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.Chart;
 import javafx.stage.Stage;
 
 /**
@@ -71,15 +70,6 @@ public class PrimaryController implements DataManagerListener {
 
 
     /**
-     * Is called when datamanager has the data on hand and ready to be used.
-     * PrimaryController must be registered as datamanager's observer beforehand.
-     */
-    public void onDataReady(List<AbstractDataModel<Double>> data, List<DataQuery> query) {
-        // createChart();
-    }
-
-
-    /**
      * Get chart data from datamanager, use ChartFactory to generate chart,
      * command RequestController to display it
      */
@@ -94,4 +84,13 @@ public class PrimaryController implements DataManagerListener {
         // TODO update view with chart
             
     };
+
+    /**
+     * Is called when datamanager has the data on hand and ready to be used.
+     * PrimaryController must be registered as datamanager's observer beforehand.
+     */
+    @Override
+    public void onDataReady(List<DataResult> data) {
+        System.out.println("Controller got data");
+    }
 }
