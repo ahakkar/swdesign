@@ -1,16 +1,13 @@
 package org.example.model.data;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
-public class ApiDataRequest 
+public class ApiDataRequest
 {
     private final Class dataClass;
-    private DataQuery dataQuery;
-    public ApiDataRequest(Class dataClass, DataQuery dataQuery)
+    private DataRequest dataRequest;
+    public ApiDataRequest(Class dataClass, DataRequest dataRequest)
     {
         this.dataClass = dataClass;
-        this.dataQuery = dataQuery;
+        this.dataRequest = dataRequest;
     }
 
 
@@ -18,7 +15,7 @@ public class ApiDataRequest
         return dataClass;
     }
 
-    public DataQuery getDataQuery() {
-        return dataQuery;
+    public DataRequest getDataRequest() {
+        return dataRequest;
     }
 }
