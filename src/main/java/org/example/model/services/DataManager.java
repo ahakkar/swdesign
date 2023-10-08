@@ -67,33 +67,44 @@ public class DataManager implements APIDataListener {
         int i;
         for (i = 1; i <= 10; i++) {
             System.out.println("PrimaryService: starting api call " + i);
-            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null, null, null, null, null));
+            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null));
         }
         System.out.println("PrimaryService: called the apiqueue " + (i - 1) + " times");
     }
 
     public void getDataFromDataManager(List<DataQuery> queries) throws IllegalArgumentException {
+        List<AbstractDataModel<Double>> results = new ArrayList<>();
         for (DataQuery query : queries) {
             if (!validateDataQuery(query)){
                 throw new IllegalArgumentException("Invalid data query");
             }
 
             // For each query check if we have the data in our models
+            // If we have data in our models, create proper abstactdatamodels and notify listeners
 
             AbstractDataModel<Double> model = getDataFromInternalStorage(query);
 
-            // If we have data in our models, create proper abstactdatamodels and notify listeners
-
             if (model == null){
+                // If we miss data make necessary API calls and notify listeners when data is available
 
+                APIQueue queue = APIQueue.getInstance();
+                queue.addListener(new APIDataListener() {
+                    @Override
+                    public void newApiDataAvailable() {
+                        
+                    }
+                });
             }
-            // If we miss data make necessary API calls and notify listeners when data is available
+            else {
+                results.add(model);
+            }
+
 
 
 
         }
 
-
+        notifyListeners(results, queries);
 
 
     }
@@ -138,6 +149,10 @@ public class DataManager implements APIDataListener {
         }
 
         return null;
+    }
+
+    private void storeDataToInternalDataStorege(AbstractDataModel<Double> dataModel) {
+        // todo
     }
 
     private boolean validateDataQuery(DataQuery query) {
@@ -203,9 +218,9 @@ public class DataManager implements APIDataListener {
     /**
      * Notify all registered listeners when something happens
      */
-    public void notifyListeners() {
+    public void notifyListeners(List<AbstractDataModel<Double>> data, List<DataQuery> query) {
         for (DataManagerListener listener : listeners) {
-            listener.onDataReady(null, null); // TODO pass actual data
+            listener.onDataReady(data, query); // TODO pass actual data
         }
     }
     

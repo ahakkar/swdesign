@@ -39,7 +39,7 @@ public class ChartFactory {
         String xAxisDesc,
         String yAxisDesc
     ) {
-        // Get data from API
+        // Get data from AP
         List<DataPoint> dataPoints = 
             service.getFingridFixedData(
                 variableId,

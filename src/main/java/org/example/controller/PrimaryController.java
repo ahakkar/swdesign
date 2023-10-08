@@ -4,18 +4,16 @@ import java.io.IOException;
 import java.util.List;
 
 import org.example.App;
-import org.example.controller.factory.ChartFactory;
 import org.example.model.data.AbstractDataModel;
 import org.example.model.services.DataManager;
 import org.example.model.services.DataManagerListener;
-import org.example.model.services.DataQuery;
+import org.example.model.data.DataQuery;
 import org.example.types.Scenes;
 import org.example.utils.EnvironmentVariables;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.Chart;
 import javafx.stage.Stage;
 
 /**
