@@ -1,6 +1,10 @@
 package org.example.model.api;
 
+import org.example.model.data.ApiDataResult;
+
+import java.util.ArrayList;
+
 public interface APIDataListener {
 
-    public void newApiDataAvailable();
+    void newApiDataAvailable(ArrayList<ApiDataResult> data);
 }

@@ -3,9 +3,19 @@ package org.example.model.data;
 public class ApiDataResult {
 
     //TODO Tänne tarvittavat attribuutit, jotta APIOperator voi palauttaa oikeanlaisen datan
-    public String test = "test";
+    private AbstractDataModel<Double> result;
+    private ApiDataRequest request;
 
-    // esim.
-    // private List<Weather> weatherData;
-    // private List<Energy> energyData;
+    public ApiDataResult(AbstractDataModel<Double> result, ApiDataRequest request) {
+        this.result = result;
+        this.request = request;
+    }
+
+    public AbstractDataModel<Double> getResult() {
+        return result;
+    }
+
+    public ApiDataRequest getRequest() {
+        return request;
+    }
 }

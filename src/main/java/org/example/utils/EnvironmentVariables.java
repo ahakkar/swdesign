@@ -13,7 +13,7 @@ import org.example.types.APIType;
  * 
  * @author Antti Hakkarainen
  */
-public class EnvironmentVariables {
+public final class EnvironmentVariables {
 
     private static EnvironmentVariables instance;
     private static Map<APIType, String> envMap;
@@ -52,5 +52,16 @@ public class EnvironmentVariables {
 
     public String get(APIType apiType) {
         return envMap.get(apiType);
+    }
+
+    /**
+     * Static method to get API keys
+     * 
+     * @param apiType
+     * @return API key
+     *
+     */
+    public static String getAPIKey(APIType apiType) {
+        return getInstance().get(apiType);
     }
 }
