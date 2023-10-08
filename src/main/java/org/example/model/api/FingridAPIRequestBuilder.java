@@ -23,7 +23,7 @@ import okhttp3.HttpUrl;
  * 
  * @author Heikki Hohtari, with help from ChatGTP
  */
-public class FingridAPIRequestBuilder extends AbstractAPIRequestBuilder {
+public class FingridAPIRequestBuilder extends AbstractAPIRequestBuilder<FingridAPIRequestBuilder> {
 
     private final EnvironmentVariables envVars = EnvironmentVariables.getInstance();
     private final String API_KEY = envVars.get(APIType.FINGRID);
