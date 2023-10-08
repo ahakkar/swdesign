@@ -4,12 +4,22 @@ import org.example.types.APIType;
 import org.example.utils.EnvironmentVariables;
 
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 
 /**
  * Class for building Fingrid API requests.
  * 
  * The class uses the Builder design pattern.
+ * 
+ * Example on how to use this builder:
+ * 
+ * <pre>
+ * FingridAPIRequestBuilder builder = new FingridAPIRequestBuilder()
+ *         .withDataType(dataType) // For instance "241"
+ *         .withStartTime(formattedStartTime) // For instance "2023-10-04T00:00:00Z"
+ *         .withEndTime(formattedEndTime); // For instance "2023-10-06T00:00:00Z"
+ * 
+ * Response response = builder.execute();
+ * </pre>
  * 
  * @author Heikki Hohtari, with help from ChatGTP
  */
