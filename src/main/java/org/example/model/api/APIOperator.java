@@ -22,7 +22,7 @@ public class APIOperator {
     protected static ApiDataResult getData(ApiDataRequest request) throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         if (request.getDataClass() == WeatherModel.class) {
                     ArrayList<String> values = new ArrayList<>();
-        URL url = new URL("http://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::multipointcoverage&place=alavus&parameters=temperature");
+        URL url = new URL("http://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::weather::multipointcoverage&place=" + request.getLocation() + "&parameters=" + request.getDataType()+"&starttime=" + request.getStarttime() + "&endtime="+ request.getEndtime() + "&timestep=60");
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
