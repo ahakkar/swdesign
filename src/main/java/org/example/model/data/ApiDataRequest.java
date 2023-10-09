@@ -1,21 +1,49 @@
 package org.example.model.data;
 
-public class ApiDataRequest
-{
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+public class ApiDataRequest {
     private final Class dataClass;
-    private DataRequest dataRequest;
-    public ApiDataRequest(Class dataClass, DataRequest dataRequest)
-    {
+    private String location;
+    private final LocalDateTime starttime;
+    private final LocalDateTime endtime;
+    private final String dataType;
+
+    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime,
+            String dataType) {
         this.dataClass = dataClass;
-        this.dataRequest = dataRequest;
+        this.location = location;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.dataType = dataType;
     }
 
+    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval,
+            String dataType) {
+        this.dataClass = dataClass;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.dataType = dataType;
+    }
 
     public Class getDataClass() {
         return dataClass;
     }
 
-    public DataRequest getDataRequest() {
-        return dataRequest;
+    public String getLocation() {
+        return location;
+    }
+
+    public LocalDateTime getStarttime() {
+        return starttime;
+    }
+
+    public LocalDateTime getEndtime() {
+        return endtime;
+    }
+
+    public String getDataType() {
+        return dataType;
     }
 }

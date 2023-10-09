@@ -15,8 +15,9 @@ import okhttp3.Response;
  * The class uses the Builder design pattern.
  * 
  * @author Heikki Hohtari, with help from ChatGTP
+ * @param <T> Self-bounding type for builder pattern.
  */
-public abstract class AbstractAPIRequestBuilder {
+public abstract class AbstractAPIRequestBuilder<T extends AbstractAPIRequestBuilder<T>> {
     private final OkHttpClient httpClient = new OkHttpClient();
     protected HttpUrl.Builder urlBuilder;
     protected Request.Builder requestBuilder = new Request.Builder(); // Initialized here
@@ -25,33 +26,29 @@ public abstract class AbstractAPIRequestBuilder {
     protected String startTime;
     protected String endTime;
 
-    public AbstractAPIRequestBuilder() {
-        // Empty constructor
-    }
-
-    public AbstractAPIRequestBuilder withBaseUrl(String baseUrl) {
+    public T withBaseUrl(String baseUrl) {
         this.urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
-        return this;
+        return (T) this;
     }
 
-    public AbstractAPIRequestBuilder withApiKey(String apiKey) {
+    public T withApiKey(String apiKey) {
         this.apiKey = apiKey;
-        return this;
+        return (T) this;
     }
 
-    public AbstractAPIRequestBuilder withDataType(String dataType) {
+    public T withDataType(String dataType) {
         this.dataType = dataType;
-        return this;
+        return (T) this;
     }
 
-    public AbstractAPIRequestBuilder withStartTime(String startTime) {
+    public T withStartTime(String startTime) {
         this.startTime = startTime;
-        return this;
+        return (T) this;
     }
 
-    public AbstractAPIRequestBuilder withEndTime(String endTime) {
+    public T withEndTime(String endTime) {
         this.endTime = endTime;
-        return this;
+        return (T) this;
     }
 
     public String getBuiltUrl() {

@@ -12,7 +12,7 @@ import org.example.model.data.*;
  * 
  * @author Janne Taskinen
  */
-public class DataManager {
+public final class DataManager {
 
     private static DataManager instance;
     private static DataStorage dataStorage;
@@ -46,8 +46,8 @@ public class DataManager {
             AbstractDataModel<Double> model = dataStorage.getData(query);
 
             if (model == null){
-                Class modelClass = resolveModelClass(query.getDataType());
-                apiRequests.add(new ApiDataRequest(modelClass, query));
+                /*Class modelClass = resolveModelClass(query.getDataType());
+                apiRequests.add(new ApiDataRequest(modelClass, query));*/
             }
             else {
                 dataQueryResults.add(new DataResult(query, model));
@@ -57,8 +57,8 @@ public class DataManager {
         if (!apiRequests.isEmpty()){
             APIQueue.getData(apiRequests, results -> {
                 for (ApiDataResult result : results){
-                    dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
-                    dataStorage.addData(result.getResult());
+                    /*dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
+                    dataStorage.addData(result.getResult());*/
                 }
                 notifyListeners(dataQueryResults);
             });
