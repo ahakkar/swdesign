@@ -3,6 +3,7 @@ package org.example.model.api;
 import org.example.model.data.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -11,52 +12,24 @@ import java.util.concurrent.*;
  */
 public class APIQueue {
 
-    private static APIQueue instance;
-    private final LinkedBlockingDeque<ApiDataResult> dequeue;
-
-    private final ArrayList<APIDataListener> listeners;
-
-
-    private APIQueue() {
-        dequeue = new LinkedBlockingDeque<>();
-        listeners = new ArrayList<>();
-    }
-
-    public static APIQueue getInstance() {
-
-        synchronized (APIQueue.class){
-            if (instance == null) {
-                instance = new APIQueue();
-            }
-            return instance;
-        }
-    }
-
-    public void addListener(APIDataListener listener) {
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(APIDataListener listener) {
-        return listeners.remove(listener);
-    }
-
-    public ApiDataResult getApiDataResult() {
-        return dequeue.poll();
-    }
-
-    public void newDataRequired(ApiDataRequest parameters) {
+    public static void getData(List<ApiDataRequest> parameters, APIDataListener listener) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        Future<ApiDataResult> future = executor.submit(() -> APIOperator.getData(parameters));
-        executor.shutdown();
+        Future<ArrayList<ApiDataResult>> future = executor.submit(() -> {
+            ArrayList<ApiDataResult> results = new ArrayList<>();
+            for (ApiDataRequest parameter : parameters) {
+                results.add(APIOperator.getData(parameter));
+            }
+            return results;
+        });
+
         int timeout = 10;
 
         new Thread(() -> {
             try {
+                ArrayList<ApiDataResult> result = future.get(timeout, TimeUnit.SECONDS);
+                listener.newApiDataAvailable(result);
 
-                ApiDataResult result = future.get(timeout, TimeUnit.SECONDS);
-                dequeue.add(result);
-                notifyListeners();
             } catch (TimeoutException e) {
                 System.out.println("API call took longer than " + timeout + " seconds.");
                 future.cancel(true); //
@@ -68,11 +41,6 @@ public class APIQueue {
 
     }
 
-    private void notifyListeners() {
-        for (APIDataListener listener : listeners) {
-            listener.newApiDataAvailable();
-        }
-    }
 
 
 

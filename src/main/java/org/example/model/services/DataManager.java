@@ -2,12 +2,9 @@ package org.example.model.services;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.example.model.api.APIDataListener;
 import org.example.model.api.APIQueue;
 import org.example.model.data.*;
 
@@ -15,19 +12,16 @@ import org.example.model.data.*;
  * 
  * @author Janne Taskinen
  */
-public class DataManager implements APIDataListener {
+public final class DataManager {
 
     private static DataManager instance;
-    private final ArrayList<AbstractDataModel<Double>> dataModels;
+    private static DataStorage dataStorage;
 
-    private APIQueue apiQueue;
     private ArrayList<DataManagerListener> listeners;
 
     private DataManager() {
-        apiQueue = APIQueue.getInstance();
-        apiQueue.addListener(this);
-        dataModels = new ArrayList<>();
         this.listeners = new ArrayList<>();
+        this.dataStorage = DataStorage.getInstance();
     }
 
     public static DataManager getInstance() {
@@ -40,107 +34,43 @@ public class DataManager implements APIDataListener {
         }
     }
 
-    /**
-     * Fetch electricity consumption data from Fingrid
-     * 
-     * @return
-     */
-    public List<DataPoint> getFingridFixedData(String dataType, LocalDate start, LocalDate end) {
-        List<DataPoint> results = new ArrayList<>();
+    public void getData(List<DataRequest> queries) throws IllegalArgumentException {
+        List<DataResult> dataQueryResults = new ArrayList<>();
+        List<ApiDataRequest> apiRequests = new ArrayList<>();
 
-        FingridApiDataSource ds = new FingridApiDataSource();
-        try {
-            results = ds.getFixedData(dataType, start, end);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return results;
-    }
-
-
-    /**
-     * TEST / DEBUGGING METHOD
-     */
-    public void getSomething() {
-        int i;
-        for (i = 1; i <= 10; i++) {
-            System.out.println("PrimaryService: starting api call " + i);
-            apiQueue.newDataRequired(new ApiDataRequest(WeatherModel.class, null, null, null, null, null));
-        }
-        System.out.println("PrimaryService: called the apiqueue " + (i - 1) + " times");
-    }
-
-    public void getDataFromDataManager(List<DataQuery> queries) throws IllegalArgumentException {
-        for (DataQuery query : queries) {
+        for (DataRequest query : queries) {
             if (!validateDataQuery(query)){
                 throw new IllegalArgumentException("Invalid data query");
             }
 
-            // For each query check if we have the data in our models
-
-            AbstractDataModel<Double> model = getDataFromInternalStorage(query);
-
-            // If we have data in our models, create proper abstactdatamodels and notify listeners
+            AbstractDataModel<Double> model = dataStorage.getData(query);
 
             if (model == null){
-
+                /*Class modelClass = resolveModelClass(query.getDataType());
+                apiRequests.add(new ApiDataRequest(modelClass, query));*/
             }
-            // If we miss data make necessary API calls and notify listeners when data is available
-
-
-
+            else {
+                dataQueryResults.add(new DataResult(query, model));
+            }
         }
 
-
-
-
+        if (!apiRequests.isEmpty()){
+            APIQueue.getData(apiRequests, results -> {
+                for (ApiDataResult result : results){
+                    /*dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
+                    dataStorage.addData(result.getResult());*/
+                }
+                notifyListeners(dataQueryResults);
+            });
+        }
+        else {
+            notifyListeners(dataQueryResults);
+        }
     }
 
-    private AbstractDataModel<Double> getDataFromInternalStorage(DataQuery query) {
-
-        AbstractDataModel<Double> model = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        for (AbstractDataModel<Double> dataModel : dataModels) {
-            if (dataModel.getDataType().equals(query.getDataType())) {
-                model = dataModel;
-                break;
-            }
-        }
-
-        if (model != null){
 
 
-            String start = query.getStarttime().format(formatter);
-            String end = query.getEndtime().format(formatter);
-
-            Map<String, Double> dataPoints = model.getDataPointsWithRange(start, end);
-            Double[] values = new Double[dataPoints.size()];
-
-            int i = 0;
-            for (Double val : dataPoints.values()){
-                values[i] = val;
-                ++i;
-            }
-
-            if (dataPoints.containsKey(start) && dataPoints.containsKey(end)){
-                if (model instanceof EnergyModel){
-                    return new EnergyModel(model.getDataType(), model.getUnit(), start, model.getInterval(), values);
-                }
-                else if (model instanceof WeatherModel){
-                    return new WeatherModel(model.getDataType(), model.getUnit(), start, model.getInterval(), ((WeatherModel) model).getLocation(), values);
-                }
-            }
-
-
-        }
-
-        return null;
-    }
-
-    private boolean validateDataQuery(DataQuery query) {
+    private boolean validateDataQuery(DataRequest query) {
         if (query == null || query.getStarttime() == null || query.getEndtime() == null || query.getDataType() == null) {
             return false;
         }
@@ -149,9 +79,16 @@ public class DataManager implements APIDataListener {
             return false;
         }
 
+        return resolveModelClass(query.getDataType()) != null;
+
+    }
+
+    private Class resolveModelClass(String dataType) {
         // TODO refactor this when we have decided where we are actually maintaining the allowed types...
         try {
-            EnergyModel.DataType.parseDataType(query.getDataType());
+             EnergyModel.DataType.parseDataType(dataType);
+             return EnergyModel.class;
+
         }
         catch (IllegalArgumentException ignored) {
 
@@ -159,22 +96,14 @@ public class DataManager implements APIDataListener {
 
         // TODO refactor this when we have decided where we are actually maintaining the allowed types...
         try {
-            WeatherModel.DataType.parseDataType(query.getDataType());
+            WeatherModel.DataType.parseDataType(dataType);
+            return WeatherModel.class;
+
         }
         catch (IllegalArgumentException e2) {
-            return false;
+
         }
-
-        return true;
-
-    }
-
-    @Override
-    public void newApiDataAvailable() {
-        System.out.println("PrimaryService got notification about new API data available");
-        ApiDataResult result = apiQueue.getApiDataResult();
-        System.out.println("Result data: " + result.test);
-
+        return null;
     }
 
 
@@ -186,7 +115,7 @@ public class DataManager implements APIDataListener {
         if (listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
             // TODO remove Registered %s as DataManager's listener debug print
-            System.out.printf("Registered %s as DataManager's listener", listener.toString());
+            System.out.printf("Registered %s as DataManager's listener\n", listener.toString());
         }
     }
 
@@ -203,9 +132,9 @@ public class DataManager implements APIDataListener {
     /**
      * Notify all registered listeners when something happens
      */
-    public void notifyListeners() {
+    public void notifyListeners(List<DataResult> data) {
         for (DataManagerListener listener : listeners) {
-            listener.onDataReady(null, null); // TODO pass actual data
+            listener.onDataReady(data); // TODO pass actual data
         }
     }
     

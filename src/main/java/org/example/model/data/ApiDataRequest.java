@@ -3,18 +3,15 @@ package org.example.model.data;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class ApiDataRequest 
-{
-
-    // TODO Tarvittavien attribuuttien lisäys, jotta Data manager voi kertoa APIOperatorille (APIQueuen kautta), mitä dataa tarvitaan
+public class ApiDataRequest {
     private final Class dataClass;
     private String location;
     private final LocalDateTime starttime;
     private final LocalDateTime endtime;
     private final String dataType;
 
-    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime, String dataType) 
-    {
+    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime,
+            String dataType) {
         this.dataClass = dataClass;
         this.location = location;
         this.starttime = starttime;
@@ -22,8 +19,8 @@ public class ApiDataRequest
         this.dataType = dataType;
     }
 
-    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval, String dataType) 
-    {
+    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval,
+            String dataType) {
         this.dataClass = dataClass;
         this.starttime = starttime;
         this.endtime = endtime;
@@ -34,24 +31,19 @@ public class ApiDataRequest
         return dataClass;
     }
 
-    public String getLocation()
-    {
+    public String getLocation() {
         return location;
     }
 
-    public LocalDateTime getStarttime()
-    {
+    public LocalDateTime getStarttime() {
         return starttime;
     }
 
-    public LocalDateTime getEndtime()
-    {
-        return endtime;   
+    public LocalDateTime getEndtime() {
+        return endtime;
     }
 
-    public String getDataType()
-    {
+    public String getDataType() {
         return dataType;
     }
-
 }

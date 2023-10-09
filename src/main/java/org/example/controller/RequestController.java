@@ -134,7 +134,7 @@ public class RequestController {
 
     @FXML
     private void testSomething() {
-        
+        RequestDispatcher.getInstance().handleDataRequest();
     }
 
     private void initializeChartTypeChoiceBox() {
