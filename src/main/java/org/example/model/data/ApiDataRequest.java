@@ -5,45 +5,18 @@ import java.time.LocalDateTime;
 
 public class ApiDataRequest {
     private final Class dataClass;
-    private String location;
-    private final LocalDateTime starttime;
-    private final LocalDateTime endtime;
-    private final String dataType;
+    private final DataRequest dataRequest;
 
-    public ApiDataRequest(Class dataClass, String location, LocalDateTime starttime, LocalDateTime endtime,
-            String dataType) {
+    public ApiDataRequest(Class dataClass, DataRequest dataRequest) {
         this.dataClass = dataClass;
-        this.location = location;
-        this.starttime = starttime;
-        this.endtime = endtime;
-        this.dataType = dataType;
-    }
-
-    public ApiDataRequest(Class dataClass, LocalDateTime starttime, LocalDateTime endtime, Duration interval,
-            String dataType) {
-        this.dataClass = dataClass;
-        this.starttime = starttime;
-        this.endtime = endtime;
-        this.dataType = dataType;
+        this.dataRequest = dataRequest;
     }
 
     public Class getDataClass() {
         return dataClass;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public LocalDateTime getStarttime() {
-        return starttime;
-    }
-
-    public LocalDateTime getEndtime() {
-        return endtime;
-    }
-
-    public String getDataType() {
-        return dataType;
+    public DataRequest getDataRequest() {
+        return dataRequest;
     }
 }

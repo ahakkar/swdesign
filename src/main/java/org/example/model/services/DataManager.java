@@ -46,8 +46,8 @@ public final class DataManager {
             AbstractDataModel<Double> model = dataStorage.getData(query);
 
             if (model == null){
-                /*Class modelClass = resolveModelClass(query.getDataType());
-                apiRequests.add(new ApiDataRequest(modelClass, query));*/
+                Class modelClass = resolveModelClass(query.getDataType());
+                apiRequests.add(new ApiDataRequest(modelClass, query));
             }
             else {
                 dataQueryResults.add(new DataResult(query, model));

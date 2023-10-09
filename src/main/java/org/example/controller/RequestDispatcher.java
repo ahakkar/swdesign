@@ -43,8 +43,8 @@ public class RequestDispatcher {
     public Boolean handleDataRequest() {
         // TODO do something with the data
         List<DataRequest> requests = new ArrayList<>();
-        requests.add(new DataRequest("TOTAL_CONSUMPTION", stringToLocalDateTime("2023-10-08 15:30:45"), stringToLocalDateTime("2023-10-10 15:30:45"), "location"));
-        requests.add(new DataRequest("WIND", stringToLocalDateTime("2023-10-08 15:31:45"), stringToLocalDateTime("2023-10-10 15:32:45"), "location"));
+        requests.add(new DataRequest("TOTAL_CONSUMPTION", stringToLocalDateTime("2023-10-08 15:30:45"), stringToLocalDateTime("2023-10-10 15:30:45"), "tampere"));
+        requests.add(new DataRequest("TOTAL_CONSUMPTION", stringToLocalDateTime("2023-10-08 15:31:45"), stringToLocalDateTime("2023-10-10 15:32:45"), "tampere"));
 
         DataManager.getInstance().getData(requests);
         return false;

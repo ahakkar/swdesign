@@ -9,10 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.example.model.data.ApiDataRequest;
-import org.example.model.data.ApiDataResult;
-import org.example.model.data.EnergyModel;
-import org.example.model.data.WeatherModel;
+import org.example.model.data.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -23,10 +20,11 @@ public class APIOperator {
             throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         if (request.getDataClass() == WeatherModel.class) {
             ArrayList<String> values = new ArrayList<>();
+            DataRequest dataRequest = request.getDataRequest();
             URL url = new URL(
                     "http://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::weather::multipointcoverage&place="
-                            + request.getLocation() + "&parameters=" + request.getDataType() + "&starttime="
-                            + request.getStarttime() + "&endtime=" + request.getEndtime() + "&timestep=60");
+                            + dataRequest.getLocation() + "&parameters=" + dataRequest.getDataType() + "&starttime="
+                            + dataRequest.getStarttime() + "&endtime=" + dataRequest.getEndtime() + "&timestep=60");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
