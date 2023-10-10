@@ -3,12 +3,14 @@ package org.example.model.api;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import okhttp3.Response;
 import org.example.model.data.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -17,10 +19,11 @@ import org.xml.sax.SAXException;
 public class APIOperator {
 
     protected static ApiDataResult getData(ApiDataRequest request)
-            throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+            throws InterruptedException, IOException, ParserConfigurationException, SAXException, IllegalArgumentException {
+        DataRequest dataRequest = request.getDataRequest();
         if (request.getDataClass() == WeatherModel.class) {
             ArrayList<String> values = new ArrayList<>();
-            DataRequest dataRequest = request.getDataRequest();
+
             URL url = new URL(
                     "http://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::weather::multipointcoverage&place="
                             + dataRequest.getLocation() + "&parameters=" + dataRequest.getDataType() + "&starttime="
@@ -46,9 +49,20 @@ public class APIOperator {
             }
 
         } else if (request.getDataClass() == EnergyModel.class) {
-            // Tästä voidaan päätellä, että kutsutaan Fingridin APIa @HEIKKI
+
+            FingridAPIRequestBuilder builder = new FingridAPIRequestBuilder()
+                    .withDataType("75")
+                    .withStartTime(dataRequest.getStarttime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+                    .withEndTime(dataRequest.getEndtime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+            Response response = builder.execute();
+            System.out.println("Fingrid request executed " + response.request().toString());
+            System.out.println("Fingrid response " + response.body().string());
+            FingridApiParser parser = new FingridApiParser();
+            EnergyModel model = parser.parseToDataObject(response);
+            return new ApiDataResult(model, request);
+
         }
 
-        return new ApiDataResult(null, request);
+        throw new IllegalArgumentException("Proper API not found for the request");
     }
 }

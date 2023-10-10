@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface DataManagerListener {
 
-    void onDataReady(List<DataResult> data);
+    void onDataReady(List<DataResult> data, Exception exception);
 }

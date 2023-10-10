@@ -90,7 +90,14 @@ public class PrimaryController implements DataManagerListener {
      * PrimaryController must be registered as datamanager's observer beforehand.
      */
     @Override
-    public void onDataReady(List<DataResult> data) {
-        System.out.println("Controller got data");
+    public void onDataReady(List<DataResult> data, Exception exception) {
+        if (exception == null) {
+            System.out.println("Controller got data");
+        }
+        else {
+            System.out.println("Controller got exception");
+            exception.printStackTrace();
+        }
+
     }
 }
