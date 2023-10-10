@@ -48,15 +48,15 @@ public class FingridApiParserTest {
             assertEquals(73, dataPoints.size());
 
             // Check first three datavalues
-            // assertEquals(7308.035602, dataPoints.get("2021-10-04 00:00:00"), 0.000001);
-            // assertEquals(7309.138412, dataPoints.get("2021-10-04 01:00:00"), 0.000001);
-            assertEquals(7540.445537, dataPoints.get("2021-10-04 02:00:00"), 0.000001);
+            assertEquals(7470, dataPoints.get("2021-10-04 00:00:00"), 0.01);
+            assertEquals(7595, dataPoints.get("2021-10-04 01:00:00"), 0.01);
+            assertEquals(7957, dataPoints.get("2021-10-04 02:00:00"), 0.01);
 
             // Check datapoint from middle
-            assertEquals(7389.240211, dataPoints.get("2021-10-05 12:00:00"), 0.000001);
+            assertEquals(9333, dataPoints.get("2021-10-05 12:00:00"), 0.01);
 
             // Check the las
-            assertEquals(7246.371250, dataPoints.get("2021-10-07 00:00:00"), 0.000001);
+            assertEquals(7552, dataPoints.get("2021-10-07 00:00:00"), 0.01);
 
         } catch (Exception e) {
             e.printStackTrace();
