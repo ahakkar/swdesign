@@ -1,5 +1,9 @@
 package org.example.model.api;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.example.model.data.WeatherModel;
 import okhttp3.Response;
 
@@ -20,7 +24,63 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
     @Override
     public WeatherModel parseToDataObject(Response response) {
         // Todo: Implement parsing @markus
+        try {
+            String responseBody = response.body().string();
+            String responseDataAsString = getStringBetween(responseBody, "<gml:doubleOrNilReasonTupleList>",
+                    "</gml:doubleOrNilReasonTupleList>");
+            List<Double> responseData = extractDoubles(responseDataAsString);
+            return new WeatherModel(null, null, null, null, null, null);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return new WeatherModel(null, null, null, null, null, null);
 
+    }
+
+    /**
+     * getStringBetween - Gets a string between two strings. Exclude the start and
+     * end strings from the result.
+     * 
+     * @param originalStr
+     * @param startStr
+     * @param endStr
+     * @return
+     */
+    public static String getStringBetween(String originalStr, String startStr, String endStr) {
+        // Check if both startStr and endStr exist in originalStr
+        if (originalStr.contains(startStr) && originalStr.contains(endStr)) {
+            int startIndex = originalStr.indexOf(startStr) + startStr.length();
+            int endIndex = originalStr.indexOf(endStr, startIndex); // Searching for endStr after the startIndex
+
+            // Check if startStr is before endStr
+            if (startIndex < endIndex) {
+                return originalStr.substring(startIndex, endIndex).trim();
+            }
+        }
+        return ""; // Return an empty string if conditions are not met
+    }
+
+    /**
+     * extractDoubles - Extracts doubles from a string.
+     * 
+     * @param input
+     * @return
+     */
+    public static List<Double> extractDoubles(String input) {
+        List<Double> resultList = new ArrayList<>();
+        String[] lines = input.split("\n");
+
+        for (String line : lines) {
+            line = line.trim(); // Remove any leading/trailing whitespace
+            try {
+                Double value = Double.parseDouble(line);
+                resultList.add(value);
+            } catch (NumberFormatException e) {
+                System.err.println("Error parsing value: " + line);
+            }
+        }
+        return resultList;
     }
 }

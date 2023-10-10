@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.example.model.data.WeatherModel;
 import org.example.utils.EnvironmentVariables;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,10 @@ import okhttp3.Response;
 
 /**
  * Test class for FmiAPIRequestBuilder.
+ * 
+ * Editors note: Result Data from FMI is so awful that it's hard to test the
+ * response without parsing it first.
+ * Therefore this test can also test (partialy) the FMIApiParser class.
  * 
  * @author Heikki Hohtari, with help from ChatGTP
  */
@@ -39,7 +44,10 @@ public class FmiAPIRequestBuilderTest {
                 .withEndTime(formattedEndTime);
 
         Response response = builder.execute();
-        String responseBody = response.body().string();
+        FMIApiParser parser = new FMIApiParser();
+        WeatherModel responseBody = parser.parseToDataObject(response);
+        // TODO @markus: Probably do couple tests on the data once you get it as a
+        // WeatherModel object
 
         // Assert that response is not empty
         assertNotNull(responseBody);
