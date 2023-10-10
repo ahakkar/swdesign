@@ -55,16 +55,23 @@ public final class DataManager {
         }
 
         if (!apiRequests.isEmpty()){
-            APIQueue.getData(apiRequests, results -> {
-                for (ApiDataResult result : results){
-                    /*dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
-                    dataStorage.addData(result.getResult());*/
+            APIQueue.getData(apiRequests, (results, exception) -> {
+                if (exception == null){
+                    for (ApiDataResult result : results){
+                        dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
+                        dataStorage.addData(result.getResult());
+                    }
+                    notifyListeners(dataQueryResults, null);
                 }
-                notifyListeners(dataQueryResults);
+                else {
+                    notifyListeners(null, exception);
+                }
+
+
             });
         }
         else {
-            notifyListeners(dataQueryResults);
+            notifyListeners(dataQueryResults, null);
         }
     }
 
@@ -132,9 +139,9 @@ public final class DataManager {
     /**
      * Notify all registered listeners when something happens
      */
-    public void notifyListeners(List<DataResult> data) {
+    public void notifyListeners(List<DataResult> data, Exception exception) {
         for (DataManagerListener listener : listeners) {
-            listener.onDataReady(data); // TODO pass actual data
+            listener.onDataReady(data, exception); // TODO pass actual data
         }
     }
     

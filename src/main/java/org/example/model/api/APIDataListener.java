@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 public interface APIDataListener {
 
-    void newApiDataAvailable(ArrayList<ApiDataResult> data);
+    void newApiDataAvailable(ArrayList<ApiDataResult> data, Exception exception);
 }

@@ -4,6 +4,7 @@ public class DataResult {
 
     private DataRequest request;
     private AbstractDataModel<Double> data;
+    private Exception exception;
 
     public DataResult(DataRequest request, AbstractDataModel<Double> data) {
         this.request = request;
@@ -16,5 +17,9 @@ public class DataResult {
 
     public AbstractDataModel<Double> getData() {
         return data;
+    }
+
+    public Exception getException() {
+        return exception;
     }
 }
