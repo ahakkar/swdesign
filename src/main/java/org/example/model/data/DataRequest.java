@@ -2,34 +2,78 @@ package org.example.model.data;
 
 import java.time.LocalDateTime;
 
+import org.example.types.DataType;
+
+/**
+ * @author Janne Taskinen
+ */
 public class DataRequest {
 
-    private final String dataType;
-    private final LocalDateTime starttime;
-    private final LocalDateTime endtime;
+    private final DataType dataType;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
     private final String location;
+    private ChartMetadata chartMetadata;   
 
-    public DataRequest(String dataType, LocalDateTime starttime, LocalDateTime endtime, String location) {
+    public DataRequest(
+        DataType dataType, 
+        LocalDateTime startTime,
+        LocalDateTime endTime,        
+        String location
+    ) {
         this.dataType = dataType;
-        this.starttime = starttime;
-        this.endtime = endtime;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.location = location;
     }
 
-    public String getDataType() {
+    /**
+     * Stores the tab and chart id of the chart that requested the data.
+     * This is used to identify the chart where the data should be used.
+     * 
+     * @param tabId The id of the tab.
+     * @param chartId The id of the chart.
+     * @author Antti Hakkarainen
+     */
+    public static class ChartMetadata {
+        private final String tabId;
+        private final String chartId;
+
+        public ChartMetadata(String tabId, String chartId) {
+            this.tabId = tabId;
+            this.chartId = chartId;
+        }
+
+        public String getTabId() {
+            return tabId;
+        }
+
+        public String getChartId() {
+            return chartId;
+        }
+    }
+
+    public DataType getDataType() {
         return dataType;
     }
 
     public LocalDateTime getStarttime() {
-        return starttime;
+        return startTime;
     }
 
     public LocalDateTime getEndtime() {
-        return endtime;
+        return endTime;
     }
 
     public String getLocation() {
         return location;
     }
 
+    public void setChartMetadata(String tabId, String chartId) {
+        this.chartMetadata = new ChartMetadata(tabId, chartId);
+    }
+
+    public ChartMetadata getChartMetadata() {
+        return chartMetadata;
+    }
 }

@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
@@ -23,7 +22,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" minHeight="800.0" minWidth="1024.0" spacing="20.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.RequestController">
+<VBox alignment="CENTER" minHeight="800.0" minWidth="1024.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.RequestController">
     <children>
         <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
@@ -34,6 +33,7 @@
                         <Button layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
                         <Button layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
                          <Button layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#testSomething" prefHeight="30.0" prefWidth="160.0" text="TEST" />
+                        <Button fx:id="addNewTabButton" layoutX="211.0" layoutY="60.0" mnemonicParsing="false" onAction="#addNewTabAction" prefHeight="30.0" prefWidth="160.0" text="New tab (temp button)" />
                      </children>
                   </AnchorPane>
                   <ScrollPane>
@@ -193,37 +193,7 @@
             </VBox>
                   <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0">
                       <children>
-                          <TabPane prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                              <tabs>
-                                  <Tab text="Graph1">
-                                      <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="695.0" prefWidth="1029.0">
-                                              <children>
-                                                  <Label alignment="CENTER" layoutX="14.0" layoutY="21.0" style="&#10;" text="Line chart" textAlignment="CENTER" wrapText="false">
-                                       <font>
-                                                  <Font size="18.0" fx:id="x1" />
-                                       </font></Label>
-                                    <AnchorPane fx:id="chartPlaceholder" layoutY="59.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-                                              </children>
-                                          </AnchorPane>
-                                      </content>
-                                  </Tab>
-                        <Tab text="Graph2">
-                           <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="695.0" prefWidth="1029.0">
-                                 <children>
-                                    <Label alignment="CENTER" layoutX="14.0" layoutY="21.0" style="&#10;" text="Line chart" textAlignment="CENTER" wrapText="false">
-                                       <font>
-                                          <Font size="18.0" fx:id="x11" />
-                                       </font>
-                                    </Label>
-                                    <AnchorPane fx:id="chartPlaceholder1" layoutY="59.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-                                 </children>
-                              </AnchorPane>
-                           </content>
-                        </Tab>
-                              </tabs>
-                          </TabPane>
+                          <TabPane fx:id="mainTabPane" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                       </children>
                   </AnchorPane>
             </items>

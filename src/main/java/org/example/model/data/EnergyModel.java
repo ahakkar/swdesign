@@ -15,7 +15,7 @@ import java.util.Locale;
 public class EnergyModel extends AbstractDataModel<Double> {
 
     static {
-        for (DataType type : DataType.values()) {
+        for (EnergyDataType type : EnergyDataType.values()) {
             supportedDataTypes.add(type.name());
         }
     }
@@ -23,7 +23,7 @@ public class EnergyModel extends AbstractDataModel<Double> {
     /**
      * DataType - Enum for energy data types.
      */
-    public enum DataType {
+    public enum EnergyDataType {
         // You can add more types here in the future
         TOTAL_CONSUMPTION,
         TOTAL_PRODUCTION,
@@ -31,9 +31,9 @@ public class EnergyModel extends AbstractDataModel<Double> {
         NUCLEAR_PRODUCTION,
         WIND_PRODUCTION;
 
-        public static DataType parseDataType(String name) {
+        public static EnergyDataType parseDataType(String name) {
             try {
-                return DataType.valueOf(name.toUpperCase(Locale.ROOT));
+                return EnergyDataType.valueOf(name.toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid energy data type: " + name);
             }
@@ -70,6 +70,6 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @inheritDoc - AbstractDataModel
      */
     public EnergyModel(String dataType, String unit, Duration interval) {
-        super(DataType.parseDataType(dataType).name().toLowerCase(Locale.ROOT), unit, interval);
+        super(EnergyDataType.parseDataType(dataType).name().toLowerCase(Locale.ROOT), unit, interval);
     }
 }

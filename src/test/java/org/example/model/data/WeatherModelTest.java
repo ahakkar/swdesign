@@ -41,8 +41,8 @@ public class WeatherModelTest {
     // Test all different data types are supported
     @Test
     public void testParseDataType() {
-        for (WeatherModel.DataType type : WeatherModel.DataType.values()) {
-            assertEquals(type, WeatherModel.DataType.parseDataType(type.name()));
+        for (WeatherModel.WeatherDataType type : WeatherModel.WeatherDataType.values()) {
+            assertEquals(type, WeatherModel.WeatherDataType.parseDataType(type.name()));
         }
     }
 

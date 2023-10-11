@@ -14,6 +14,7 @@ module org.example {
     exports org.example.types;
     exports org.example.controller;
     exports org.example.model.services;
+    exports org.example.model.session;
     opens org.example.controller to javafx.fxml;
     //opens org.example.model.data to com.fasterxml.jackson.databind;
     exports org.example.model.data;

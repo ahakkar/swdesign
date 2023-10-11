@@ -17,7 +17,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     private String location;
 
     static {
-        for (DataType type : DataType.values()) {
+        for (WeatherDataType type : WeatherDataType.values()) {
             supportedDataTypes.add(type.name());
         }
     }
@@ -25,7 +25,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     /**
      * DataType - Enum for weather data types.
      */
-    public enum DataType {
+    public enum WeatherDataType {
         // You can add more types here in the future
         WIND,
         TEMPERATURE,
@@ -33,9 +33,9 @@ public class WeatherModel extends AbstractDataModel<Double> {
         HUMIDITY,
         AIR_PRESSURE;
 
-        public static DataType parseDataType(String name) {
+        public static WeatherDataType parseDataType(String name) {
             try {
-                return DataType.valueOf(name.toUpperCase(Locale.ROOT));
+                return WeatherDataType.valueOf(name.toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid energy data type: " + name);
             }
