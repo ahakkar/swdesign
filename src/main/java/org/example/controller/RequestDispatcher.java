@@ -1,13 +1,11 @@
 package org.example.controller;
 
-import javafx.scene.chart.XYChart;
+import org.example.types.DataType;
+import org.example.model.data.ChartRequest;
 import org.example.model.data.DataRequest;
-import org.example.model.services.DataManager;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Singleton. Probably validates data from UI, and returns true/false depending on
@@ -37,21 +35,27 @@ public class RequestDispatcher {
 
 
     /**
-     * Validates data from UI and passes it on to datamanager
+     * Validates data from UI and passes it on to sessionmanager
      * @return
      */
-    public Boolean handleDataRequest() {
-        // TODO do something with the data
-        List<DataRequest> requests = new ArrayList<>();
-        requests.add(new DataRequest("TOTAL_CONSUMPTION", stringToLocalDateTime("2023-10-08 15:30:45"), stringToLocalDateTime("2023-10-10 15:30:45"), "tampere"));
-        //requests.add(new DataRequest("TOTAL_CONSUMPTION", stringToLocalDateTime("2023-10-08 15:31:45"), stringToLocalDateTime("2023-10-10 15:32:45"), "tampere"));
-
-        DataManager.getInstance().getData(requests);
-        return false;
+    public Boolean validateAddChartRequest(
+        ChartRequest chartRequest,
+        DataType dataType, 
+        LocalDateTime startTime,
+        LocalDateTime endTime,        
+        String location,
+        String tabId
+    ) {
+        // TODO validate data
+        DataRequest dataRequest = new DataRequest(dataType, startTime, endTime, location);
+        SessionController sessionManager = SessionController.getInstance();
+        sessionManager.newChartRequest(chartRequest, dataRequest, tabId);
+        
+        return true;
     }
 
-    private LocalDateTime stringToLocalDateTime(String timestamp) {
+/*     private LocalDateTime stringToLocalDateTime(String timestamp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(timestamp, formatter);
-    }
+    } */
 }

@@ -1,33 +1,45 @@
 package org.example.controller;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.XYChart;
 
-import org.example.model.services.DataManager;
+import org.example.model.data.ChartRequest;
+import org.example.model.data.DataResult;
+import org.example.model.session.SessionChangeData;
+import org.example.types.DataType;
 import org.example.types.AxisType;
 import org.example.types.ChartType;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.CheckBox;
 
 /**
- * Controller for mainworkspace(.fxml)
+ * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements.
  * 
  * @author Antti Hakkarainen
  */
 public class RequestController {
 
-    private final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
+    private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
+    private static final SessionController sessionManager = SessionController.getInstance();
+
+    @FXML
+    private TabPane mainTabPane;
 
     @FXML
     private ChoiceBox<ChartType> chartTypeChoiceBox;
@@ -36,16 +48,13 @@ public class RequestController {
     private ChoiceBox<String> xAxisChoiceBox;
 
     @FXML
-    private ChoiceBox<AxisType> yAxisChoiceBox;
+    private ChoiceBox<DataType> yAxisChoiceBox;
 
     @FXML
     private DatePicker fromDatePicker;
 
     @FXML
     private DatePicker toDatePicker;
-
-    @FXML
-    private AnchorPane chartPlaceholder;
 
     @FXML
     private ChoiceBox<String> relativeTimeChoiceBox;
@@ -83,6 +92,9 @@ public class RequestController {
     @FXML
     private Button loadPresetButton;
 
+    @FXML
+    private Button addNewTabButton;
+
     /**
      * Populate choicebox values and select defaults
      */
@@ -110,21 +122,89 @@ public class RequestController {
      */
     @FXML
     public void createDiagramButtonAction() {
+        Map<AxisType, DataType> axisMap = Map.of(
+            AxisType.X_AXIS, DataType.TIME,
+            AxisType.Y_AXIS, yAxisChoiceBox.getValue()
+        );
 
         // TODO display a spinning widget while chart is being generated
-        // TODO listen for/get notified when chartgen is complete  
-        requestDispatcher.handleDataRequest(); // TODO populate request params from data with UI
+        ChartRequest chartRequest = new ChartRequest(
+            yAxisChoiceBox.getValue().getAPIType(),
+            chartTypeChoiceBox.getValue(),
+            axisMap,
+            null            
+        );
+
+        requestDispatcher.validateAddChartRequest(
+            chartRequest,
+            yAxisChoiceBox.getValue(),
+            fromDatePicker.getValue().atStartOfDay(),
+            toDatePicker.getValue().atStartOfDay(),
+            null,
+            mainTabPane.getSelectionModel().getSelectedItem().getId()
+        );
     }
 
+    @FXML 
+    public void addNewTabAction() {        
+        sessionManager.addTab();
+    }
 
     /**
-     * PrimaryController calls this method to display a generated chart ons creen
+     * Bound to a tab's contextmenu, this action is called from the tab's 
+     * contextmenu when user wants to close a tab. We forward the info to
+     * SessionManager which decides what to do.
+     * 
+     * @param tabId
+     */
+    private void removeTabAction(String tabId) {
+        sessionManager.removeTab(tabId);
+    }
+
+    /**
+     * Adds a new JavaFX Tab element to TabPane mainTabPane
+     */
+    public void addNewTabToUI(SessionChangeData data) {
+        Tab newTab = new Tab(data.getTitle());
+        newTab.setId(data.getId().toString());
+
+        // Contex menu for closing the tab
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem closeItem = new MenuItem("Close tab");
+        closeItem.setOnAction(event -> {
+            removeTabAction(newTab.getId());
+            
+        });
+        contextMenu.getItems().add(closeItem);
+
+        newTab.setContextMenu(contextMenu);
+        mainTabPane.getTabs().add(newTab);
+    }
+
+    /**
+     * PrimaryController calls this method to remove a tab from UI. Tab is
+     * found with the unique id.
+     * 
+     * @param tabId String representation UUID of the tab to be removed
+     */
+    public void removeTabFromUI(String tabId) {
+        for (Tab tab : mainTabPane.getTabs()) {
+            if (tabId.equals(tab.getId())) {
+                mainTabPane.getTabs().remove(tab);
+                break;
+            }
+        }
+    }
+
+    /**
+     * PrimaryController calls this method to display a generated chart on a tab
      * @param chart Chart a pie/xychart ready to be displayed
      */
-    public void displayChart(Chart chart) {
-        // TODO put chart on screen
-        //replacePlaceholderChart(chart);
+    public void addChartToTab(String tabId, Chart chart) {
+        // TODO actually place the chart into a tab with specified id
+        // TODO and probably switch the active tab to id as well
     }
+
 
     @FXML
     private void chartTypeChoiceBoxAction() {
@@ -134,7 +214,7 @@ public class RequestController {
 
     @FXML
     private void testSomething() {
-        RequestDispatcher.getInstance().handleDataRequest();
+        
     }
 
     private void initializeChartTypeChoiceBox() {
@@ -159,18 +239,18 @@ public class RequestController {
     }
 
     private void initializeYAxisChoiceBox() {
-        yAxisChoiceBox.setConverter(new StringConverter<AxisType>() {
-            public String toString(AxisType type) {
+        yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
+            public String toString(DataType type) {
                 return (type == null) ? "" : type.toString();  
             }
 
-            public AxisType fromString(String label) {
+            public DataType fromString(String label) {
                 return null; 
             }            
         });
 
-        yAxisChoiceBox.getItems().addAll(AxisType.values());
-        yAxisChoiceBox.setValue(AxisType.CONSUMPTION);
+        yAxisChoiceBox.getItems().addAll(DataType.values());
+        yAxisChoiceBox.setValue(DataType.CONSUMPTION);
     }
 
     private void initializeRelativeTimeChoiceBox() {
@@ -308,7 +388,7 @@ public class RequestController {
     }
 
     private void replacePlaceholderChart(XYChart<?, ?> chart) {
-        chartPlaceholder.getChildren().clear();
+        // chartPlaceholder.getChildren().clear();
 
         // Glue added the chart to anchorpane's borders
         AnchorPane.setTopAnchor(chart, 0.0);
@@ -316,7 +396,7 @@ public class RequestController {
         AnchorPane.setBottomAnchor(chart, 0.0);
         AnchorPane.setLeftAnchor(chart, 0.0);
 
-        chartPlaceholder.getChildren().add(chart);
+        // chartPlaceholder.getChildren().add(chart);
     }
 
 

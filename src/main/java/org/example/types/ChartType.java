@@ -16,9 +16,9 @@ import javafx.scene.chart.XYChart;
  * @author Antti Hakkarainen
  */
 public enum ChartType {
-    LINE_CHART("Line chart", params -> new LineChartImpl().createChart(params)),
-    AREA_CHART("Area chart", params -> new AreaChartImpl().createChart(params)),
-    SCATTER_DOT_CHART("Scatter chart", params -> new ScatterChartImpl().createChart(params)),
+    LINE_CHART("Line chart", params -> new LineChartImpl().createXYChart(params)),
+    AREA_CHART("Area chart", params -> new AreaChartImpl().createXYChart(params)),
+    SCATTER_DOT_CHART("Scatter chart", params -> new ScatterChartImpl().createXYChart(params)),
     PIE_CHART("Pie chart", null);
 
     private final String label;

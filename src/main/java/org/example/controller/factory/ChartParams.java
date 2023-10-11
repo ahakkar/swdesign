@@ -1,8 +1,8 @@
 package org.example.controller.factory;
 
-import java.util.List;
 
-import org.example.model.data.DataPoint;
+import org.example.model.data.AbstractDataModel;
+import org.example.model.data.ChartRequest;
 
 /**
  * Data Transfer Object, DTO to pass params to chart creator classes
@@ -11,38 +11,23 @@ import org.example.model.data.DataPoint;
  */
 public class ChartParams {
 
-    private final List<DataPoint> dataPoints;
-    private final String chartDesc;
-    private final String xAxisDesc;
-    private final String yAxisDesc;
+    private final AbstractDataModel<Double> data;
+    private final ChartRequest request;
 
     public ChartParams(
-        List<DataPoint> dataPoints,
-        String chartDesc,
-        String xAxisDesc,
-        String yAxisDesc
-    ) {
-        
-        this.dataPoints = dataPoints;
-        this.chartDesc = chartDesc;
-        this.xAxisDesc = xAxisDesc;
-        this.yAxisDesc = yAxisDesc;
+        AbstractDataModel<Double> data,
+        ChartRequest request
+    ) {        
+        this.data = data;
+        this.request = request;
     };
 
-    public List<DataPoint> getDataPoints() {
-        return dataPoints;
+    public AbstractDataModel<Double> getData() {
+        return data;
     }
 
-    public String getChartDesc() {
-        return chartDesc;
-    }
-
-    public String getXAxisDesc() {
-        return xAxisDesc;
-    }
-
-    public String getYAxisDesc() {
-        return yAxisDesc;
+    public ChartRequest getRequest() {
+        return request;
     }
     
 }

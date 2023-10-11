@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.example.model.api.APIQueue;
 import org.example.model.data.*;
+import org.example.types.DataType;
 
 /**
  * 
@@ -34,7 +35,9 @@ public final class DataManager {
         }
     }
 
-    public void getData(List<DataRequest> queries) throws IllegalArgumentException {
+    public void getData(
+        List<DataRequest> queries
+    ) throws IllegalArgumentException {
         List<DataResult> dataQueryResults = new ArrayList<>();
         List<ApiDataRequest> apiRequests = new ArrayList<>();
 
@@ -90,27 +93,22 @@ public final class DataManager {
 
     }
 
-    private Class resolveModelClass(String dataType) {
-        // TODO refactor this when we have decided where we are actually maintaining the allowed types...
-        try {
-             EnergyModel.DataType.parseDataType(dataType);
-             return EnergyModel.class;
 
+    /**
+     * Resolve the model class based on the datatype
+     * 
+     * @param dataType Enum DataType
+     * @return Class<? extends AbstractDataModel<Double>> Base class for different data models
+     */
+    private Class<? extends AbstractDataModel<Double>> resolveModelClass(DataType dataType) {
+        switch (dataType.getAPIType()) {
+            case FINGRID:
+                return EnergyModel.class;
+            case FMI:
+                return WeatherModel.class;
+            default:
+                return null;
         }
-        catch (IllegalArgumentException ignored) {
-
-        }
-
-        // TODO refactor this when we have decided where we are actually maintaining the allowed types...
-        try {
-            WeatherModel.DataType.parseDataType(dataType);
-            return WeatherModel.class;
-
-        }
-        catch (IllegalArgumentException e2) {
-
-        }
-        return null;
     }
 
 
@@ -141,7 +139,7 @@ public final class DataManager {
      */
     public void notifyListeners(List<DataResult> data, Exception exception) {
         for (DataManagerListener listener : listeners) {
-            listener.onDataReady(data, exception); // TODO pass actual data
+            listener.onDataReadyForChart(data, exception);
         }
     }
     
