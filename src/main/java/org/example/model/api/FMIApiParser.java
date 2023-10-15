@@ -1,9 +1,13 @@
 package org.example.model.api;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
 import okhttp3.Response;
 
@@ -23,13 +27,39 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
      */
     @Override
     public WeatherModel parseToDataObject(Response response) {
-        // Todo: Implement parsing @markus
         try {
             String responseBody = response.body().string();
             String responseDataAsString = getStringBetween(responseBody, "<gml:doubleOrNilReasonTupleList>",
                     "</gml:doubleOrNilReasonTupleList>");
             List<Double> responseData = extractDoubles(responseDataAsString);
-            return new WeatherModel(null, null, null, null, null, null);
+            Double[] responseDataArray = new Double[responseData.size()];
+
+            String location = getStringBetween(responseBody, "<target:region codeSpace="+"\""+"http://xml.fmi.fi/namespace/location/region"+"\""+">", "</target:region>");
+            Duration interval = Duration.ofHours(1);
+            String firstEntryTimestamp = getStringBetween(responseBody, "<gml:beginPosition>", "</gml:beginPosition>");
+            DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+            DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
+            String formattedTimestamp = dateTime.format(desiredFormat);
+            String dataType = getStringBetween(response.toString(), "parameters=","&");
+            String unit = "";
+
+            if (dataType.equals("temperature")) {
+                unit = "Celsius";
+            }
+            else if (dataType.equals("windspeedms")) {
+                unit = "meters/second";
+            }
+            else if (dataType.equals("humidity")) {
+                unit = "";
+            }
+            else if (dataType.equals("pressure")) {
+                unit = "";
+            }
+
+
+
+            return new WeatherModel(dataType, unit, formattedTimestamp, interval, location, responseData.toArray(responseDataArray));
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
