@@ -3,6 +3,7 @@ package org.example.model.api;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.example.model.data.WeatherModel;
 import org.example.utils.EnvironmentVariables;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class FmiAPIRequestBuilderTest {
 
         Response response = builder.execute();
         FMIApiParser parser = new FMIApiParser();
-        //WeatherModel responseBody = parser.parseToDataObject(response);
+        WeatherModel responseBody = parser.parseToDataObject(response);
         // TODO @markus: Probably do couple tests on the data once you get it as a
         // WeatherModel object
 

@@ -36,28 +36,28 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
 
             String location = getStringBetween(responseBody, "<target:region codeSpace="+"\""+"http://xml.fmi.fi/namespace/location/region"+"\""+">", "</target:region>");
             Duration interval = Duration.ofHours(1);
-            String firstEntryTimestamp = getStringBetween(responseBody, "<gml:beginPosition>", "</gml:beginPosition>");
-            DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+            CharSequence firstEntryTimestamp = getStringBetween(responseBody, "<gml:beginPosition>", "</gml:beginPosition>");
+            DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
             DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
             String formattedTimestamp = dateTime.format(desiredFormat);
             String dataType = getStringBetween(response.toString(), "parameters=","&");
             String unit = "";
 
-            if (dataType.equals("temperature")) {
-                unit = "Celsius";
+            switch (dataType) {
+                case "temperature":
+                    unit = "Celsius";
+                    break;
+                case "windspeedms":
+                    unit = "meters/second";
+                    break;
+                case "pressure":
+                    unit = "";
+                    break;
+                case "humidity":
+                    unit ="";
+                    break;
             }
-            else if (dataType.equals("windspeedms")) {
-                unit = "meters/second";
-            }
-            else if (dataType.equals("humidity")) {
-                unit = "";
-            }
-            else if (dataType.equals("pressure")) {
-                unit = "";
-            }
-
-
 
             return new WeatherModel(dataType, unit, formattedTimestamp, interval, location, responseData.toArray(responseDataArray));
 
