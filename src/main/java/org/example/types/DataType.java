@@ -15,14 +15,14 @@ public enum DataType {
 
     CONSUMPTION(
         "Consumption",
-        "0",
+        "124",
         true, true, true, true, false,
         APIType.FINGRID, 
         "Electricity Consumption (1 Hour)"
     ),
     PRODUCTION(
         "Production",
-        "0",
+        "74",
         true, true, true, true, true,
         APIType.FINGRID, 
         "Electricity Production (1 Hour)"

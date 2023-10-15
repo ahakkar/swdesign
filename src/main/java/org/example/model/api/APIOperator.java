@@ -51,12 +51,12 @@ public class APIOperator {
         } else if (request.getDataClass() == EnergyModel.class) {
 
             FingridAPIRequestBuilder builder = new FingridAPIRequestBuilder()
-                    .withDataType("75")
+                    .withDataType(dataRequest.getDataType().getVariableId())
                     .withStartTime(dataRequest.getStarttime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                     .withEndTime(dataRequest.getEndtime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
             Response response = builder.execute();
-            System.out.println("Fingrid request executed " + response.request().toString());
-            System.out.println("Fingrid response " + response.body().string());
+            //System.out.println("Fingrid request executed " + response.request().toString());
+            //System.out.println("Fingrid response " + response.body().string());
             FingridApiParser parser = new FingridApiParser();
             EnergyModel model = parser.parseToDataObject(response);
             return new ApiDataResult(model, request);
