@@ -2,12 +2,14 @@ package org.example.model.services;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.example.model.api.APIQueue;
 import org.example.model.data.*;
 import org.example.types.DataType;
+import org.example.utils.EnvironmentVariables;
 
 /**
  * 
@@ -18,11 +20,11 @@ public final class DataManager {
     private static DataManager instance;
     private static DataStorage dataStorage;
 
-    private ArrayList<DataManagerListener> listeners;
+    private final ArrayList<DataManagerListener> listeners;
 
     private DataManager() {
         this.listeners = new ArrayList<>();
-        this.dataStorage = DataStorage.getInstance();
+        dataStorage = DataStorage.getInstance();
     }
 
     public static DataManager getInstance() {
@@ -37,47 +39,76 @@ public final class DataManager {
 
     public void getData(
         List<DataRequest> queries
-    ) throws IllegalArgumentException {
-        List<DataResult> dataQueryResults = new ArrayList<>();
-        List<ApiDataRequest> apiRequests = new ArrayList<>();
+    )  {
 
+        if (!validateAllQueries(queries)){
+            notifyListeners(null, new IllegalArgumentException("Invalid data query"));
+            return;
+        }
+
+        List<DataResult> localData = getAllDataFromStorage(queries);
+
+        if (localData == null){
+            getDataFromAPIAndNotifyListeners(queries);
+        }
+        else {
+            notifyListeners(localData, null);
+        }
+
+
+    }
+
+    private boolean validateAllQueries(List<DataRequest> queries) {
         for (DataRequest query : queries) {
             if (!validateDataQuery(query)){
-                throw new IllegalArgumentException("Invalid data query");
+                return false;
             }
+        }
+        return true;
+    }
 
+    private void getDataFromAPIAndNotifyListeners(List<DataRequest> apiRequests) {
+        List<DataResult> apiResults = new ArrayList<>();
+        List<ApiDataRequest> apiDataRequests = new ArrayList<>();
+
+        for (DataRequest query : apiRequests) {
+            apiDataRequests.add(new ApiDataRequest(resolveModelClass(query.getDataType()), query));
+        }
+
+        APIQueue.getData(apiDataRequests, (results, exception) -> {
+            if (exception == null) {
+                for (ApiDataResult result : results) {
+                    apiResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
+                    dataStorage.addData(result.getResult());
+                }
+                notifyListeners(apiResults, null);
+            } else {
+                notifyListeners(null, exception);
+            }
+        });
+    }
+
+    /**
+     * Tries to get data from storage based on the queries.
+     * If data is found from storage for ALL the queries, a list of DataResults will be returned.
+     * If data is not found from storage for at least 1 query in the list, null will be returned.
+     * @param queries List<DataRequest>
+     * @return List<DataResult> or null
+     */
+
+    private List<DataResult> getAllDataFromStorage(List<DataRequest> queries) {
+        List<DataResult> dataQueryResults = new ArrayList<>();
+        for (DataRequest query : queries) {
             AbstractDataModel<Double> model = dataStorage.getData(query);
-
             if (model == null){
-                Class modelClass = resolveModelClass(query.getDataType());
-                apiRequests.add(new ApiDataRequest(modelClass, query));
+                return null;
             }
             else {
                 dataQueryResults.add(new DataResult(query, model));
             }
         }
-
-        if (!apiRequests.isEmpty()){
-            APIQueue.getData(apiRequests, (results, exception) -> {
-                if (exception == null){
-                    for (ApiDataResult result : results){
-                        dataQueryResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
-                        dataStorage.addData(result.getResult());
-                    }
-                    notifyListeners(dataQueryResults, null);
-                }
-                else {
-                    notifyListeners(null, exception);
-                }
-
-
-            });
-        }
-        else {
-            notifyListeners(dataQueryResults, null);
-        }
+        return dataQueryResults;
     }
-
 
 
     private boolean validateDataQuery(DataRequest query) {
@@ -142,5 +173,5 @@ public final class DataManager {
             listener.onDataReadyForChart(data, exception);
         }
     }
-    
+
 }
