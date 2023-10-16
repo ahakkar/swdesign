@@ -1,6 +1,5 @@
 package org.example.model.data;
 
-import java.time.Duration;
 import java.util.Locale;
 
 /**
@@ -47,13 +46,11 @@ public class WeatherModel extends AbstractDataModel<Double> {
      * 
      * @param dataType - Data type for example "Temperature"
      * @param unit     - Unit for example "Celsius"
-     * @param interval - Interval between data points for example if data is
-     *                 collected every 5 minutes, interval is 5 minutes
      * @param -        location for example "Helsinki"
      * @inheritDoc - AbstractDataModel
      */
-    public WeatherModel(String dataType, String unit, Duration interval, String location) {
-        super(dataType, unit, interval);
+    public WeatherModel(String dataType, String unit, String location) {
+        super(dataType, unit);
         this.location = location;
     }
 
@@ -68,15 +65,12 @@ public class WeatherModel extends AbstractDataModel<Double> {
      * @param unit                - Unit for example "Celsius"
      * @param firstEntryTimestamp - Timestamp for the first data point in format
      *                            "yyyy-MM-dd HH:mm:ss"
-     * @param interval            - Interval between data points for example if data
-     *                            is collected every 5 minutes, interval is 5
-     *                            minutes
      * @param values              - Array of data points
      * @inheritDoc - AbstractDataModel
      */
-    public WeatherModel(String dataType, String unit, String firstEntryTimestamp, Duration interval, String location,
+    public WeatherModel(String dataType, String unit, String firstEntryTimestamp, String location,
             Double[] values) {
-        super(dataType, unit, firstEntryTimestamp, interval, values);
+        super(dataType, unit, firstEntryTimestamp, values);
         this.location = location;
     }
 

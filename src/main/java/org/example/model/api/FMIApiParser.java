@@ -1,13 +1,11 @@
 package org.example.model.api;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
 import okhttp3.Response;
 
@@ -35,7 +33,6 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
             Double[] responseDataArray = new Double[responseData.size()];
 
             String location = getStringBetween(responseBody, "<target:region codeSpace="+"\""+"http://xml.fmi.fi/namespace/location/region"+"\""+">", "</target:region>");
-            Duration interval = Duration.ofHours(1);
             CharSequence firstEntryTimestamp = getStringBetween(responseBody, "<gml:beginPosition>", "</gml:beginPosition>");
             DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
             DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -59,13 +56,13 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
                     break;
             }
 
-            return new WeatherModel(dataType, unit, formattedTimestamp, interval, location, responseData.toArray(responseDataArray));
+            return new WeatherModel(dataType, unit, formattedTimestamp, location, responseData.toArray(responseDataArray));
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return new WeatherModel(null, null, null, null, null, null);
+        return new WeatherModel(null, null, null, null, null);
 
     }
 

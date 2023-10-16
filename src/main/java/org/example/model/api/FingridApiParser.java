@@ -88,8 +88,7 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
 
             // Interval is duration of 1 hour
             Duration interval = Duration.ofHours(1);
-            return new EnergyModel(dataType, "MWh", formattedTimestamp, interval,
-                    values);
+            return new EnergyModel(dataType, "MWh", formattedTimestamp, values);
 
         } catch (Exception e) {
             throw new RuntimeException("Error parsing response to EnergyModel", e);
