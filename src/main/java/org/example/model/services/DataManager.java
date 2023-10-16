@@ -1,17 +1,14 @@
 package org.example.model.services;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.example.model.api.APIQueue;
 import org.example.model.data.*;
 import org.example.types.DataType;
-import org.example.utils.EnvironmentVariables;
 
 /**
+ * TODO add javadoc
  * 
  * @author Janne Taskinen
  */
@@ -24,7 +21,7 @@ public final class DataManager {
 
     private DataManager() {
         this.listeners = new ArrayList<>();
-        dataStorage = DataStorage.getInstance();
+        DataManager.dataStorage = DataStorage.getInstance();
     }
 
     public static DataManager getInstance() {
@@ -37,10 +34,14 @@ public final class DataManager {
         }
     }
 
-    public void getData(
-        List<DataRequest> queries
-    )  {
 
+    /**
+     * TODO add javadoc
+     * 
+     * @param queries
+     */
+    public void getData(List<DataRequest> queries)
+    {
         if (!validateAllQueries(queries)){
             notifyListeners(null, new IllegalArgumentException("Invalid data query"));
             return;
@@ -58,16 +59,30 @@ public final class DataManager {
 
     }
 
+
+    /**
+     * TODO add javadoc
+     * 
+     * @param queries
+     * @return
+     */
     private boolean validateAllQueries(List<DataRequest> queries) {
         for (DataRequest query : queries) {
             if (!validateDataQuery(query)){
-                return false;
+                throw new IllegalArgumentException("DataManager: Invalid data query");
             }
         }
         return true;
     }
 
-    private void getDataFromAPIAndNotifyListeners(List<DataRequest> apiRequests) {
+
+    /**
+     * TODO add javadoc
+     * 
+     * @param apiRequests
+     */
+    private void getDataFromAPIAndNotifyListeners(List<DataRequest> apiRequests)
+    {
         List<DataResult> apiResults = new ArrayList<>();
         List<ApiDataRequest> apiDataRequests = new ArrayList<>();
 
@@ -75,7 +90,7 @@ public final class DataManager {
             apiDataRequests.add(new ApiDataRequest(resolveModelClass(query.getDataType()), query));
         }
 
-        APIQueue.getData(apiDataRequests, (results, exception) -> {
+        APIQueue.getData(apiDataRequests, (results, exception) -> {   
             if (exception == null) {
                 for (ApiDataResult result : results) {
                     apiResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
@@ -85,6 +100,7 @@ public final class DataManager {
             } else {
                 notifyListeners(null, exception);
             }
+   
         });
     }
 
@@ -92,8 +108,9 @@ public final class DataManager {
      * Tries to get data from storage based on the queries.
      * If data is found from storage for ALL the queries, a list of DataResults will be returned.
      * If data is not found from storage for at least 1 query in the list, null will be returned.
-     * @param queries List<DataRequest>
-     * @return List<DataResult> or null
+     * 
+     * @param queries To be sent to storage
+     * @return        List<DataResult> or null
      */
 
     private List<DataResult> getAllDataFromStorage(List<DataRequest> queries) {
@@ -121,7 +138,6 @@ public final class DataManager {
         }
 
         return resolveModelClass(query.getDataType()) != null;
-
     }
 
 
@@ -167,8 +183,12 @@ public final class DataManager {
 
     /**
      * Notify all registered listeners when something happens
+     * 
      */
-    public void notifyListeners(List<DataResult> data, Exception exception) {
+    public void notifyListeners(
+        List<DataResult> data,
+        Exception exception
+    ) {
         for (DataManagerListener listener : listeners) {
             listener.onDataReadyForChart(data, exception);
         }

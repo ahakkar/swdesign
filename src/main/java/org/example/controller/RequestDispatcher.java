@@ -8,21 +8,20 @@ import java.time.LocalDateTime;
 
 
 /**
- * Singleton. Probably validates data from UI, and returns true/false depending on
- * if data was good. Data good? -> send request to datamanager
+ * Singleton. Vvalidates data from UI, and returns true/false depending on
+ * if data was good. Data good? -> send request to datamanager. Bad? -> complain
+ * to user via UI.
  * 
  * @author Antti Hakkarainen
  */
-public class RequestDispatcher {
-    
+public class RequestDispatcher
+{    
     private static RequestDispatcher instance;
-
     private RequestDispatcher() { }
-
 
     /**
      * Creates a new instance if one doesn't exist. Returns it.
-     * @return RequestDispatcher instance
+     * @return instance of this class
      */
     public static RequestDispatcher getInstance() {
         synchronized (RequestDispatcher.class) {
@@ -35,8 +34,15 @@ public class RequestDispatcher {
 
 
     /**
-     * Validates data from UI and passes it on to sessionmanager
-     * @return
+     * Validates data from UI and passes it on to sessionmanager if it's good.
+     * 
+     * @param chartRequest  container for chart creation parameters
+     * @param dataType      Which type of data we want to display in chart
+     * @param startTime     Start of the range for data we want to display in chart
+     * @param endTime       End of the range for data we want to display in chart
+     * @param location      Ie. "Helsinki", "Tampere"
+     * @param tabId         String representation of UUID of the tab
+     * @return              True if data was good, false if not
      */
     public Boolean validateAddChartRequest(
         ChartRequest chartRequest,
@@ -46,10 +52,10 @@ public class RequestDispatcher {
         String location,
         String tabId
     ) {
-        // TODO validate data
+        // TODO actually validate data and don't just pass it on..
         DataRequest dataRequest = new DataRequest(dataType, startTime, endTime, location);
-        SessionController sessionManager = SessionController.getInstance();
-        sessionManager.newChartRequest(chartRequest, dataRequest, tabId);
+        SessionController sessionController = SessionController.getInstance();
+        sessionController.newChartRequest(chartRequest, dataRequest, tabId);
         
         return true;
     }

@@ -1,7 +1,8 @@
 package org.example.model.data;
 
 import java.time.Duration;
-import java.util.Locale;
+
+import org.example.types.DataType;
 
 /**
  * WeatherModel - Class for storing weather data.
@@ -16,32 +17,6 @@ public class WeatherModel extends AbstractDataModel<Double> {
 
     private String location;
 
-    static {
-        for (WeatherDataType type : WeatherDataType.values()) {
-            supportedDataTypes.add(type.name());
-        }
-    }
-
-    /**
-     * DataType - Enum for weather data types.
-     */
-    public enum WeatherDataType {
-        // You can add more types here in the future
-        WIND,
-        TEMPERATURE,
-        RAIN,
-        HUMIDITY,
-        AIR_PRESSURE;
-
-        public static WeatherDataType parseDataType(String name) {
-            try {
-                return WeatherDataType.valueOf(name.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid energy data type: " + name);
-            }
-        }
-    }
-
     /**
      * Constructor for WeatherModel
      * 
@@ -52,7 +27,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
      * @param -        location for example "Helsinki"
      * @inheritDoc - AbstractDataModel
      */
-    public WeatherModel(String dataType, String unit, Duration interval, String location) {
+    public WeatherModel(DataType dataType, String unit, Duration interval, String location) {
         super(dataType, unit, interval);
         this.location = location;
     }
@@ -74,8 +49,14 @@ public class WeatherModel extends AbstractDataModel<Double> {
      * @param values              - Array of data points
      * @inheritDoc - AbstractDataModel
      */
-    public WeatherModel(String dataType, String unit, String firstEntryTimestamp, Duration interval, String location,
-            Double[] values) {
+    public WeatherModel(
+        DataType dataType, 
+        String unit,
+        String firstEntryTimestamp,
+        Duration interval,
+        String location,
+        Double[] values
+    ) {
         super(dataType, unit, firstEntryTimestamp, interval, values);
         this.location = location;
     }

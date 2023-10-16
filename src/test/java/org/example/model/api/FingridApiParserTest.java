@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.example.utils.EnvironmentVariables;
@@ -12,7 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import okhttp3.Response;
 
+import org.example.model.data.ApiDataRequest;
+import org.example.model.data.DataRequest;
 import org.example.model.data.EnergyModel;
+import org.example.types.DataType;
 
 /**
  * Test class for FingridAPIRequestBuilder.
@@ -38,8 +42,18 @@ public class FingridApiParserTest {
         try {
             Response response = builder.execute();
             FingridApiParser parser = new FingridApiParser();
-            EnergyModel model = parser.parseToDataObject(response);
-            assertEquals(model.getDataType(), "TOTAL_CONSUMPTION");
+
+            DataRequest dataRequest = 
+                new DataRequest(
+                    DataType.CONSUMPTION, 
+                    LocalDateTime.of(2021, 10, 4, 0, 0),
+                    LocalDateTime.of(2021, 10, 7, 0, 0),      
+                    "Helsinki"
+                    );
+            ApiDataRequest apiDataRequest = new ApiDataRequest(EnergyModel.class, dataRequest);
+
+            EnergyModel model = parser.parseToDataObject(apiDataRequest, response.body().string());
+            assertEquals(model.getDataType(), DataType.CONSUMPTION);
             assertEquals(model.getUnit(), "MWh");
             assertEquals(model.getInterval(), Duration.ofHours(1));
 

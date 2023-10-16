@@ -26,9 +26,10 @@ public class ChartRequest
     /**
      * Initializes a new ChartRequest.
      * 
-     * @param apiType The API type.
-     * @param axisMap A map specifying the axis types and their corresponding data types.
-     * @param dataRequest The data request used by DataManager.
+     * @param apiType       FMI, Fingrid, something else?
+     * @param chartType     Line chart, Area chart, Pie chart etc?
+     * @param axisMap       A map specifying the axis types and their corresponding data types.
+     * @param dataRequest   The data request used by DataManager.
      */
     public ChartRequest(
         APIType apiType,

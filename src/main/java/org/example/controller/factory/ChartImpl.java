@@ -12,11 +12,13 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 /**
- * Common interface for chart implementations
+ * Common abstract class for chart implementations. Holds common methods for
+ * all chart types. XYChart and PieChart specific subclasses extend this class.
  * 
  * @author Antti Hakkarainen
  */
-public abstract class ChartImpl {
+public abstract class ChartImpl
+{
     protected XYChart<Number, Number> chart;
     protected AbstractDataModel<Double> data;
     protected ChartRequest request;
@@ -25,6 +27,10 @@ public abstract class ChartImpl {
 
     /**
      * Generates a line chart and displays it on screen
+     * @param params DTO for data and chart creation parameters
+     * @return       Finished Chart object ready to be added to UI  
+     * 
+     * // TODO refactor to use Chart instead of XYChart  
      */
     public XYChart<Number, Number> createXYChart(
         ChartParams params
@@ -60,9 +66,11 @@ public abstract class ChartImpl {
     } 
 
      /**
-     * Populates the Chart with provided data
+     * Populates the Chart object with provided data
      * 
-     * @param hideNodes  should we hide the "circle" from each data node
+     * @param hideNodes  boolean for hiding the datapoints' nodes
+     * 
+     * //TODO refactor to use Chart instead of XYChart (possibly move this to a XYChartImpl subclass)
      */
     public XYChart<Number, Number> populateXYChartData(Boolean hideNodes) {
 

@@ -1,5 +1,6 @@
 package org.example.model.data;
 
+import org.example.types.DataType;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -18,7 +19,7 @@ public class AbstractDataModelTest {
     @Test
     public void testConstructorWithMap() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", "2022-01-01 00:00:00",
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", "2022-01-01 00:00:00",
                 Duration.ofMinutes(1), new Double[] { 20.0, 23.0, 22.0 });
 
         // Get the data points
@@ -34,7 +35,7 @@ public class AbstractDataModelTest {
     @Test
     public void testAddDataPointAndGetPoints() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", Duration.ofMinutes(1));
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", Duration.ofMinutes(1));
 
         // Add some data points
         dataModel.addDataPoint("2022-01-01 00:00:00", 20.0);
@@ -54,7 +55,7 @@ public class AbstractDataModelTest {
     @Test
     public void testAddDataPointAndGetPointsWithInterval() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", Duration.ofMinutes(1));
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", Duration.ofMinutes(1));
 
         // Add some data points
         dataModel.addDataPoint("2022-01-01 00:00:00", 20.0);
@@ -74,7 +75,7 @@ public class AbstractDataModelTest {
     @Test
     public void testAddDataPointAndGetPointsWithIntervalAndFirstTimestamp() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", "2022-01-01 00:00:00",
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", "2022-01-01 00:00:00",
                 Duration.ofMinutes(1), new Double[] { 20.0, 23.0, 22.0 });
 
         // Get the data points
@@ -157,7 +158,7 @@ public class AbstractDataModelTest {
     @Test
     public void testCheckDataPoints() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", Duration.ofMinutes(1));
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", Duration.ofMinutes(1));
 
         // Add some data points wtih missing point
         dataModel.addDataPoint("2022-01-01 00:00:00", 20.0);
@@ -173,7 +174,7 @@ public class AbstractDataModelTest {
     @Test
     public void testAddDataPointWithInvalidTimestamp() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", Duration.ofMinutes(1));
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", Duration.ofMinutes(1));
 
         // Add some data points
         dataModel.addDataPoint("2022-01-01 00:00:00", 20.0);
@@ -192,7 +193,7 @@ public class AbstractDataModelTest {
     @Test
     public void testGetDataPointsWithRange() {
         // Create a new data model with a 1 minute interval
-        AbstractDataModel<Double> dataModel = new ExampleDataModel("Temperature", "Celsius", Duration.ofMinutes(1));
+        AbstractDataModel<Double> dataModel = new ExampleDataModel(DataType.TEMPERATURE, "Celsius", Duration.ofMinutes(1));
 
         // Add some data points
         dataModel.addDataPoint("2022-01-01 00:00:00", 20.0);
@@ -230,25 +231,17 @@ public class AbstractDataModelTest {
      */
     public static class ExampleDataModel extends AbstractDataModel<Double> {
 
-        static {
-            for (DataType type : DataType.values()) {
-                supportedDataTypes.add(type.name());
-            }
+        public ExampleDataModel(
+            DataType dataType,
+            String unit,
+            String firstEntryTimestamp,
+            Duration interval,
+            Double[] values
+        ) {
+            super(dataType, unit, firstEntryTimestamp, interval, values);
         }
 
-        public enum DataType {
-            TEMPERATURE,
-            HUMIDITY,
-            PRESSURE
-        }
-
-        public ExampleDataModel(String dataType, String unit, String firstEntryTimestamp, Duration interval,
-                Double[] values) {
-            super(AbstractDataModel.parseDataType(supportedDataTypes, dataType), unit, firstEntryTimestamp, interval,
-                    values);
-        }
-
-        public ExampleDataModel(String dataType, String unit, Duration interval) {
+        public ExampleDataModel(DataType dataType, String unit, Duration interval) {
             super(dataType, unit, interval);
         }
     }

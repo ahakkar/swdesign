@@ -13,6 +13,7 @@ import org.example.model.session.SessionChangeData;
 import org.example.types.Scenes;
 import org.example.utils.EnvironmentVariables;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,12 +21,16 @@ import javafx.scene.chart.Chart;
 import javafx.stage.Stage;
 
 /**
- * Loads views and controllers. Starts from mainworkspace. Handles the 
- * application-level logic, like creating new tabs and charts.
+ * Loads views and controllers. Loads mainworkspace.fxml first. Handles the 
+ * application-level logic, like forwarding requests when other classes ask
+ * "what should we do with this event?".
+ * 
+ * Listens (=subscribes to) to DataManager and SessionController events.
  * 
  * @author Antti Hakkarainen
  */
-public class PrimaryController implements DataManagerListener, SessionControllerListener {
+public class PrimaryController implements DataManagerListener, SessionControllerListener
+{
     private static PrimaryController instance;
     private RequestController requestController;
     private final DataManager dataManager = DataManager.getInstance();
@@ -48,6 +53,8 @@ public class PrimaryController implements DataManagerListener, SessionController
      * 
      * @param stage created in App.class
      * @throws IOException
+     * 
+     * // TODO possibly refactor enviroment variable (=APIKEY) loading somewhere else
      */
     public void init(Stage stage) throws IOException {
         if (this.stage == null) {
@@ -68,8 +75,8 @@ public class PrimaryController implements DataManagerListener, SessionController
     /**
      * Creates a new window for the application
      * 
-     * @param sceneName
-     * @throws IOException
+     * @param sceneName     name of the scene to be loaded, without .fxml extension
+     * @throws IOException  if the scene file is not found
      */
     private void LoadScene(String sceneName) throws IOException {
         scene = new Scene(loadFXML(sceneName), 1400, 1000);
@@ -82,16 +89,15 @@ public class PrimaryController implements DataManagerListener, SessionController
      * Loads a new view and controller and registers the controller to 
      * requestController variable.
      * 
-     * @param fxml
-     * @return
-     * @throws IOException
+     * @param sceneName      name of the fxml file to be loaded, without .fxml extension
+     * @return               Parent object of the loaded scene
+     * @throws IOException   if the scene file is not found
      */
-    private Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+    private Parent loadFXML(String sceneName) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(sceneName + ".fxml"));
         Parent parent = fxmlLoader.load(); 
 
         this.requestController = fxmlLoader.getController();
-        System.out.println("PrimaryController: loaded " + fxml + ".fxml, controller: " + requestController.toString());
         
         return parent;
     }
@@ -99,25 +105,38 @@ public class PrimaryController implements DataManagerListener, SessionController
     /**
      * Is called when datamanager has the data on hand and ready to be used.
      * PrimaryController must be registered as datamanager's observer beforehand.
+     * 
+     * @param data       data from the DataManager used to create charts
+     * @param exception  possible exception from the API
      */
     @Override
-    public void onDataReadyForChart(List<DataResult> data, Exception exception) {
+    public void onDataReadyForChart(
+        List<DataResult> data,
+        Exception exception
+    ) {
         if (exception == null) {
+            if (data.isEmpty() || data == null) {
+                System.err.println("PrimaryController: data is empty/null");
+                return;
+            }
             for (DataResult result : data) {
                 String tabId = result.getRequest().getChartMetadata().getTabId();
                 String chartId = result.getRequest().getChartMetadata().getChartId();
                 ChartRequest chartRequest = sessionManager.getChartRequest(tabId, chartId);
-
+               
                 Chart chart = chartFactory.generateChart(
                     result.getData(), 
                     chartRequest
                     );
-                requestController.addChartToTab(tabId, chart);
+                
+                // execute the chart adding to UI in JavaFX application thread
+                Platform.runLater(() -> {
+                    requestController.addChartToTab(tabId, chart);
+                });
             }           
         }
         else {
-            System.out.println("Controller got exception");
-            exception.printStackTrace();  
+            // TODO do something with the exception
         }
     }
 
@@ -126,12 +145,14 @@ public class PrimaryController implements DataManagerListener, SessionController
      * Is called when session's state is changed. For example a new tab was
      * created, or a new tab was created, removed, changed etc. This is used
      * to reflect the internal session's state to the user interface.
+     * 
+     * @param data                      data about the session change
+     * @throws IllegalArgumentException if the session change type is unknown
      */
     @Override
-    public void onSessionChange(SessionChangeData data) {
-        System.out.println(
-            "PrimaryController: Session changed: " + data.getType().toString());
-          
+    public void onSessionChange(
+        SessionChangeData data
+    ) throws IllegalArgumentException {          
 
         switch (data.getType()) {
             case TAB_ADDED:
@@ -167,8 +188,10 @@ public class PrimaryController implements DataManagerListener, SessionController
                 break;
 
             default:
-                System.out.println("Unknown session change type: " + data.getType().toString());
-                break;
+                throw new IllegalArgumentException(
+                    "[PrimaryController]: Unknown session change type: " + 
+                    data.getType().toString()
+                );
         }
     }
 }

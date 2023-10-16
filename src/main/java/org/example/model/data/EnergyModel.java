@@ -1,7 +1,8 @@
 package org.example.model.data;
 
 import java.time.Duration;
-import java.util.Locale;
+
+import org.example.types.DataType;
 
 /**
  * EnergyModel - Class for storing energy data.
@@ -13,32 +14,6 @@ import java.util.Locale;
  * @author Heikki Hohtari with help of github copilot
  */
 public class EnergyModel extends AbstractDataModel<Double> {
-
-    static {
-        for (EnergyDataType type : EnergyDataType.values()) {
-            supportedDataTypes.add(type.name());
-        }
-    }
-
-    /**
-     * DataType - Enum for energy data types.
-     */
-    public enum EnergyDataType {
-        // You can add more types here in the future
-        TOTAL_CONSUMPTION,
-        TOTAL_PRODUCTION,
-        HYDRO_PRODUCTION,
-        NUCLEAR_PRODUCTION,
-        WIND_PRODUCTION;
-
-        public static EnergyDataType parseDataType(String name) {
-            try {
-                return EnergyDataType.valueOf(name.toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid energy data type: " + name);
-            }
-        }
-    }
 
     /**
      * Constructor for EnergyModel. Can be used to initialize data model with data
@@ -53,8 +28,8 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @param values              - Array of data points
      * @inheritDoc - AbstractDataModel
      */
-    public EnergyModel(String dataType, String unit, String firstEntryTimestamp, Duration interval, Double[] values) {
-        super(AbstractDataModel.parseDataType(supportedDataTypes, dataType), unit, firstEntryTimestamp, interval,
+    public EnergyModel(DataType dataType, String unit, String firstEntryTimestamp, Duration interval, Double[] values) {
+        super(dataType, unit, firstEntryTimestamp, interval,
                 values);
     }
 
@@ -69,7 +44,7 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @param interval - Interval between data points for example if data
      * @inheritDoc - AbstractDataModel
      */
-    public EnergyModel(String dataType, String unit, Duration interval) {
-        super(EnergyDataType.parseDataType(dataType).name().toLowerCase(Locale.ROOT), unit, interval);
+    public EnergyModel(DataType dataType, String unit, Duration interval) {
+        super(dataType, unit, interval);
     }
 }

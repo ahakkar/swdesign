@@ -17,9 +17,11 @@ import javafx.scene.chart.XYChart;
 public class ScatterChartImpl extends ChartImpl {
 
      /**
-     * Populates the Chart with provided data     * 
+     * Populates the Chart with random dummy data. 
 
      * @param hideNodes  should we hide the "circle" from each data node
+     * 
+     * // TODO refactor to use actual data, and possibly move to XYChartImpl
      */
     public XYChart<Number, Number> populateChartData(Boolean hideNodes) {
 

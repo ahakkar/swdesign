@@ -39,7 +39,8 @@ public class APIQueue {
             future = executor.submit(() -> {
                 ArrayList<ApiDataResult> results = new ArrayList<>();
                 for (ApiDataRequest parameter : parameters) {
-                    results.add(APIOperator.getData(parameter));
+                    APIOperator op = new APIOperator();
+                    results.add(op.getData(parameter));
                 }
                 return results;
             });

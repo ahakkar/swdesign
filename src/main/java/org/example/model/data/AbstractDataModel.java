@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.example.types.DataType;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,39 +26,13 @@ import java.time.format.DateTimeFormatter;
  *            Time is stored as a string in format "yyyy-MM-dd HH:mm:ss".
  * @author Heikki Hohtari with the help of github copilot
  */
-public abstract class AbstractDataModel<T extends Number> {
-
-    // Interface for data types
+public abstract class AbstractDataModel<T extends Number>
+{
     protected static Set<String> supportedDataTypes = new HashSet<>();
-
-    // Data type and unit for example "Temperature", "EnergyConsumption"
-    private String dataType;
-
-    // Unit for example "Celsius", "kWh"
+    private DataType dataType;
     private String unit;
-
-    // Interval between data points for example if data is collected every 5
-    // minutes, interval is 5 minutes
     private Duration interval;
-
-    // Map of data points
-    // Key is timestamp in format "yyyy-MM-dd HH:mm:ss"
-    // Value data can whatever numerical value
     private Map<String, T> dataPoints;
-
-    /**
-     * Parses and validates the data type.
-     * 
-     * @param dataType - Data type to be parsed.
-     * @return dataType if it's valid.
-     * @throws IllegalArgumentException if the data type is invalid.
-     */
-    protected static String parseDataType(Set<String> supportedDataTypes, String dataType) {
-        if (supportedDataTypes.contains(dataType.toUpperCase())) {
-            return dataType;
-        }
-        throw new IllegalArgumentException("Invalid data type: " + dataType);
-    }
 
     /**
      * Constructor for AbstractDataModel
@@ -64,8 +40,8 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param dataType - Data type for example "Temperature"
      * @param unit     - Unit for example "Celsius"
      */
-    public AbstractDataModel(String dataType, String unit, Duration interval) {
-        this.dataType = parseDataType(supportedDataTypes, dataType);
+    public AbstractDataModel(DataType dataType, String unit, Duration interval) {
+        this.dataType = dataType;
         this.unit = unit;
         this.interval = interval;
         this.dataPoints = new TreeMap<>();
@@ -88,8 +64,14 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param values              - Array of data points
      * @return AbstractDataModel
      */
-    public AbstractDataModel(String dataType, String unit, String firstEntryTimestamp, Duration interval, T[] values) {
-        this.dataType = parseDataType(supportedDataTypes, dataType);
+    public AbstractDataModel(
+        DataType dataType, 
+        String unit, 
+        String firstEntryTimestamp,
+        Duration interval,
+        T[] values
+    ) {
+        this.dataType = dataType;
         this.unit = unit;
         this.interval = interval;
         String timestamp = firstEntryTimestamp;
@@ -118,7 +100,7 @@ public abstract class AbstractDataModel<T extends Number> {
      * 
      * @return String
      */
-    public String getDataType() {
+    public DataType getDataType() {
         return dataType;
     }
 

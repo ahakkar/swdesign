@@ -1,7 +1,6 @@
 package org.example.model.session;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,6 +23,12 @@ public class ChartManager {
         storedCharts = new HashMap<>();
     }
 
+    /**
+     * Returns the ChartRequest with the given chartId.
+     * 
+     * @param chartId The chartId of the ChartRequest to be returned.
+     * @return        The ChartRequest with the given chartId.
+     */
     public ChartRequest getChartRequest(String chartId) {
         return storedCharts.get(chartId);
     }
@@ -50,6 +55,14 @@ public class ChartManager {
      */
     public void removeChart(String chartId) {
         storedCharts.remove(chartId);
+    }
+
+    /**
+     * Checks if the chart map is full.
+     * @return true if the chart map is full, false if not.
+     */
+    public boolean isAtMaxCharts() {
+        return storedCharts.size() >= maxCharts;
     }
 
     
