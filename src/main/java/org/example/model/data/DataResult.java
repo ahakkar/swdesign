@@ -1,5 +1,9 @@
 package org.example.model.data;
 
+/**
+ * 
+ * @author ???
+ */
 public class DataResult {
 
     private DataRequest request;

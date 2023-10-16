@@ -10,7 +10,10 @@ import java.util.List;
  * @param label         The label shown in the UI
  * @param variableId    The variableId used in the API call
  * @param APIType       The API used to get the data from
- * @param description   The description shown in the UI
+ * @param unit          The unit of measurement (Celisus, m/s, € etc.)
+ * @param interval      ... 
+ * @param chartTitle    ...
+ * @param description   The longer description shown in the UI
  * @param allowedAxes   The axes allowed for this data type
  * @param allowedCharts The charts allowed for this data type 
  * 

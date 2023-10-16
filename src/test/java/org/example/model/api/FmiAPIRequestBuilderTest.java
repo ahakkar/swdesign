@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 
 import org.example.model.data.ApiDataRequest;
 import org.example.model.data.DataRequest;
-import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
 import org.example.types.DataType;
 
