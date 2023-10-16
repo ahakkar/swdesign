@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException;
  * FingridApiParser - Parses response from Fingrid API to EnergyModel.
  * 
  * @see APIParserInterface
+ * @author ???
  */
 public class FingridApiParser implements APIParserInterface<EnergyModel> {
     /**

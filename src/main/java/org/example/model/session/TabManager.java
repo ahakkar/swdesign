@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.example.model.data.ChartRequest;
+import org.example.model.data.DataRequest;
 
 
 /**
@@ -41,6 +42,18 @@ public class TabManager {
 
     public TabManager() {
         tabs = new HashMap<>();
+    }
+
+    public void addDataRequestToChart(
+        String tabId,
+        String chartId,
+        DataRequest dataRequest
+    ) {
+        for (TabInfo key : tabs.keySet()) {
+            if (key.getId().equals(tabId)) {
+                tabs.get(key).addDataRequest(chartId, dataRequest);
+            }
+        }
     }
 
     public ChartRequest getChartRequest(String tabId, String chartId) {

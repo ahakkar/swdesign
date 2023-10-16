@@ -6,6 +6,7 @@ import org.example.model.data.ApiDataRequest;
 /**
  * APIParserInterface - Interface for API parsers.
  * 
+ * @author ??? 
  */
 public interface APIParserInterface<T extends AbstractDataModel<?>> {
 

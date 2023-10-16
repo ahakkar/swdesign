@@ -1,10 +1,7 @@
 package org.example.controller.factory;
 
-
 import org.example.model.data.AbstractDataModel;
 import org.example.model.data.ChartRequest;
-
-import org.example.types.ChartType;
 
 import javafx.scene.chart.Chart;
 
@@ -15,10 +12,8 @@ import javafx.scene.chart.Chart;
  * @see org.example.controller.factory.ChartImpl common methods for all Chart types 
  * @see org.example.controller.factory.PieChartImpl PieChart specific methods 
  * @see org.example.controller.factory.XYChartImpl XYChart specific methods
- * @author Antti Hakkarainen
  * 
- * // TODO PieChart specific class not actually implemented yet
- * // TODO XYChart specific class not actually implemented yet
+ * @author Antti Hakkarainen 
  */
 public class ChartFactory {
 
@@ -56,9 +51,19 @@ public class ChartFactory {
         AbstractDataModel<Double> data,
         ChartRequest request
     ) {    
-        ChartParams params = new ChartParams(data, request);
-        ChartType chartType = request.getChartType();
-
-        return chartType.createChart(params);        
+        switch(request.getChartType()) {
+            // At this stage first 3 use the same class -ah
+            case LINE_CHART:
+            case AREA_CHART:
+            case SCATTER_DOT_CHART:
+            System.out.println("Generating xychart");
+                XYChartImpl xyCreator = new XYChartImpl();
+                return xyCreator.createChart(request, data);                  
+            case PIE_CHART:
+                PieChartImpl pieCreator = new PieChartImpl();
+                return pieCreator.createChart(request, data);    
+            default:
+                return null;
+        }     
     };   
 }

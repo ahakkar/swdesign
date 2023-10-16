@@ -125,19 +125,18 @@ public class SessionController implements DataManagerListener {
         }
         String chartId = this.addChart(tabId, chartRequest);
 
-        if (chartId.equals("")) {
-            // TODO error msg to user if chartId is empty
+        if (chartId.equals(null)) {
+            System.out.println("[SessionController]: chartId is null");
             return;
         }
 
         dataRequest.setChartMetadata(tabId, chartId);
+        tabManager.addDataRequestToChart(tabId, chartId, dataRequest);
+        
         List<DataRequest> list = new ArrayList<DataRequest>();
         list.add(dataRequest);
-        try {
-            dataManager.getData(list);
-        } catch (Exception e) {            
-            e.printStackTrace();
-        }
+        dataManager.getData(list);
+  
     }
 
 
@@ -171,7 +170,7 @@ public class SessionController implements DataManagerListener {
     public String addTab() {
         TabInfo info = tabManager.addTab();
         SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_ADDED);  
-        data.setId(info.getId());
+        data.setTabId(info.getId());
         data.setTitle(info.getTitle());
         this.currentTabId = info.getId();  
 
@@ -190,7 +189,7 @@ public class SessionController implements DataManagerListener {
     public void removeTab(String tabId) {
         tabManager.removeTab(tabId);
         SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_REMOVED);  
-        data.setId(tabId);
+        data.setTabId(tabId);
         notifyListeners(data);
     }
 
@@ -209,7 +208,8 @@ public class SessionController implements DataManagerListener {
     ) {       
         String chartId = tabManager.addChartToTab(tabId, request);
         SessionChangeData change = new SessionChangeData(SessionChangeType.CHART_ADDED);
-        change.setId(tabId);
+        change.setTabId(tabId);
+        change.setChartId(chartId);
         change.setChartRequest(request);
 
         // TODO use this? to tell PrimaryController to display a spinning widget on UI..

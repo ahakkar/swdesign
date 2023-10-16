@@ -8,7 +8,7 @@ import org.example.model.data.*;
 import org.example.types.DataType;
 
 /**
- * TODO add javadoc
+ * 
  * 
  * @author Janne Taskinen
  */
@@ -36,7 +36,7 @@ public final class DataManager {
 
 
     /**
-     * TODO add javadoc
+     * 
      * 
      * @param queries
      */
@@ -61,7 +61,7 @@ public final class DataManager {
 
 
     /**
-     * TODO add javadoc
+     * 
      * 
      * @param queries
      * @return
@@ -77,7 +77,7 @@ public final class DataManager {
 
 
     /**
-     * TODO add javadoc
+     * 
      * 
      * @param apiRequests
      */

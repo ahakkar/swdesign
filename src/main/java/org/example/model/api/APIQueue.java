@@ -9,6 +9,8 @@ import java.util.concurrent.*;
 /**
  * APIQueue
  * Singleton class that handles the API queue
+ * 
+ * @author ???
  */
 public class APIQueue {
 
