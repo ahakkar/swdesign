@@ -49,9 +49,6 @@ public class FmiAPIRequestBuilderTest {
         WeatherModel responseBody = parser.parseToDataObject(response);
         assertNotNull(responseBody);
 
-        // Assert that response is not empty
-        assertNotNull(responseBody);
-
         String realLocation = responseBody.getLocation().toLowerCase();
         assertEquals(place,realLocation);
 
