@@ -1,5 +1,5 @@
 module org.example {
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires transitive javafx.graphics;
     requires javafx.fxml;
     requires okhttp3;

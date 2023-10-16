@@ -53,6 +53,16 @@ public class TabManager {
         return null;
     }
 
+    public boolean isTabFull(String tabId) {
+        for (TabInfo key : tabs.keySet()) {
+            if (key.getId().equals(tabId)) {
+                return tabs.get(key).isAtMaxCharts();
+            }
+        }
+
+        return false;
+    }
+
     public TabInfo addTab () {
         if (tabs.size() < MAX_TABS) {
             TabInfo newTab = new TabInfo(UUID.randomUUID().toString(), "Tab " + currentTab);

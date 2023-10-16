@@ -3,17 +3,15 @@ package org.example.controller;
 import java.time.LocalDate;
 import java.util.Map;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
-import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import javafx.scene.chart.Chart;
-import javafx.scene.chart.XYChart;
 
 import org.example.model.data.ChartRequest;
-import org.example.model.data.DataResult;
 import org.example.model.session.SessionChangeData;
 import org.example.types.DataType;
 import org.example.types.AxisType;
@@ -36,7 +34,7 @@ import javafx.scene.control.CheckBox;
 public class RequestController {
 
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
-    private static final SessionController sessionManager = SessionController.getInstance();
+    private static final SessionController sessionController = SessionController.getInstance();
 
     @FXML
     private TabPane mainTabPane;
@@ -99,26 +97,46 @@ public class RequestController {
      * Populate choicebox values and select defaults
      */
     @FXML
-    public void initialize() {
+    public void initialize()
+    {
+        observeForTabChanges();
         initializeChartTypeChoiceBox();
         initializeXAxisChoiceBox();
         initializeYAxisChoiceBox();
         initializeRelativeTimeChoiceBox();
         initializeRelativeTimeToggle();
+        initializeDateBoxes();
         initRemoveCurrentChartButton();
+        initLoadPresetButton();
         exportCurrentButton();
         showYAverageCheckBoxClick();
         showYQClick();
-        //generateNewDiagramButton();
-        savePresetButton();
-        initLoadPresetButton();
-        initDateBoxes();
-
+        savePresetButton();   
     }
 
+
     /**
-     * Decides what happens when user clicks the Create Diagram button. Probably
-     * one of the most important methods in this class.
+     * Observes changes in mainTabPane and updates the tab id in
+     * SessionController, if tab changes.
+     */
+    private void observeForTabChanges()
+    {
+        mainTabPane.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldTab, newTab) -> {
+                if (newTab != null) {
+                    String selectedTabId = newTab.getId();
+                    sessionController.setCurrentTabId(selectedTabId);
+                }
+            }
+        );
+    }
+
+
+    /**
+     * Called when user clicks the "Generate" button. Creates a ChartRequest
+     * based on user's selections in UI, and sends it with more user choices
+     * to RequestDispatcher for validation. If validation is successful,
+     * RequestDispatcher will send a DataRequest to DataManager.
      */
     @FXML
     public void createDiagramButtonAction() {
@@ -132,7 +150,7 @@ public class RequestController {
             yAxisChoiceBox.getValue().getAPIType(),
             chartTypeChoiceBox.getValue(),
             axisMap,
-            null            
+            null         // Constructed in RequestDispatcher after validation         
         );
 
         requestDispatcher.validateAddChartRequest(
@@ -140,14 +158,14 @@ public class RequestController {
             yAxisChoiceBox.getValue(),
             fromDatePicker.getValue().atStartOfDay(),
             toDatePicker.getValue().atStartOfDay(),
-            null,
-            mainTabPane.getSelectionModel().getSelectedItem().getId()
+            "tampere", // TODO remove placeholder hardcoded location!!
+            sessionController.getTabIdForChart()
         );
     }
 
     @FXML 
     public void addNewTabAction() {        
-        sessionManager.addTab();
+        sessionController.addTab();
     }
 
     /**
@@ -155,14 +173,18 @@ public class RequestController {
      * contextmenu when user wants to close a tab. We forward the info to
      * SessionManager which decides what to do.
      * 
-     * @param tabId
+     * @param tabId String representation UUID of the tab to be removed
      */
     private void removeTabAction(String tabId) {
-        sessionManager.removeTab(tabId);
+        sessionController.removeTab(tabId);
     }
 
     /**
-     * Adds a new JavaFX Tab element to TabPane mainTabPane
+     * Adds a new JavaFX Tab element to TabPane mainTabPane. Adds a provided
+     * unique ID for the Tab, so it can be identified later. Adds a right 
+     * click context menu with "Close tab" selection to each Tab.
+     * 
+     * @param data object containing tab's id and title
      */
     public void addNewTabToUI(SessionChangeData data) {
         Tab newTab = new Tab(data.getTitle());
@@ -197,26 +219,40 @@ public class RequestController {
     }
 
     /**
-     * PrimaryController calls this method to display a generated chart on a tab
+     * After a long round trip around the galaxy and half of the program,
+     * PrimaryController finally calls this method to display a generated Chart 
+     * on a tab.
+     * 
      * @param chart Chart a pie/xychart ready to be displayed
      */
     public void addChartToTab(String tabId, Chart chart) {
-        // TODO actually place the chart into a tab with specified id
-        // TODO and probably switch the active tab to id as well
+        for (Tab tab : mainTabPane.getTabs()) {
+            if (tabId.equals(tab.getId())) {
+                tab.setContent(chart);
+                mainTabPane.getSelectionModel().select(tab);
+
+                break;
+            }
+        }
     }
 
 
+    /** TODO what is this method used for? -ah */
     @FXML
     private void chartTypeChoiceBoxAction() {
         // System.out.println("Chart type Choice Box: Value " +
         // chartTypeChoiceBox.getValue() + " was selected");
     }
 
+    /** TODO what is this method used for? -ah */
     @FXML
-    private void testSomething() {
-        
-    }
+    private void testSomething() {  }
 
+
+    /**
+     * Populates the chartTypeChoiceBox with ChartType enums and sets the default
+     * value to LINE_CHART.
+     */
     private void initializeChartTypeChoiceBox() {
         // allows storing ChartType enums directly as values of the ChoiceBox
         chartTypeChoiceBox.setConverter(new StringConverter<ChartType>() {
@@ -233,11 +269,23 @@ public class RequestController {
         chartTypeChoiceBox.setValue(ChartType.LINE_CHART);
     }
 
+
+    /**
+     * Populates the xAxisChoiceBox with String values and sets the default
+     * value to "Time".
+     * 
+     * TODO replace hardcoded value with actual options
+     */
     private void initializeXAxisChoiceBox() {
         xAxisChoiceBox.getItems().add("Time");
         xAxisChoiceBox.setValue("Time");
     }
 
+
+    /**
+     * Populates the yAxisChoiceBox with DataType enums and sets the default
+     * value to CONSUMPTION.
+     */
     private void initializeYAxisChoiceBox() {
         yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
             public String toString(DataType type) {
@@ -253,6 +301,13 @@ public class RequestController {
         yAxisChoiceBox.setValue(DataType.CONSUMPTION);
     }
 
+
+    /**
+     * Populates the relativeTimeChoiceBox with String values and sets the default
+     * value to "Last 24 hours".
+     * 
+     * TODO remove hard-coded values and move them over to an enum or something
+     */
     private void initializeRelativeTimeChoiceBox() {
 
         relativeTimeChoiceBox.getItems().addAll(
@@ -264,45 +319,44 @@ public class RequestController {
         relativeTimeChoiceBox.setValue("Last 24 hours");
     }
 
+
     /**
-     * Adds relativeTimeToggle logic
-     * When toggle is selected:
-     * - relativeTimeChoiceBox is shown
-     * - fromDatePicker and toDatePicker are hidden
-     * - shows and hides their labels accordingly
-     * When toggle is not selected:
-     * - relativeTimeChoiceBox is hidden
-     * - fromDatePicker and toDatePicker are shown
-     * - shows and hides their labels accordingly
+     * TODO adjust default values
+     */
+    private void initializeDateBoxes() {
+        fromDatePicker.setValue(LocalDate.now().minusDays(1));
+        toDatePicker.setValue(LocalDate.now());
+    }
+
+
+    /**
+     * Initializes the relativeTimeToggle and binds it to the relativeTimeChoiceBox.
+     * When the toggle is selected, the choicebox is hidden and vice versa.
      */
     private void initializeRelativeTimeToggle() {
-        relativeTimeToggle.setOnAction((event) -> {
-            if (relativeTimeToggle.isSelected()) {
-                relativeTimeToggle.setText("Relative time");
-                relativeTimeChoiceBox.setVisible(true);
-                fromDatePicker.setVisible(false);
-                toDatePicker.setVisible(false);
-                relativeTimeLabel.setVisible(true);
-                startTimeLabel.setVisible(false);
-                endTimeLabel.setVisible(false);
-            } else {
-                relativeTimeToggle.setText("Real time");
-                relativeTimeChoiceBox.setVisible(false);
-                fromDatePicker.setVisible(true);
-                toDatePicker.setVisible(true);
-                relativeTimeLabel.setVisible(false);
-                startTimeLabel.setVisible(true);
-                endTimeLabel.setVisible(true);
-            }
-        });
+        relativeTimeChoiceBox.visibleProperty().bind(relativeTimeToggle.selectedProperty());
+        relativeTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty());
+        fromDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        toDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        startTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        endTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+
+        // Update the Button based on the toggle selection
+        relativeTimeToggle.textProperty().bind(Bindings.when(relativeTimeToggle.selectedProperty())
+            .then("Relative time")
+            .otherwise("Real time"));
+
         // Instantly trigger this event to set the default state
-        relativeTimeToggle.fire();
+        relativeTimeToggle.setSelected(!relativeTimeToggle.isSelected());
     }
+
 
     /**
      * initiates the button to open up a dialog. Currently only sets
      * a placeholder text in dialog and does nothing. Dialog should be able
      * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to removeCurrentChartButton
      */
     private void initRemoveCurrentChartButton() {
         removeCurrentChartButton.setOnAction((event) -> {
@@ -314,6 +368,14 @@ public class RequestController {
         });
     }
 
+
+    /**
+     * initiates the button to open up a dialog. Currently only sets
+     * a placeholder text in dialog and does nothing. Dialog should be able
+     * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to exportCurrentButton
+     */
     private void exportCurrentButton() {
         exportCurrentButton.setOnAction((event) -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -324,6 +386,14 @@ public class RequestController {
         });
     }
 
+
+    /**
+     * initiates the button to open up a dialog. Currently only sets
+     * a placeholder text in dialog and does nothing. Dialog should be able
+     * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to showYAverageCheckBoxClick
+     */
     private void showYAverageCheckBoxClick() {
         showYAverageCheckBox.setOnAction((event) -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -335,6 +405,14 @@ public class RequestController {
         });
     }
 
+
+    /**
+     * initiates the button to open up a dialog. Currently only sets
+     * a placeholder text in dialog and does nothing. Dialog should be able
+     * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to showYQClick
+     */
     private void showYQClick() {
         showYQ.setOnAction((event) -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -346,17 +424,14 @@ public class RequestController {
         });
     }
 
-/*     private void generateNewDiagramButton() {
-        generateNewDiagramButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action works the same as regenerate, but it would open a new tab for the new diagram. That is we will not lose the old diagram.");
-            alert.showAndWait();
-        });
-    } */
 
+    /**
+     * initiates the button to open up a dialog. Currently only sets
+     * a placeholder text in dialog and does nothing. Dialog should be able
+     * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to savePresetButton
+     */
     private void savePresetButton() {
         savePresetButton.setOnAction((event) -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -368,6 +443,14 @@ public class RequestController {
         });
     }
 
+
+    /**
+     * initiates the button to open up a dialog. Currently only sets
+     * a placeholder text in dialog and does nothing. Dialog should be able
+     * to close on ok and cancel buttons.
+     * 
+     * TODO implement some actual functionality to initLoadPresetButton
+     */
     private void initLoadPresetButton() {
         loadPresetButton.setOnAction((event) -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -378,26 +461,4 @@ public class RequestController {
             alert.showAndWait();
         });
     }
-
-    /**
-     * TODO adjust default values
-     */
-    private void initDateBoxes() {
-        fromDatePicker.setValue(LocalDate.now().minusDays(1));
-        toDatePicker.setValue(LocalDate.now());
-    }
-
-    private void replacePlaceholderChart(XYChart<?, ?> chart) {
-        // chartPlaceholder.getChildren().clear();
-
-        // Glue added the chart to anchorpane's borders
-        AnchorPane.setTopAnchor(chart, 0.0);
-        AnchorPane.setRightAnchor(chart, 0.0);
-        AnchorPane.setBottomAnchor(chart, 0.0);
-        AnchorPane.setLeftAnchor(chart, 0.0);
-
-        // chartPlaceholder.getChildren().add(chart);
-    }
-
-
 }

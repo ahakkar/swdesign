@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 
+import org.example.types.DataType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,9 +14,9 @@ public class EnergyModelTest {
 
     @Test
     public void testEnergyModel() {
-        EnergyModel model = new EnergyModel("total_consumption", "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
                 new Double[] { 1.0, 2.0, 3.0 });
-        assertEquals("total_consumption", model.getDataType());
+        assertEquals(DataType.CONSUMPTION, model.getDataType());
         assertEquals("MWh", model.getUnit());
         // assertEquals("2021-01-01 00:00:00", model.getFirstEntryTimestamp());
         assertEquals(Duration.ofHours(1), model.getInterval());
@@ -28,34 +29,19 @@ public class EnergyModelTest {
     // Test all possible data types
     @Test
     public void testEnergyModelDataTypes() {
-        EnergyModel model = new EnergyModel("total_consumption", "MWh", Duration.ofHours(1));
-        assertEquals("total_consumption", model.getDataType());
-        model = new EnergyModel("total_production", "MWh", Duration.ofHours(1));
-        assertEquals("total_production", model.getDataType());
-        model = new EnergyModel("hydro_production", "MWh", Duration.ofHours(1));
-        assertEquals("hydro_production", model.getDataType());
-        model = new EnergyModel("nuclear_production", "MWh", Duration.ofHours(1));
-        assertEquals("nuclear_production", model.getDataType());
-        model = new EnergyModel("wind_production", "MWh", Duration.ofHours(1));
-        assertEquals("wind_production", model.getDataType());
-    }
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", Duration.ofHours(1));
+        assertEquals(DataType.CONSUMPTION, model.getDataType());
 
-    // Test that IllegalArgumentException is thrown if data type is invalid
-    @Test
-    public void testEnergyModelInvalidDataType() {
-        try {
-            new EnergyModel("invalid_data_type", "MWh", Duration.ofHours(1));
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Invalid energy data type: invalid_data_type",
-                    e.getMessage());
-        }
+        model = new EnergyModel(DataType.PRODUCTION, "MWh", Duration.ofHours(1));
+        assertEquals(DataType.PRODUCTION, model.getDataType());
+
+        //TODO implement more datatype tests as they are added to DataTypes
     }
 
     // Test that values added are correct
     @Test
     public void testAddDataPoint() {
-        EnergyModel model = new EnergyModel("total_consumption", "MWh", Duration.ofHours(1));
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", Duration.ofHours(1));
         model.addDataPoint("2021-01-01 00:00:00", 1.0);
         model.addDataPoint("2021-01-01 01:00:00", 2.0);
         model.addDataPoint("2021-01-01 02:00:00", 3.0);
@@ -68,7 +54,7 @@ public class EnergyModelTest {
     // Test that returned map is correct, without range
     @Test
     public void testGetDataPoints() {
-        EnergyModel model = new EnergyModel("total_consumption", "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
                 new Double[] { 1.0, 2.0, 3.0 });
         assertEquals(3, model.getDataPoints().size());
         assertEquals(1.0, model.getDataPoints().get("2021-01-01 00:00:00"));
@@ -79,7 +65,7 @@ public class EnergyModelTest {
     // Test that returned map is correct, with range
     @Test
     public void testGetDataPointsWithRange() {
-        EnergyModel model = new EnergyModel("total_consumption", "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
                 new Double[] { 1.0, 2.0, 3.0 });
         assertEquals(3, model.getDataPointsWithRange("2021-01-01 00:00:00", "2021-01-01 02:00:00").size());
         assertEquals(1.0,
@@ -88,18 +74,5 @@ public class EnergyModelTest {
                 model.getDataPointsWithRange("2021-01-01 00:00:00", "2021-01-01 02:00:00").get("2021-01-01 01:00:00"));
         assertEquals(3.0,
                 model.getDataPointsWithRange("2021-01-01 00:00:00", "2021-01-01 02:00:00").get("2021-01-01 02:00:00"));
-    }
-
-    // Test that constructor does not accept undefined data types
-    @Test
-    public void testEnergyModelUndefinedDataType() {
-        try {
-            new EnergyModel("undefined_data_type", "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
-                    new Double[] { 1.0, 2.0, 3.0 });
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Invalid data type: undefined_data_type",
-                    e.getMessage());
-        }
     }
 }

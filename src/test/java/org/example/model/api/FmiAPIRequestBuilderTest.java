@@ -1,11 +1,17 @@
 package org.example.model.api;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.example.utils.EnvironmentVariables;
+import org.example.model.data.ApiDataRequest;
+import org.example.model.data.DataRequest;
+import org.example.model.data.EnergyModel;
+import org.example.model.data.WeatherModel;
+import org.example.types.DataType;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Response;
@@ -13,15 +19,22 @@ import okhttp3.Response;
 /**
  * Test class for FmiAPIRequestBuilder.
  * 
+ * Editors note: Result Data from FMI is so awful that it's hard to test the
+ * response without parsing it first.
+ * Therefore this test can also test (partialy) the FMIApiParser class.
+ * 
  * @author Heikki Hohtari, with help from ChatGTP
+ * 
+ * TODO fix broken tests due to missing DataType enum compatibility
  */
 public class FmiAPIRequestBuilderTest {
 
     @Test
     public void testFmiApiRequestBuilder() throws Exception {
-        EnvironmentVariables.load(".env");
 
         String place = "tampere";
+        String parameters = "temperature";
+        String unit = "Celsius";
 
         // Set fixed date as 25.09.2023 and set the end date as 29.09.2023
         LocalDate startTimeDate = LocalDate.of(2023, 9, 25);
@@ -36,10 +49,33 @@ public class FmiAPIRequestBuilderTest {
         FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
                 .withPlace(place)
                 .withStartTime(formattedStartTime)
-                .withEndTime(formattedEndTime);
+                .withEndTime(formattedEndTime)
+                .withDataType(parameters);
 
         Response response = builder.execute();
-        String responseBody = response.body().string();
+        FMIApiParser parser = new FMIApiParser();
+
+        DataRequest dataRequest = 
+            new DataRequest(
+                DataType.CONSUMPTION, 
+                LocalDateTime.of(2021, 10, 4, 0, 0),
+                LocalDateTime.of(2021, 10, 7, 0, 0),      
+                "tampere"
+                );
+        ApiDataRequest apiDataRequest = new ApiDataRequest(WeatherModel.class, dataRequest);
+
+        WeatherModel responseBody = parser.parseToDataObject(apiDataRequest, response.body().string());
+        assertNotNull(responseBody);
+        // TODO @markus: Probably do couple tests on the data once you get it as a
+        // WeatherModel object
+        String realLocation = responseBody.getLocation().toLowerCase();
+        assertEquals(place,realLocation);
+
+/*         String realDataType = responseBody.getDataType();
+        assertEquals(parameters, DataType.CONSUMPTION); */
+        
+        String realUnit = responseBody.getUnit();
+        assertEquals(unit, realUnit);
 
         // Assert that response is not empty
         assertNotNull(responseBody);

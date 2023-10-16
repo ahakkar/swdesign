@@ -1,5 +1,10 @@
 package org.example.controller.factory;
 
-public class PieChartImpl {
+/**
+ * PieChart specific methods
+ * 
+ * @author Antti Hakkarainen
+ */
+public class PieChartImpl extends ChartImpl {
     
 }
