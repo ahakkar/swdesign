@@ -46,16 +46,16 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
 
             switch (dataType) {
                 case "temperature":
-                    unit = "Celsius";
+                    unit = "C";
                     break;
                 case "windspeedms":
-                    unit = "meters/second";
+                    unit = "m/s";
                     break;
                 case "pressure":
-                    unit = "";
+                    unit = "hPa";
                     break;
                 case "humidity":
-                    unit ="";
+                    unit = "%";
                     break;
             }
 
