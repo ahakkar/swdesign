@@ -1,10 +1,5 @@
 package org.example.model.api;
 
-import org.example.types.APIType;
-import org.example.utils.EnvironmentVariables;
-
-import okhttp3.HttpUrl;
-
 /**
  * Class for building FMI API requests.
  * 
