@@ -3,10 +3,7 @@ package fi.nordicwatt.model.data;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
@@ -178,6 +175,16 @@ public abstract class AbstractDataModel<T extends Number>
             timestamp = incrementTimestamp(timestamp);
         }
         return true;
+    }
+
+    public void merge(AbstractDataModel<T> other) throws IllegalArgumentException{
+        if (this.dataType != other.dataType){
+            throw new IllegalArgumentException("Data types do not match");
+        }
+        if (!Objects.equals(this.unit, other.unit)){
+            throw new IllegalArgumentException("Units do not match");
+        }
+        this.dataPoints.putAll(other.dataPoints);
     }
 
     @Override

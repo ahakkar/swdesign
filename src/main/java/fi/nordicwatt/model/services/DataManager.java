@@ -54,6 +54,7 @@ public final class DataManager {
         }
         else {
             notifyListeners(localData, null);
+            System.out.println("DATAMANAGER: DATA RETURNED LOCALLY");
         }
 
 
@@ -87,7 +88,7 @@ public final class DataManager {
         List<ApiDataRequest> apiDataRequests = new ArrayList<>();
 
         for (DataRequest query : apiRequests) {
-            apiDataRequests.add(new ApiDataRequest(resolveModelClass(query.getDataType()), query));
+            apiDataRequests.add(new ApiDataRequest(query));
         }
 
         APIQueue.getData(apiDataRequests, (results, exception) -> {   
@@ -97,6 +98,7 @@ public final class DataManager {
                     dataStorage.addData(result.getResult());
                 }
                 notifyListeners(apiResults, null);
+                System.out.println("DATAMANAGER: DATA RETURNED FROM API");
             } else {
                 notifyListeners(null, exception);
             }
