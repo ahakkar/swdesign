@@ -34,7 +34,7 @@ public class FmiAPIRequestBuilderTest {
 
         String place = "tampere";
         String parameters = "temperature";
-        String unit = "Celsius";
+        String unit = "C";
 
         // Set fixed date as 25.09.2023 and set the end date as 29.09.2023
         LocalDate startTimeDate = LocalDate.of(2023, 9, 25);
@@ -50,14 +50,14 @@ public class FmiAPIRequestBuilderTest {
                 .withPlace(place)
                 .withStartTime(formattedStartTime)
                 .withEndTime(formattedEndTime)
-                .withDataType(parameters);
+                .withDataType(DataType.TEMPERATURE.getVariableId());
 
         Response response = builder.execute();
         FMIApiParser parser = new FMIApiParser();
 
         DataRequest dataRequest = 
             new DataRequest(
-                DataType.CONSUMPTION, 
+                DataType.TEMPERATURE, 
                 LocalDateTime.of(2021, 10, 4, 0, 0),
                 LocalDateTime.of(2021, 10, 7, 0, 0),      
                 "tampere"
@@ -66,8 +66,7 @@ public class FmiAPIRequestBuilderTest {
 
         WeatherModel responseBody = parser.parseToDataObject(apiDataRequest, response.body().string());
         assertNotNull(responseBody);
-        // TODO @markus: Probably do couple tests on the data once you get it as a
-        // WeatherModel object
+
         String realLocation = responseBody.getLocation().toLowerCase();
         assertEquals(place,realLocation);
 
@@ -79,9 +78,5 @@ public class FmiAPIRequestBuilderTest {
 
         // Assert that response is not empty
         assertNotNull(responseBody);
-
-        // TODO: This test is awful, but it's a start
-        // It should actually test the response body for the correct data
-        // But extracting the data from the XML response is a bit tricky
     }
 }

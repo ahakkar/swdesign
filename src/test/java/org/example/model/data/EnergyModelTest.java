@@ -1,10 +1,7 @@
 package org.example.model.data;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.time.Duration;
-
 import org.example.types.DataType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -14,12 +11,12 @@ public class EnergyModelTest {
 
     @Test
     public void testEnergyModel() {
-        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
-                new Double[] { 1.0, 2.0, 3.0 });
+        
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00",new Double[] { 1.0, 2.0, 3.0 });
+                
         assertEquals(DataType.CONSUMPTION, model.getDataType());
         assertEquals("MWh", model.getUnit());
         // assertEquals("2021-01-01 00:00:00", model.getFirstEntryTimestamp());
-        assertEquals(Duration.ofHours(1), model.getInterval());
         assertEquals(3, model.getDataPoints().size());
         assertEquals(1.0, model.getDataPoints().get("2021-01-01 00:00:00"));
         assertEquals(2.0, model.getDataPoints().get("2021-01-01 01:00:00"));
@@ -29,10 +26,10 @@ public class EnergyModelTest {
     // Test all possible data types
     @Test
     public void testEnergyModelDataTypes() {
-        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", Duration.ofHours(1));
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh");
         assertEquals(DataType.CONSUMPTION, model.getDataType());
 
-        model = new EnergyModel(DataType.PRODUCTION, "MWh", Duration.ofHours(1));
+        model = new EnergyModel(DataType.PRODUCTION, "MWh");
         assertEquals(DataType.PRODUCTION, model.getDataType());
 
         //TODO implement more datatype tests as they are added to DataTypes
@@ -41,7 +38,7 @@ public class EnergyModelTest {
     // Test that values added are correct
     @Test
     public void testAddDataPoint() {
-        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", Duration.ofHours(1));
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh");
         model.addDataPoint("2021-01-01 00:00:00", 1.0);
         model.addDataPoint("2021-01-01 01:00:00", 2.0);
         model.addDataPoint("2021-01-01 02:00:00", 3.0);
@@ -54,8 +51,7 @@ public class EnergyModelTest {
     // Test that returned map is correct, without range
     @Test
     public void testGetDataPoints() {
-        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
-                new Double[] { 1.0, 2.0, 3.0 });
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", new Double[] { 1.0, 2.0, 3.0 });
         assertEquals(3, model.getDataPoints().size());
         assertEquals(1.0, model.getDataPoints().get("2021-01-01 00:00:00"));
         assertEquals(2.0, model.getDataPoints().get("2021-01-01 01:00:00"));
@@ -65,8 +61,7 @@ public class EnergyModelTest {
     // Test that returned map is correct, with range
     @Test
     public void testGetDataPointsWithRange() {
-        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", Duration.ofHours(1),
-                new Double[] { 1.0, 2.0, 3.0 });
+        EnergyModel model = new EnergyModel(DataType.CONSUMPTION, "MWh", "2021-01-01 00:00:00", new Double[] { 1.0, 2.0, 3.0 });
         assertEquals(3, model.getDataPointsWithRange("2021-01-01 00:00:00", "2021-01-01 02:00:00").size());
         assertEquals(1.0,
                 model.getDataPointsWithRange("2021-01-01 00:00:00", "2021-01-01 02:00:00").get("2021-01-01 00:00:00"));

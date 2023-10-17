@@ -18,7 +18,7 @@ import org.example.model.data.*;
  * APIOperator - Class for handling API requests.
  * 
  * @author Janne Taskinen       initial stub
- * @author Heikki Hohtar        igetEnergyModelData
+ * @author Heikki Hohtari       getEnergyModelData
  * @author Markus Hissa         getWeatherModelData
  * @author Antti Hakkarainen    slight refactoring
  */
@@ -28,7 +28,7 @@ public class APIOperator {
     private ApiDataRequest apiDataRequest;
 
     protected ApiDataResult getData(ApiDataRequest request)
-            throws InterruptedException, IOException, IllegalArgumentException {
+            throws InterruptedException, IOException, IllegalArgumentException, ParseException {
 
         this.dataRequest = request.getDataRequest();
         this.apiDataRequest = request;
@@ -47,7 +47,8 @@ public class APIOperator {
     /**
      * getWeatherModelData - Gets weather data from FMI API.
      */
-    private ApiDataResult getWeatherModelData() {
+    private ApiDataResult getWeatherModelData()
+        throws ParseException {
         URL url;
         try {
             url = new URL(

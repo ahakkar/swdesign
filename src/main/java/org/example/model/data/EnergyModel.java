@@ -1,7 +1,5 @@
 package org.example.model.data;
 
-import java.time.Duration;
-
 import org.example.types.DataType;
 
 /**
@@ -24,13 +22,11 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @param dataType            - Data type for example "Temperature"
      * @param unit                - Unit for example "Celsius"
      * @param firstEntryTimestamp - Timestamp for the first data point in format
-     * @param interval            - Interval between data points for example if data
      * @param values              - Array of data points
      * @inheritDoc - AbstractDataModel
      */
-    public EnergyModel(DataType dataType, String unit, String firstEntryTimestamp, Duration interval, Double[] values) {
-        super(dataType, unit, firstEntryTimestamp, interval,
-                values);
+    public EnergyModel(DataType dataType, String unit, String firstEntryTimestamp, Double[] values) {
+        super(dataType, unit, firstEntryTimestamp, values);
     }
 
     /**
@@ -41,10 +37,9 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * 
      * @param dataType - Data type for example "Temperature"
      * @param unit     - Unit for example "Celsius"
-     * @param interval - Interval between data points for example if data
      * @inheritDoc - AbstractDataModel
      */
-    public EnergyModel(DataType dataType, String unit, Duration interval) {
-        super(dataType, unit, interval);
+    public EnergyModel(DataType dataType, String unit) {
+        super(dataType, unit);
     }
 }

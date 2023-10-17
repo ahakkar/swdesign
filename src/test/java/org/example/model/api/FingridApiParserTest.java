@@ -1,21 +1,19 @@
 package org.example.model.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.example.model.data.EnergyModel;
 import org.example.utils.EnvironmentVariables;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 import okhttp3.Response;
 
 import org.example.model.data.ApiDataRequest;
 import org.example.model.data.DataRequest;
-import org.example.model.data.EnergyModel;
 import org.example.types.DataType;
 
 /**
@@ -55,7 +53,6 @@ public class FingridApiParserTest {
             EnergyModel model = parser.parseToDataObject(apiDataRequest, response.body().string());
             assertEquals(model.getDataType(), DataType.CONSUMPTION);
             assertEquals(model.getUnit(), "MWh");
-            assertEquals(model.getInterval(), Duration.ofHours(1));
 
             // Get all datapoints in a map
             Map<String, Double> dataPoints = model.getDataPoints();

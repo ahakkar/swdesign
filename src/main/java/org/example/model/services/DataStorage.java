@@ -1,13 +1,13 @@
 package org.example.model.services;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.example.model.data.AbstractDataModel;
 import org.example.model.data.DataRequest;
 import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
-
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class DataStorage {
 
@@ -60,10 +60,10 @@ public class DataStorage {
 
             if (dataPoints.containsKey(start) && dataPoints.containsKey(end)){
                 if (model instanceof EnergyModel){
-                    return new EnergyModel(model.getDataType(), model.getUnit(), start, model.getInterval(), values);
+                    return new EnergyModel(model.getDataType(), model.getUnit(), start, values);
                 }
                 else if (model instanceof WeatherModel){
-                    return new WeatherModel(model.getDataType(), model.getUnit(), start, model.getInterval(), ((WeatherModel) model).getLocation(), values);
+                    return new WeatherModel(model.getDataType(), model.getUnit(), start, ((WeatherModel) model).getLocation(), values);
                 }
             }
         }

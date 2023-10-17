@@ -1,5 +1,9 @@
 package org.example.model.api;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -8,12 +12,6 @@ import org.example.model.data.EnergyModel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 /**
  * FingridApiParser - Parses response from Fingrid API to EnergyModel.
  * 
@@ -58,23 +56,12 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
             LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
             String formattedTimestamp = dateTime.format(desiredFormat);
     
-            // Interval is duration of 1 hour
-            Duration interval = Duration.ofHours(1);
-            return new EnergyModel(
-                request.getDataRequest().getDataType(),
-                "MWh",
-                formattedTimestamp,
-                interval,
-                values
-            );
-    
+            return new EnergyModel(request.getDataRequest().getDataType(), "MWh", formattedTimestamp, values);
+
         } catch (IOException e) {  // ObjectMapper's readVlue can throw IOException
             throw new ParseException("[FingridAPIParser]: Error reading and processing the JSON response", e);
         } catch (DateTimeParseException e) { // LocalDateTime's parse can throw DateTimeParseException
             throw new ParseException("[FingridAPIParser]: Error parsing date time from the API response", e);
         }
-    }
-
-
-    
+    }  
 }

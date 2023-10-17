@@ -51,7 +51,7 @@ public class FmiAPIRequestBuilder extends AbstractAPIRequestBuilder<FmiAPIReques
     @Override
     protected void addQueryParameters() {
         urlBuilder.addQueryParameter("place", place);
-        urlBuilder.addQueryParameter("parameters", "temperature");
+        urlBuilder.addQueryParameter("parameters", dataType);
         urlBuilder.addQueryParameter("starttime", startTime);
         urlBuilder.addQueryParameter("endtime", endTime);
     }

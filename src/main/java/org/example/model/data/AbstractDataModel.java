@@ -1,15 +1,14 @@
 package org.example.model.data;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.example.types.DataType;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * AbstractDataModel - Abstract class for handling and storing data.
@@ -28,22 +27,16 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class AbstractDataModel<T extends Number>
 {
+
     protected static Set<String> supportedDataTypes = new HashSet<>();
     private DataType dataType;
     private String unit;
-    private Duration interval;
-    private Map<String, T> dataPoints;
+    private Map<String,T> dataPoints;
 
-    /**
-     * Constructor for AbstractDataModel
-     * 
-     * @param dataType - Data type for example "Temperature"
-     * @param unit     - Unit for example "Celsius"
-     */
-    public AbstractDataModel(DataType dataType, String unit, Duration interval) {
+    public AbstractDataModel(DataType dataType, String unit)
+    {
         this.dataType = dataType;
         this.unit = unit;
-        this.interval = interval;
         this.dataPoints = new TreeMap<>();
     }
 
@@ -58,9 +51,6 @@ public abstract class AbstractDataModel<T extends Number>
      * @param unit                - Unit for example "Celsius"
      * @param firstEntryTimestamp - Timestamp for the first data point in format
      *                            "yyyy-MM-dd HH:mm:ss"
-     * @param interval            - Interval between data points for example if data
-     *                            is collected every 5 minutes, interval is 5
-     *                            minutes
      * @param values              - Array of data points
      * @return AbstractDataModel
      */
@@ -68,17 +58,15 @@ public abstract class AbstractDataModel<T extends Number>
         DataType dataType, 
         String unit, 
         String firstEntryTimestamp,
-        Duration interval,
         T[] values
     ) {
         this.dataType = dataType;
         this.unit = unit;
-        this.interval = interval;
         String timestamp = firstEntryTimestamp;
         this.dataPoints = new TreeMap<>();
         for (T value : values) {
             addDataPoint(timestamp, value);
-            timestamp = incrementTimestamp(timestamp, interval);
+            timestamp = incrementTimestamp(timestamp);
         }
     }
 
@@ -86,11 +74,11 @@ public abstract class AbstractDataModel<T extends Number>
      * Returns timestamp that is incremented by interval.
      * 
      * @param timestamp
-     * @param interval
      * @return
      */
-    public static String incrementTimestamp(String timestamp, Duration interval) {
+    public static String incrementTimestamp(String timestamp) {
         LocalDateTime dateTime = LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        Duration interval = Duration.ofHours(1);
         dateTime = dateTime.plus(interval);
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
@@ -111,15 +99,6 @@ public abstract class AbstractDataModel<T extends Number>
      */
     public String getUnit() {
         return unit;
-    }
-
-    /**
-     * Returns interval.
-     * 
-     * @return Duration
-     */
-    public Duration getInterval() {
-        return interval;
     }
 
     /**
@@ -195,7 +174,7 @@ public abstract class AbstractDataModel<T extends Number>
             if (!timestamp.equals(key)) {
                 return false;
             }
-            timestamp = incrementTimestamp(timestamp, interval);
+            timestamp = incrementTimestamp(timestamp);
         }
         return true;
     }
@@ -205,7 +184,7 @@ public abstract class AbstractDataModel<T extends Number>
         return "AbstractDataModel{" +
                 "dataType='" + dataType + '\'' +
                 ", unit='" + unit + '\'' +
-                ", interval=" + interval +
+                ", interval=" + Duration.ofHours(1) +
                 ", dataPoints=" + dataPoints +
                 '}';
     }

@@ -46,7 +46,7 @@ public enum DataType {
     ),
     TEMPERATURE(
         "Temperature",
-        "0",
+        "Temperature",
         APIType.FMI,
         "Temperature (1 Hour)",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
@@ -54,7 +54,7 @@ public enum DataType {
     ),
     WIND(
         "Wind",
-        "Wind", 
+        "WindSpeedMS", 
         APIType.FMI,
         "Wind (1 Hour)",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
@@ -87,7 +87,7 @@ public enum DataType {
     ),    
     AIR_PRESSURE(
         "Air pressure",
-        "Air pressure",
+        "Pressure",
         APIType.FMI,
         "Air pressure (1 Hour)",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),

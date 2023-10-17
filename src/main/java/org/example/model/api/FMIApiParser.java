@@ -1,6 +1,5 @@
 package org.example.model.api;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,58 +25,47 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
      *
      */
     @Override
-    public WeatherModel parseToDataObject(ApiDataRequest request, String response)
-    throws IllegalArgumentException {                  
+    public WeatherModel parseToDataObject(ApiDataRequest request, String response) throws ParseException {
+
         String responseDataAsString = getStringBetween(response, "<gml:doubleOrNilReasonTupleList>",
                 "</gml:doubleOrNilReasonTupleList>");
         List<Double> responseData = extractDoubles(responseDataAsString);
         Double[] responseDataArray = new Double[responseData.size()];
 
         String location = getStringBetween(response, "<target:region codeSpace="+"\""+"http://xml.fmi.fi/namespace/location/region"+"\""+">", "</target:region>");
-        Duration interval = Duration.ofHours(1);
         CharSequence firstEntryTimestamp = getStringBetween(response, "<gml:beginPosition>", "</gml:beginPosition>");
         DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
         String formattedTimestamp = dateTime.format(desiredFormat);
-
         DataType dataType = request.getDataRequest().getDataType();
-        WeatherModel model = 
-            new WeatherModel(
-                request.getDataRequest().getDataType(),
-                getUnitTemporary(dataType),
-                formattedTimestamp,
-                interval, 
-                location, 
-                responseData.toArray(responseDataArray
-            ));
-            
-        return model;
-    }
+        String unit = "";
+        responseData.toArray(responseDataArray);
 
-
-    /**
-     * getUnitTemporary - Gets a unit for a data type. TODO: This is temporary
-     * until we have a proper unit system.
-     * 
-     * @param dataType Enum containing supported datatypes
-     * @return         Unit as a string (like m/s, C, etc.)
-     * @throws IllegalArgumentException if data type is not supported
-     */
-    private static String getUnitTemporary(DataType dataType) 
-    throws IllegalArgumentException {
         switch (dataType) {
             case TEMPERATURE:
-                return "Celsius";
+                unit = "C";
+                break;
             case WIND:
-                return "meters/second";
+                unit = "m/s";
+                break;
             case AIR_PRESSURE:
-                return "";
+                unit = "hPa";
+                break;
             case HUMIDITY:
-                return "";
-            default:
-                throw new IllegalArgumentException("Invalid data type: " + dataType);                    
+                unit = "%";
+                break;
         }
+        WeatherModel model = 
+            new WeatherModel(
+                dataType,
+                unit,
+                formattedTimestamp,
+                location, 
+                responseData.toArray(responseDataArray)
+                );
+
+            return model;    
     }
 
     /**
