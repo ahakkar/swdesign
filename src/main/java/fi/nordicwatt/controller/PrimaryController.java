@@ -156,13 +156,15 @@ public class PrimaryController implements DataManagerListener, SessionController
         String tabId = result.getRequest().getChartMetadata().getTabId();
         String chartId = result.getRequest().getChartMetadata().getChartId();
         sessionController.removeChart(tabId, chartId);
+        Platform.runLater(() -> {
+            CustomAlerts.displayAlert(
+                    AlertType.ERROR,
+                    "Exception from DataManager",
+                    "Can't create a chart because of an exception.\nResponse error message below:",
+                    exception.toString()
+            );
+         });
 
-        CustomAlerts.displayAlert(
-            AlertType.ERROR, 
-            "Exception from DataManager", 
-            "Can't create a chart because of an exception.\nResponse error message below:", 
-            exception.toString()
-        );        
     }
 
 
