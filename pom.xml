@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.example</groupId>
-    <artifactId>Java</artifactId>
+    <groupId>fi.nordicwatt</groupId>
+    <artifactId>nordicwatt</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,7 +82,7 @@
                 <configuration>
                     <testSourceDirectory>src/test/java</testSourceDirectory>
                     <argLine>
-                        --add-opens org.example/org.example.model.api=ALL-UNNAMED
+                        --add-opens fi.nordicwatt/fi.nordicwatt.model.api=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>
@@ -96,7 +96,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.App</mainClass>
+                            <mainClass>fi.nordicwatt.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>
