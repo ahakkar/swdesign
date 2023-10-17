@@ -7,8 +7,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
-import fi.nordicwatt.model.api.FingridAPIRequestBuilder;
-import fi.nordicwatt.model.api.FingridApiParser;
+
 import fi.nordicwatt.model.data.ApiDataRequest;
 import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.data.EnergyModel;

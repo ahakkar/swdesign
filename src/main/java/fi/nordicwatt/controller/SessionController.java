@@ -217,6 +217,22 @@ public class SessionController implements DataManagerListener {
         return chartId;
     }
 
+    /**
+     * Remove a chart from a tab. This is called from PrimaryController when
+     * user clicks the remove button on a chart. Or if a DataManager returns
+     * and exception and a chart can't be created.
+     * 
+     * @param tabId    Unique UUID string for a tab where the chart is
+     * @param chartId  Unique UUID string for a chart to be removed
+     */
+    public void removeChart(String tabId, String chartId) {
+        tabManager.removeChartFromTab(tabId, chartId);
+        SessionChangeData data = new SessionChangeData(SessionChangeType.CHART_REMOVED);
+        data.setTabId(tabId);
+        data.setChartId(chartId);
+        notifyListeners(data);
+    }
+
 
     /**
      * Actually not used for anything. No idea what the idea behind this was -ah

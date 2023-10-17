@@ -56,7 +56,6 @@ public class ChartFactory {
             case LINE_CHART:
             case AREA_CHART:
             case SCATTER_DOT_CHART:
-            System.out.println("Generating xychart");
                 XYChartImpl xyCreator = new XYChartImpl();
                 return xyCreator.createChart(request, data);                  
             case PIE_CHART:
