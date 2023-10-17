@@ -53,7 +53,7 @@ public class APIOperator {
         try {
             url = new URL(
                 "http://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::weather::multipointcoverage&place="
-                    + dataRequest.getLocation() + "&parameters=" + dataRequest.getDataType() + "&starttime="
+                    + dataRequest.getLocation() + "&parameters=" + dataRequest.getDataType().getVariableId() + "&starttime="
                     + dataRequest.getStarttime() + "&endtime=" + dataRequest.getEndtime() + "&timestep=60");
 
             System.out.println(url);
