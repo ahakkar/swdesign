@@ -12,6 +12,7 @@ public enum MeasurementUnit {
     EURO("€"),
     KILO_WATT_HOUR("kWh"),
     MEGA_WATT_HOUR("MWh"),
+    MEGA_WATT("MW"),
     HUMIDITY("%"),
     MILLIMETERS("mm"),
     HOUR("h");

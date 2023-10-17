@@ -49,7 +49,43 @@ public enum DataType
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
     ),
 
-    PRICE(
+    HYDRO(
+        "Hydro Production",
+        "191",
+        APIType.FINGRID, 
+        MeasurementUnit.MEGA_WATT,
+        Duration.ofMinutes(3),
+        "Hydro Production (3 minutes)",
+        "Hydro Production in Finland",
+        EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+    ),
+
+    NUCLEAR(
+        "Nuclear Production",
+        "188",
+        APIType.FINGRID, 
+        MeasurementUnit.MEGA_WATT,
+        Duration.ofMinutes(3),
+        "Nuclear Productionn (3 minutes)",
+        "Nuclear Production in Finland",
+        EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+    ),
+
+    WINDPOWER(
+        "Wind power generation",
+        "75",
+        APIType.FINGRID, 
+        MeasurementUnit.MEGA_WATT_HOUR,
+        Duration.ofMinutes(3),
+        "Nuclear Productionn (3 minutes)",
+        "Nuclear Production in Finland",
+        EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+    ),
+
+    /*PRICE(
         "Price", 
         "0",
         APIType.NOAPI,
@@ -59,7 +95,7 @@ public enum DataType
         "Electricity price in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
-    ),
+    ),*/
 
     TEMPERATURE(
         "Temperature",
