@@ -9,6 +9,7 @@ import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -226,7 +227,9 @@ public class RequestController {
         for (Tab tab : mainTabPane.getTabs()) {
             if (tabId.equals(tab.getId())) {
                 // TODO need to change this to support a specific chart in 1-4 chart mode
-                tab.setContent(null);
+                Platform.runLater(() -> {
+                    tab.setContent(null);
+                });
                 break;
             }
         }

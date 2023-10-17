@@ -43,7 +43,7 @@ public final class DataManager {
     public void getData(List<DataRequest> queries)
     {
         if (!validateAllQueries(queries)){
-            notifyListeners(null, new IllegalArgumentException("Invalid data query"));
+            notifyListeners(createEmptyDataResultList(queries), new IllegalArgumentException("Invalid data query"));
             return;
         }
 
@@ -76,6 +76,14 @@ public final class DataManager {
         return true;
     }
 
+    private List<DataResult> createEmptyDataResultList(List<DataRequest> requests){
+        List<DataResult> results = new ArrayList<>();
+        for (DataRequest request : requests) {
+            results.add(new DataResult(request, null));
+        }
+        return results;
+    }
+
 
     /**
      * 
@@ -100,7 +108,7 @@ public final class DataManager {
                 notifyListeners(apiResults, null);
                 System.out.println("DATAMANAGER: DATA RETURNED FROM API");
             } else {
-                notifyListeners(null, exception);
+                notifyListeners(createEmptyDataResultList(apiRequests), exception);
             }
    
         });
