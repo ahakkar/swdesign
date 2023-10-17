@@ -47,12 +47,7 @@ public class DataManagerTest {
             }
         };
         dm.registerListener(listener);
-        try {
-            dm.getData(queries);
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+        dm.getData(queries);
 
         // Assuming that getData has been called but data is not ready yet..
         assertEquals(0, results.size());

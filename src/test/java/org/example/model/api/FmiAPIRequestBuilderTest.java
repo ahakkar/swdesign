@@ -61,7 +61,7 @@ public class FmiAPIRequestBuilderTest {
                 LocalDateTime.of(2021, 10, 7, 0, 0),      
                 "tampere"
                 );
-        ApiDataRequest apiDataRequest = new ApiDataRequest(WeatherModel.class, dataRequest);
+        ApiDataRequest apiDataRequest = new ApiDataRequest(dataRequest);
 
         WeatherModel responseBody = parser.parseToDataObject(apiDataRequest, response.body().string());
         assertNotNull(responseBody);

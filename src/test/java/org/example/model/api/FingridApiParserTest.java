@@ -48,7 +48,7 @@ public class FingridApiParserTest {
                     LocalDateTime.of(2021, 10, 7, 0, 0),      
                     "Helsinki"
                     );
-            ApiDataRequest apiDataRequest = new ApiDataRequest(EnergyModel.class, dataRequest);
+            ApiDataRequest apiDataRequest = new ApiDataRequest(dataRequest);
 
             EnergyModel model = parser.parseToDataObject(apiDataRequest, response.body().string());
             assertEquals(model.getDataType(), DataType.CONSUMPTION);

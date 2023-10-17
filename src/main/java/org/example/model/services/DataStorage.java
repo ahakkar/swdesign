@@ -8,6 +8,7 @@ import org.example.model.data.AbstractDataModel;
 import org.example.model.data.DataRequest;
 import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
+import org.example.types.DataType;
 
 /**
  * @author ???
@@ -32,20 +33,38 @@ public class DataStorage {
     }
 
     protected void addData(AbstractDataModel<Double> dataModel) {
-        // TODO IMPLEMENT THIS
+
+        AbstractDataModel<Double> existingModel = getModelByType(dataModel.getDataType());
+
+        if (existingModel == null){
+            dataModels.add(dataModel);
+        }
+        else {
+            try {
+                existingModel.merge(dataModel);
+            }
+            catch (IllegalArgumentException e) {
+                System.out.println("DATASTORAGE: MERGE FAILED");
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    private AbstractDataModel<Double> getModelByType(DataType dataType){
+        for (AbstractDataModel<Double> model : dataModels) {
+            if (model.getDataType().equals(dataType)) {
+                return model;
+            }
+        }
+        return null;
     }
 
     protected AbstractDataModel<Double> getData(DataRequest query) {
 
-        AbstractDataModel<Double> model = null;
+        AbstractDataModel<Double> model = getModelByType(query.getDataType());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        for (AbstractDataModel<Double> dataModel : dataModels) {
-            if (dataModel.getDataType().equals(query.getDataType())) {
-                model = dataModel;
-                break;
-            }
-        }
 
         if (model != null){
 
