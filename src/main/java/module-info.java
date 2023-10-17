@@ -1,4 +1,6 @@
-module org.example {
+module fi.nordicwatt {
+    exports fi.nordicwatt;
+    
     requires transitive javafx.controls;
     requires transitive javafx.graphics;
     requires javafx.fxml;
@@ -8,16 +10,15 @@ module org.example {
     requires com.fasterxml.jackson.databind;
     requires java.xml;
 
-    opens org.example to javafx.fxml;
-    exports org.example;
-    exports org.example.controller.factory;
-    exports org.example.types;
-    exports org.example.controller;
-    exports org.example.model.services;
-    exports org.example.model.session;
-    opens org.example.controller to javafx.fxml;
-    //opens org.example.model.data to com.fasterxml.jackson.databind;
-    exports org.example.model.data;
-    opens org.example.model.data to com.fasterxml.jackson.databind;
-    opens org.example.model.services to com.fasterxml.jackson.databind;
+    opens fi.nordicwatt to javafx.fxml;
+    opens fi.nordicwatt.controller to javafx.fxml;    
+    opens fi.nordicwatt.model.data to com.fasterxml.jackson.databind;
+    opens fi.nordicwatt.model.services to com.fasterxml.jackson.databind;
+
+    exports fi.nordicwatt.model.data;
+    exports fi.nordicwatt.controller.factory;
+    exports fi.nordicwatt.types;
+    exports fi.nordicwatt.controller;
+    exports fi.nordicwatt.model.services;
+    exports fi.nordicwatt.model.session;
 }
