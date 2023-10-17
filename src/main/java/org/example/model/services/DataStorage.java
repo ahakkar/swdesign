@@ -9,6 +9,9 @@ import org.example.model.data.DataRequest;
 import org.example.model.data.EnergyModel;
 import org.example.model.data.WeatherModel;
 
+/**
+ * @author ???
+ */
 public class DataStorage {
 
     private static DataStorage instance;

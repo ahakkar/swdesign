@@ -124,10 +124,16 @@ public class PrimaryController implements DataManagerListener, SessionController
                 String chartId = result.getRequest().getChartMetadata().getChartId();
                 ChartRequest chartRequest = sessionManager.getChartRequest(tabId, chartId);
                
+                if(chartRequest == null) {
+                    System.err.println("PrimaryController: chartRequest is null, can't generate chart");
+                    return;
+                }
                 Chart chart = chartFactory.generateChart(
                     result.getData(), 
                     chartRequest
                     );
+
+                System.out.println("Chart generated, " + chart.getId());
                 
                 // execute the chart adding to UI in JavaFX application thread
                 Platform.runLater(() -> {
@@ -152,7 +158,9 @@ public class PrimaryController implements DataManagerListener, SessionController
     @Override
     public void onSessionChange(
         SessionChangeData data
-    ) throws IllegalArgumentException {          
+    ) throws IllegalArgumentException {   
+        
+        // System.out.println("[PrimaryController]: Session change: " + data.getType().toString());
 
         switch (data.getType()) {
             case TAB_ADDED:
@@ -160,7 +168,7 @@ public class PrimaryController implements DataManagerListener, SessionController
                 break;
 
             case TAB_REMOVED:
-                requestController.removeTabFromUI(data.getId());
+                requestController.removeTabFromUI(data.getTabId());
                 break;
 
             case TAB_MOVED:
@@ -172,7 +180,7 @@ public class PrimaryController implements DataManagerListener, SessionController
                 break;
 
             case CHART_ADDED:                
-                // TODO probably do nothing here since datamanager will trigger onDataReadyForChart event
+                requestController.displayProgressIndicator(data);
                 break;
 
             case CHART_REMOVED:
@@ -186,7 +194,7 @@ public class PrimaryController implements DataManagerListener, SessionController
             case CHART_UPDATED:
                 // TODO: handle chart updated event
                 break;
-
+  
             default:
                 throw new IllegalArgumentException(
                     "[PrimaryController]: Unknown session change type: " + 

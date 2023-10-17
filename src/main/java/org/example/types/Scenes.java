@@ -1,5 +1,10 @@
 package org.example.types;
 
+/**
+ * Contains a list of supported scenes (.fxml files)
+ * 
+ * @author Antti Hakkarainen
+ */
 public enum Scenes {
     MainWorkspace("mainworkspace");
 

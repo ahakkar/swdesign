@@ -5,7 +5,7 @@ import org.example.model.data.DataResult;
 import java.util.List;
 
 /**
- * TODO comment for javadoc
+ * Listener for DataManager
  * 
  * @author Antti Hakkarainen
  */
@@ -19,10 +19,4 @@ public interface DataManagerListener {
      * @throws Exception if anything goes wrong while fetching data
      */
     default void onDataReadyForChart(List<DataResult> data, Exception e)  {}
-
-
-    /**
-     * TODO remove if no other uses are found
-     */
-    default void onDataReadyForSomethingElse() {}
 }

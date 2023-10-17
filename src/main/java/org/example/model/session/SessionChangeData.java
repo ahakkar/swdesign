@@ -15,6 +15,7 @@ import org.example.types.SessionChangeType;
 public class SessionChangeData {
     private final SessionChangeType type;
     private String tabId;
+    private String chartId;
     private String title;
     private List<DataResult> data;
     private ChartRequest chartRequest;
@@ -39,12 +40,20 @@ public class SessionChangeData {
         return type;
     }
 
-    public void setId(String tabId) {
+    public void setTabId(String tabId) {
         this.tabId = tabId;
     }
 
-    public String getId() {
+    public String getTabId() {
         return tabId;
+    }
+
+    public void setChartId(String chartId) {
+        this.chartId = chartId;
+    }
+
+    public String getChartId() {
+        return chartId;
     }
 
     public void setTitle(String title) {

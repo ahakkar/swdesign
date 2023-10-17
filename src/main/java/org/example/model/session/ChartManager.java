@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.example.model.data.ChartRequest;
+import org.example.model.data.DataRequest;
 
 /**
  * Holds the list of ChartRequests, which can be used to get data from the 
@@ -21,6 +22,10 @@ public class ChartManager {
     public ChartManager(Integer maxCharts) {
         this.maxCharts = maxCharts;   
         storedCharts = new HashMap<>();
+    }
+
+    public void addDataRequest(String chartId, DataRequest dataRequest) {
+        storedCharts.get(chartId).setDataRequest(dataRequest);
     }
 
     /**

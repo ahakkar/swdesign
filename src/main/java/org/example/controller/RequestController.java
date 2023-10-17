@@ -17,8 +17,10 @@ import org.example.types.DataType;
 import org.example.types.AxisType;
 import org.example.types.ChartType;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Alert;
@@ -145,7 +147,6 @@ public class RequestController {
             AxisType.Y_AXIS, yAxisChoiceBox.getValue()
         );
 
-        // TODO display a spinning widget while chart is being generated
         ChartRequest chartRequest = new ChartRequest(
             yAxisChoiceBox.getValue().getAPIType(),
             chartTypeChoiceBox.getValue(),
@@ -188,7 +189,7 @@ public class RequestController {
      */
     public void addNewTabToUI(SessionChangeData data) {
         Tab newTab = new Tab(data.getTitle());
-        newTab.setId(data.getId().toString());
+        newTab.setId(data.getTabId().toString());
 
         // Contex menu for closing the tab
         ContextMenu contextMenu = new ContextMenu();
@@ -231,6 +232,33 @@ public class RequestController {
                 tab.setContent(chart);
                 mainTabPane.getSelectionModel().select(tab);
 
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * Displays a spinning ProgressIndicator in a tab to indicate that a chart
+     * is being generated.
+     * 
+     * @param data object containing tabid and chartid where to place the spinner
+     */
+    public void displayProgressIndicator(SessionChangeData data) {
+        // TODO implement support to place indicator in specific chart after multiple chart support is implemted
+        String tabId = data.getTabId();
+        // String chartId = data.getChartId();
+
+/*         System.out.println(
+            "[RequestController]: Displaying progress indicator at tab " + 
+            tabId + " and chart " + chartId); */
+   
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        StackPane stackPane = new StackPane(progressIndicator);
+
+        for (Tab tab : mainTabPane.getTabs()) {
+            if (tabId.equals(tab.getId())) {
+                tab.setContent(stackPane);
                 break;
             }
         }

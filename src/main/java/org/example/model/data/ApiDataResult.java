@@ -1,5 +1,9 @@
 package org.example.model.data;
 
+/**
+ * 
+ * @author ???
+ */
 public class ApiDataResult {
 
     private final AbstractDataModel<Double> result;

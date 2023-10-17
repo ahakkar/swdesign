@@ -14,6 +14,11 @@ import org.example.types.DataType;
  * Data is fetched from DataManager, which gets it either from local storage
  * or over the internet via API calls.
  * 
+ * @param apiType       FMI, Fingrid, something else?
+ * @param chartType     Line chart, Area chart, Pie chart etc?
+ * @param axisMap       A map specifying the axis types and their corresponding data types.
+ * @param dataRequest   The data request used by DataManager.
+ * 
  * @author Antti Hakkarainen
  */
 public class ChartRequest
@@ -25,11 +30,6 @@ public class ChartRequest
 
     /**
      * Initializes a new ChartRequest.
-     * 
-     * @param apiType       FMI, Fingrid, something else?
-     * @param chartType     Line chart, Area chart, Pie chart etc?
-     * @param axisMap       A map specifying the axis types and their corresponding data types.
-     * @param dataRequest   The data request used by DataManager.
      */
     public ChartRequest(
         APIType apiType,
