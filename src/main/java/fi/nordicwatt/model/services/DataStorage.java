@@ -1,14 +1,14 @@
-package org.example.model.services;
+package fi.nordicwatt.model.services;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.example.model.data.AbstractDataModel;
-import org.example.model.data.DataRequest;
-import org.example.model.data.EnergyModel;
-import org.example.model.data.WeatherModel;
-import org.example.types.DataType;
+import fi.nordicwatt.model.data.AbstractDataModel;
+import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.data.EnergyModel;
+import fi.nordicwatt.model.data.WeatherModel;
+import fi.nordicwatt.types.DataType;
 
 /**
  * @author ???

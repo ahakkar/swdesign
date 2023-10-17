@@ -56,7 +56,7 @@ public class XYChartImpl extends ChartImpl {
 
         this.populateChartData(true);
         updateXYAxisLabels();   
-        System.out.println("returning chart..");
+
         return chart;
     }
 

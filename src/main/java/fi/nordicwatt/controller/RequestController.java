@@ -219,6 +219,19 @@ public class RequestController {
         }
     }
 
+    public void removeChartFromUI(SessionChangeData data) {
+        String tabId = data.getTabId();
+        String chartId = data.getChartId();
+
+        for (Tab tab : mainTabPane.getTabs()) {
+            if (tabId.equals(tab.getId())) {
+                // TODO need to change this to support a specific chart in 1-4 chart mode
+                tab.setContent(null);
+                break;
+            }
+        }
+    }
+
     /**
      * After a long round trip around the galaxy and half of the program,
      * PrimaryController finally calls this method to display a generated Chart 

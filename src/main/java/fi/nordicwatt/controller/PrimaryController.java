@@ -11,6 +11,7 @@ import fi.nordicwatt.model.services.DataManager;
 import fi.nordicwatt.model.services.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
 import fi.nordicwatt.types.Scenes;
+import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.EnvironmentVariables;
 
 import javafx.application.Platform;
@@ -18,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
@@ -34,7 +36,7 @@ public class PrimaryController implements DataManagerListener, SessionController
     private static PrimaryController instance;
     private RequestController requestController;
     private final DataManager dataManager = DataManager.getInstance();
-    private final SessionController sessionManager = SessionController.getInstance();
+    private final SessionController sessionController = SessionController.getInstance();
     private final ChartFactory chartFactory = ChartFactory.getInstance();
     private static Scene scene;
     private Stage stage;
@@ -67,8 +69,8 @@ public class PrimaryController implements DataManagerListener, SessionController
         LoadScene(Scenes.MainWorkspace.toString());        
         dataManager.registerListener(this);
 
-        sessionManager.registerListener(this);
-        sessionManager.loadSession();
+        sessionController.registerListener(this);
+        sessionController.loadSession();
     }
 
       
@@ -120,15 +122,11 @@ public class PrimaryController implements DataManagerListener, SessionController
         List<DataResult> data,
         Exception exception
     ) {
-        if (exception == null) {
-            if (data.isEmpty() || data == null) {
-                System.err.println("PrimaryController: data is empty/null");
-                return;
-            }
-            for (DataResult result : data) {
+        if (exception == null && !data.isEmpty() && data != null) {
+            for (DataResult result : data) {     
                 String tabId = result.getRequest().getChartMetadata().getTabId();
                 String chartId = result.getRequest().getChartMetadata().getChartId();
-                ChartRequest chartRequest = sessionManager.getChartRequest(tabId, chartId);
+                ChartRequest chartRequest = sessionController.getChartRequest(tabId, chartId);
                
                 if(chartRequest == null) {
                     System.err.println("PrimaryController: chartRequest is null, can't generate chart");
@@ -138,9 +136,8 @@ public class PrimaryController implements DataManagerListener, SessionController
                     result.getData(), 
                     chartRequest
                     );
-
-                System.out.println("Chart generated, " + chart.getId());
-                
+                chart.setId(chartId);
+               
                 // execute the chart adding to UI in JavaFX application thread
                 Platform.runLater(() -> {
                     requestController.addChartToTab(tabId, chart);
@@ -148,8 +145,24 @@ public class PrimaryController implements DataManagerListener, SessionController
             }           
         }
         else {
-            // TODO do something with the exception
+            // Reroll back the placeholder chart from UI and SessionController
+            for (DataResult result : data) {
+                rollBackChart(result, exception);
+            }
         }
+    }
+
+    private void rollBackChart(DataResult result, Exception exception) {        
+        String tabId = result.getRequest().getChartMetadata().getTabId();
+        String chartId = result.getRequest().getChartMetadata().getChartId();
+        sessionController.removeChart(tabId, chartId);
+
+        CustomAlerts.displayAlert(
+            AlertType.ERROR, 
+            "Exception from DataManager", 
+            "Can't create a chart because of an exception.\nResponse error message below:", 
+            exception.toString()
+        );        
     }
 
 
@@ -190,7 +203,7 @@ public class PrimaryController implements DataManagerListener, SessionController
                 break;
 
             case CHART_REMOVED:
-                // TODO: handle chart removed event
+                requestController.removeChartFromUI(data);
                 break;
 
             case CHART_MOVED:

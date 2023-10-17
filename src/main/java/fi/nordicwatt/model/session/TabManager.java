@@ -93,6 +93,12 @@ public class TabManager {
         
     }
 
+
+    /**
+     * Remove a tab from the session
+     * 
+     * @param tabId String from UUID
+     */
     public void removeTab (String tabId) {
         TabInfo keyToRemove = null;
 
@@ -109,6 +115,14 @@ public class TabManager {
         }
     }    
 
+
+    /**
+     * Add a chart to a tab
+     * 
+     * @param tabId    String from UUID
+     * @param request  ChartRequest containing params for chart creation
+     * @return
+     */
     public String addChartToTab(String tabId, ChartRequest request) {
         // TODO handle case when tab is not found
         for (TabInfo key : tabs.keySet()) {
@@ -119,5 +133,20 @@ public class TabManager {
         }
 
         return "";
+    }
+
+
+    /**
+     * Remove a chart from a tab
+     * 
+     * @param tabId     String from UUID  
+     * @param chartId   String from UUID
+     */
+    public void removeChartFromTab(String tabId, String chartId) {
+        for (TabInfo key : tabs.keySet()) {
+            if (key.getId().equals(tabId)) {
+                tabs.get(key).removeChart(chartId);
+            }
+        }
     }
 }
