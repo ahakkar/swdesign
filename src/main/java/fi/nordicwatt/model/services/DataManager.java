@@ -99,7 +99,7 @@ public final class DataManager {
             apiDataRequests.add(new ApiDataRequest(query));
         }
 
-        APIQueue.getData(apiDataRequests, (results, exception) -> {   
+        APIQueue.getData(apiDataRequests, (results, exception) -> {
             if (exception == null) {
                 for (ApiDataResult result : results) {
                     apiResults.add(new DataResult(result.getRequest().getDataRequest(), result.getResult()));
@@ -173,12 +173,14 @@ public final class DataManager {
      * Use to register a class as a listener
      * @param listener
      */
-    public void registerListener(DataManagerListener listener) {
+    public boolean registerListener(DataManagerListener listener) {
         if (listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
             // TODO remove Registered %s as DataManager's listener debug print
             System.out.printf("Registered %s as DataManager's listener\n", listener.toString());
+            return true;
         }
+        return false;
     }
 
 
@@ -186,8 +188,8 @@ public final class DataManager {
      * Remove a listener
      * @param listener
      */
-    public void removeListener(DataManagerListener listener) {
-        listeners.remove(listener);
+    public boolean removeListener(DataManagerListener listener) {
+        return listeners.remove(listener);
     }
 
 
