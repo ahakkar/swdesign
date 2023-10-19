@@ -147,7 +147,7 @@ public enum DataType
 
     TIME(
         "Time",
-        null,
+        "Time",
         APIType.NOAPI,
         MeasurementUnit.HOUR,
         Duration.ofHours(1),
