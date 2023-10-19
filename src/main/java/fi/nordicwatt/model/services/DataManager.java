@@ -1,10 +1,19 @@
 package fi.nordicwatt.model.services;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import fi.nordicwatt.model.api.APIQueue;
-import fi.nordicwatt.model.data.*;
+import fi.nordicwatt.model.data.AbstractDataModel;
+import fi.nordicwatt.model.data.ApiDataRequest;
+import fi.nordicwatt.model.data.ApiDataResult;
+import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.data.DataResult;
+import fi.nordicwatt.model.data.EnergyModel;
+import fi.nordicwatt.model.data.SettingsData;
+import fi.nordicwatt.model.data.WeatherModel;
 import fi.nordicwatt.types.DataType;
 
 /**
@@ -16,12 +25,14 @@ public final class DataManager {
 
     private static DataManager instance;
     private static DataStorage dataStorage;
+    private static PresetParsing presetParsing;
 
     private final ArrayList<DataManagerListener> listeners;
 
     private DataManager() {
         this.listeners = new ArrayList<>();
         DataManager.dataStorage = DataStorage.getInstance();
+        DataManager.presetParsing = PresetParsing.getInstance();
     }
 
     public static DataManager getInstance() {
@@ -204,6 +215,30 @@ public final class DataManager {
         for (DataManagerListener listener : listeners) {
             listener.onDataReadyForChart(data, exception);
         }
+    }
+
+    /**
+     * Sends the settings to be saved to PresetParsing.
+     * @param xAxis
+     * @param yAxis
+     * @param starttime
+     * @param endtime
+     * @param location
+     * @throws IOException
+     */
+    public void savePreset(DataType xAxis, DataType yAxis, LocalDate starttime, LocalDate endtime, String location) throws IOException
+    {
+        PresetParsing.saveSettings(xAxis, yAxis, starttime, endtime, location);
+    }
+
+    /**
+     * Loads the setting from PresetParsing.
+     * @return The saved settings as SettingsData object.
+     * @throws IOException
+     */
+    public SettingsData loadPreset() throws IOException
+    {
+        return PresetParsing.loadSettings();
     }
 
 }

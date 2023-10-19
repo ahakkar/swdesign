@@ -1,9 +1,12 @@
 package fi.nordicwatt.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 
 import fi.nordicwatt.model.data.ChartRequest;
+import fi.nordicwatt.model.data.SettingsData;
+import fi.nordicwatt.model.services.DataManager;
 import fi.nordicwatt.model.session.SessionChangeData;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
@@ -487,6 +490,12 @@ public class RequestController {
             alert.setContentText(
                     "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
             alert.showAndWait();
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                dataManager.savePreset(DataType.TIME, yAxisChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -506,6 +515,16 @@ public class RequestController {
             alert.setContentText(
                     "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
             alert.showAndWait();
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                SettingsData settingsData = dataManager.loadPreset();
+                xAxisChoiceBox.setValue(settingsData.getXAxis().toString());
+                yAxisChoiceBox.setValue(settingsData.getYAxis());
+                fromDatePicker.setValue(settingsData.getStarttime());
+                toDatePicker.setValue(settingsData.getEndtime());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 }

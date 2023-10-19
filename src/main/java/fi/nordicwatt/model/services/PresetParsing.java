@@ -12,13 +12,27 @@ import fi.nordicwatt.model.data.SettingsData;
 import fi.nordicwatt.types.DataType;
 
 /**
+ * A Singleton class.
  * Saves the chart settings to a file.
  * Also fetches already stored settings if requested.
  * @author Markus Hissa
  */
 public final class PresetParsing
 {   
+    private static PresetParsing instance;
     private static final File FILE = new File("./settings.conf");
+
+    public static PresetParsing getInstance() 
+    {
+        synchronized (PresetParsing.class) 
+        {
+            if (instance == null) 
+            {
+                instance = new PresetParsing();
+            }
+            return instance;
+        }
+    }
 
     protected static void saveSettings(DataType xAxis, DataType yAxis, LocalDate starttime, LocalDate endtime, String location) 
         throws IOException
