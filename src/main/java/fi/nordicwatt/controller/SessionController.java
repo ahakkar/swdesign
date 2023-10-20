@@ -1,16 +1,17 @@
 package fi.nordicwatt.controller;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
+import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.DataRequest;
-import fi.nordicwatt.model.data.DataResult;
-import fi.nordicwatt.model.services.DataManager;
-import fi.nordicwatt.model.services.DataManagerListener;
+import fi.nordicwatt.model.service.DataManager;
+import fi.nordicwatt.model.service.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
 import fi.nordicwatt.model.session.TabInfo;
-import fi.nordicwatt.model.session.TabManager;
 import fi.nordicwatt.types.SessionChangeType;
 
 /**
@@ -27,9 +28,15 @@ import fi.nordicwatt.types.SessionChangeType;
  */
 public class SessionController implements DataManagerListener {
     private static SessionController instance;
-    private final TabManager tabManager = TabManager.getInstance();
     private final DataManager dataManager = DataManager.getInstance();
-    private ArrayList<SessionControllerListener> listeners;
+    private static ArrayList<SessionControllerListener> listeners;
+
+    // UUID tabId, TabInfo object
+    private static Map<String, TabInfo> tabMap = new HashMap<>();
+
+    // UUID chartId, ChartRequest object
+    private static Map<String, ChartRequest> chartMap = new HashMap<>();
+
 
     // TODO should be somehow synced bidirectionally with UI
     private String currentTabId; 
@@ -56,7 +63,9 @@ public class SessionController implements DataManagerListener {
      * Register this class as a listener to DataManager's events
      */
     public SessionController() {
-        this.listeners = new ArrayList<>();
+        SessionController.listeners = new ArrayList<>();
+        SessionController.tabMap = new HashMap<>();
+        SessionController.chartMap = new HashMap<>();
         dataManager.registerListener(this);
     }
 
@@ -91,89 +100,20 @@ public class SessionController implements DataManagerListener {
      */
     public void resetSession() {
     }
-
-
-    /**
-     * When selected tab changes in UI, this method is called to update
-     * currentTabId. This is used to determine which tab is visible for user.
-     * 
-     * @param newTabId   Unique UUID string for a tab which is selected
-     */
-    public void setCurrentTabId(String newTabId) {
-        this.currentTabId = newTabId;
-    }
-
-
-    /**
-     * Called from RequestDispatcher after user submitted chart parameters
-     * are validated. Sends a DataRequest to DataManager. DataManager will
-     * fetch data from API and notify PrimaryController when data is ready.
-     * Unique tabId and chartId are bundled to the DataRequest so we can match
-     * received data to the correct chart.
-     * 
-     * @param chartRequest ChartRequest object
-     * @param dataRequest  DataRequest object
-     * @param tabId        Unique UUID string for a tab where the chart will go
-     */
-    public void newChartRequest (
-        ChartRequest chartRequest,
-        DataRequest dataRequest,
-        String tabId
-    ) throws IllegalArgumentException {
-        if (tabId.equals(null)) {
-            throw new IllegalArgumentException("[SessionController]: tabId is null");
-        }
-        String chartId = this.addChart(tabId, chartRequest);
-
-        if (chartId.equals(null)) {
-            System.out.println("[SessionController]: chartId is null");
-            return;
-        }
-
-        dataRequest.setChartMetadata(tabId, chartId);
-        tabManager.addDataRequestToChart(tabId, chartId, dataRequest);
-        
-        List<DataRequest> list = new ArrayList<DataRequest>();
-        list.add(dataRequest);
-        dataManager.getData(list);
-  
-    }
-
-
-    /**
-     * When something needs to know to which tab the chart should go, this
-     * method can be used to get the tab's UUID. Behind the scenes the selected
-     * tab's id is returned, or a new tab is created if no tabs exist or the
-     * current tab is full of charts. 
-     * 
-     * @return tabId Unique UUID string for a tab where the chart will go
-     */
-    public String getTabIdForChart() {
-        if(currentTabId != null) {
-            if(tabManager.isTabFull(currentTabId)) {
-                this.addTab();
-            }
-            return currentTabId;
-        }
-        return this.addTab();
-    }
         
 
     /**
-     * Adds a tab to the session and changes currentTabId to the new tabId.
-     * TabManager will create a new tab and returna TabInfo object containing
-     * the tab's UUID and title. This info is then used to create a new tab 
-     * in UI, by sending a notification to SessionController's listeners.
-     * 
-     * TODO give error msg to user if tab count is at maximum
+     *
      */
     public String addTab() {
-        TabInfo info = tabManager.addTab();
+        TabInfo newTab = new TabInfo("Tab");        
+        
         SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_ADDED);  
-        data.setTabId(info.getId());
-        data.setTitle(info.getTitle());
-        this.currentTabId = info.getId();  
+        data.setTabId(newTab.getId());
+        data.setTitle(newTab.getTitle());
+        this.currentTabId = newTab.getId();       
 
+        tabMap.put(newTab.getId(), newTab);
         notifyListeners(data);  // Used to notify PrimaryController to add a new Tab to UI
 
         return currentTabId;
@@ -181,36 +121,65 @@ public class SessionController implements DataManagerListener {
 
 
     /**
-     * Asks TabManager to remove a tab, and notifies SessionController's
-     * listeners about the removal.
+     * Remove a tab.
      * 
      * @param tabId     Unique UUID string for a tab to be removed
      */
     public void removeTab(String tabId) {
-        tabManager.removeTab(tabId);
+        Set<String> storeCharts = tabMap.get(tabId).getStoredCharts();
+        tabMap.remove(tabId);
+
+        for(Iterator<String> it = storeCharts.iterator(); it.hasNext();) {
+            String chartId = it.next();
+            chartMap.remove(chartId);
+        }
+        
         SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_REMOVED);  
         data.setTabId(tabId);
         notifyListeners(data);
     }
 
+    
     /**
-     * Called from SessionManager when a new empty chart is added to a tab.
-     * A placeholder tab should be added to UI with the help of the event.
-     * Data will be added to the chart later when it's ready.
      * 
-     * @param tabId     Unique UUID string for a tab where the chart will go
-     * @param request   Parameters which can be used to create a chart with 
-     *                  ChartFactory
+     * @param chartRequest ChartRequest object
      */
-    private String addChart(
-        String tabId,
-        ChartRequest request
+    public void newChartRequest (ChartRequest chartRequest)
+        throws IllegalArgumentException
+    {
+        this.addChart(chartRequest);         
+        dataManager.getData(chartRequest.getRequestBundle());  
+    }
+
+
+    /**
+     *
+     * @param Chartrequest  Parameters which can be used to create a chart with 
+     *                      ChartFactory
+     */
+    private String addChart(  
+        ChartRequest chartRequest
     ) {       
-        String chartId = tabManager.addChartToTab(tabId, request);
+        String chartId = chartRequest.getChartId();
+        String tabId = "";
+
+        // Find room for a new chart
+        if(tabMap.get(currentTabId) == null) {
+            tabId = this.addTab();
+        } else if (tabMap.get(currentTabId).getStoredChartCount() >= Constants.MAX_CHARTS_PER_TAB) {
+            tabId = this.addTab();
+        } else {
+            tabId = currentTabId;
+        }        
+        
+        tabMap.get(tabId).incrementStoredChartCount();
+        tabMap.get(tabId).addChart(chartId);
+        chartMap.put(chartId, chartRequest);
+
         SessionChangeData change = new SessionChangeData(SessionChangeType.CHART_ADDED);
         change.setTabId(tabId);
         change.setChartId(chartId);
-        change.setChartRequest(request);
+        change.setChartRequest(chartRequest);
 
         // TODO use this? to tell PrimaryController to display a spinning widget on UI..
         notifyListeners(change);
@@ -222,41 +191,65 @@ public class SessionController implements DataManagerListener {
      * user clicks the remove button on a chart. Or if a DataManager returns
      * and exception and a chart can't be created.
      * 
-     * @param tabId    Unique UUID string for a tab where the chart is
      * @param chartId  Unique UUID string for a chart to be removed
      */
-    public void removeChart(String tabId, String chartId) {
-        tabManager.removeChartFromTab(tabId, chartId);
+    public void removeChart(String chartId) {   
+        String tabId = "";
+        for (Map.Entry<String, TabInfo> entry : tabMap.entrySet()) {
+            if (entry.getValue().removeChart(chartId)) {
+                tabId = entry.getKey();
+                break;
+            }
+        }
+
         SessionChangeData data = new SessionChangeData(SessionChangeType.CHART_REMOVED);
         data.setTabId(tabId);
         data.setChartId(chartId);
+
+        chartMap.remove(chartId);
         notifyListeners(data);
-    }
-
-
-    /**
-     * Actually not used for anything. No idea what the idea behind this was -ah
-     * 
-     * @param tabId
-     * @param request
-     * @param data
-     * 
-     * TODO remove when really deemed unneccessary
-     */
-    public void onDataReadyForChart(String tabId, ChartRequest request, List<DataResult> data) {
-
     }
 
 
     /**
      * Retrieve parameters for creating a chart from the specified tab.
      * 
-     * @param tabId   Unique UUID string where to look the chart params from
      * @param chartId Unique UUID string for which chart to choose from the tab
      * @return        Object containing data required for a Chart creation task.
      */
-    public ChartRequest getChartRequest(String tabId, String chartId) {
-        return tabManager.getChartRequest(tabId, chartId);
+    public ChartRequest getChartRequest(String requestBundleId) {
+        // search chartmap for chartrequest with matching requestbundleid
+        ChartRequest chartRequest = null;
+        for (Map.Entry<String, ChartRequest> entry : chartMap.entrySet()) {
+            if (entry.getValue().getRequestBundleId().equals(requestBundleId)) {
+                chartRequest = entry.getValue();
+                break;
+            }
+        }
+
+        return chartRequest;
+    }
+
+    public String getTabIdForChart(String chartId) {
+        String tabId = "";
+        for (Map.Entry<String, TabInfo> entry : tabMap.entrySet()) {
+            if (entry.getValue().getStoredCharts().contains(chartId)) {
+                tabId = entry.getKey();
+                break;
+            }
+        }
+        return tabId;
+    }
+
+
+    /**
+     * When selected tab changes in UI, this method is called to update
+     * currentTabId. This is used to determine which tab is visible for user.
+     * 
+     * @param newTabId   Unique UUID string for a tab which is selected
+     */
+    public void setCurrentTabId(String newTabId) {
+        this.currentTabId = newTabId;
     }
 
    

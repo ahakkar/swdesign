@@ -3,7 +3,7 @@ package fi.nordicwatt.model.session;
 import java.util.List;
 
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.DataResult;
+import fi.nordicwatt.model.data.DataResponse;
 import fi.nordicwatt.types.SessionChangeType;
 
 /**
@@ -17,7 +17,7 @@ public class SessionChangeData {
     private String tabId;
     private String chartId;
     private String title;
-    private List<DataResult> data;
+    private List<DataResponse> data;
     private ChartRequest chartRequest;
 
     public SessionChangeData(
@@ -64,11 +64,11 @@ public class SessionChangeData {
         return title;
     }
 
-    public List<DataResult> getData() {
+    public List<DataResponse> getData() {
         return data;
     }
 
-    public void setData(List<DataResult> data) {
+    public void setData(List<DataResponse> data) {
         this.data = data;
     }
 

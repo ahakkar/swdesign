@@ -56,7 +56,8 @@ public abstract class AbstractAPIRequestBuilder<T extends AbstractAPIRequestBuil
     public T withEndTime(String endTime) {
         this.endTime = endTime;
         return (T) this;
-    }
+    }   
+
 
     public String getBuiltUrl() {
         return urlBuilder.build().toString();
@@ -69,12 +70,15 @@ public abstract class AbstractAPIRequestBuilder<T extends AbstractAPIRequestBuil
     protected abstract void addQueryParameters();
 
     public Response execute() throws IOException {
+        addPath();
+        addQueryParameters();
+
         if (!isValid()) {
+            System.out.println("Validation failed. Start Time: " + startTime + ", End Time: " + endTime);
             throw new IllegalStateException("Request is not valid");
         }
 
-        addPath();
-        addQueryParameters();
+
         Request finalRequest = requestBuilder.url(urlBuilder.build()).build();
 
         return httpClient.newCall(finalRequest).execute();

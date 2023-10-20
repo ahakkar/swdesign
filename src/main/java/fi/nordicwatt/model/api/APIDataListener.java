@@ -1,14 +1,14 @@
 package fi.nordicwatt.model.api;
 
-import java.util.ArrayList;
-
-import fi.nordicwatt.model.data.ApiDataResult;
+import fi.nordicwatt.model.datamodel.RequestBundle;
+import fi.nordicwatt.model.datamodel.ResponseBundle;
 
 /**
  * 
  * @author ??? 
  */
 public interface APIDataListener {
+    void APIDataRequestSuccess(ResponseBundle responses);
 
-    void newApiDataAvailable(ArrayList<ApiDataResult> data, Exception exception);
+    void APIDataRequestFailure(RequestBundle requests, Exception e);
 }

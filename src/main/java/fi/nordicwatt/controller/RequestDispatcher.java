@@ -1,10 +1,10 @@
 package fi.nordicwatt.controller;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.CustomAlerts;
 import javafx.scene.control.Alert.AlertType;
@@ -44,7 +44,6 @@ public class RequestDispatcher
      * @param startTime     Start of the range for data we want to display in chart
      * @param endTime       End of the range for data we want to display in chart
      * @param location      Ie. "Helsinki", "Tampere"
-     * @param tabId         String representation of UUID of the tab
      * @return              True if data was good, false if not
      */
     public Boolean validateAddChartRequest(
@@ -52,8 +51,7 @@ public class RequestDispatcher
         DataType dataType, 
         LocalDateTime startTime,
         LocalDateTime endTime,        
-        String location,
-        String tabId
+        String location
     ) {
         if (dataType == null) {
             CustomAlerts.displayAlert(
@@ -92,20 +90,16 @@ public class RequestDispatcher
             return false;
         }
 
-        try {
-            UUID.fromString(tabId);
-        } catch (IllegalArgumentException e) {
-            CustomAlerts.displayAlert(
-                AlertType.ERROR,
-                "Error in RequestDispatcher",
-                "Selected tab is invalid.\nTabId is not a valid UUID."
-                );
-            return false;
-        }
-
+        // TODO support for more complicated datarequests
+        // ie. add more requests to a bundle to get more complex data from
+        // multiple sources to a chart!
         DataRequest dataRequest = new DataRequest(dataType, startTime, endTime, location);
+        RequestBundle bundle = new RequestBundle();
+        bundle.addItem(dataRequest);
+        chartRequest.setRequestBundle(bundle);
+    
         SessionController sessionController = SessionController.getInstance();
-        sessionController.newChartRequest(chartRequest, dataRequest, tabId);
+        sessionController.newChartRequest(chartRequest);
         
         return true;
     }

@@ -1,7 +1,7 @@
 package fi.nordicwatt.model.api;
 
-import fi.nordicwatt.model.data.AbstractDataModel;
-import fi.nordicwatt.model.data.ApiDataRequest;
+import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.datamodel.AbstractDataModel;
 
 /**
  * APIParserInterface - Interface for API parsers.
@@ -17,7 +17,7 @@ public interface APIParserInterface<T extends AbstractDataModel<?>> {
      * @param response - Response from API
      * @return Data object
      */
-    T parseToDataObject(ApiDataRequest request, String response) throws ParseException;
+    T parseToDataObject(DataRequest request, String response) throws ParseException;
 
     class ParseException extends Exception {
         public ParseException(String message) {

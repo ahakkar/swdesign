@@ -1,8 +1,7 @@
 package fi.nordicwatt.controller.factory;
 
-import fi.nordicwatt.model.data.AbstractDataModel;
 import fi.nordicwatt.model.data.ChartRequest;
-
+import fi.nordicwatt.model.datamodel.ResponseBundle;
 import javafx.scene.chart.Chart;
 
 /**
@@ -47,9 +46,9 @@ public class ChartFactory {
      * @param request   parameters needed for chart creation (axis etc)
      * @return          Finished Chart object ready to be added to UI
      */
-    public Chart generateChart(
-        AbstractDataModel<Double> data,
-        ChartRequest request
+    public Chart generateChart(        
+        ChartRequest request,
+        ResponseBundle data
     ) {    
         switch(request.getChartType()) {
             // At this stage first 3 use the same class -ah

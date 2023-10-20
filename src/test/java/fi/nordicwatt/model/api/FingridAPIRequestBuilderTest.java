@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
+
+import fi.nordicwatt.model.api.fingrid.FingridAPIRequestBuilder;
 import fi.nordicwatt.utils.EnvironmentVariables;
 
 import com.fasterxml.jackson.databind.JsonNode;
