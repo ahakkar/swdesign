@@ -1,12 +1,12 @@
-package fi.nordicwatt.model.services;
+package fi.nordicwatt.model.service;
 
-import fi.nordicwatt.model.data.WeatherModel;
 import org.junit.jupiter.api.Test;
 import fi.nordicwatt.model.data.DataRequest;
-import fi.nordicwatt.model.data.DataResult;
-import fi.nordicwatt.model.data.EnergyModel;
-import fi.nordicwatt.model.services.DataManager;
-import fi.nordicwatt.model.services.DataManagerListener;
+import fi.nordicwatt.model.data.DataResponse;
+import fi.nordicwatt.model.datamodel.EnergyModel;
+import fi.nordicwatt.model.datamodel.RequestBundle;
+import fi.nordicwatt.model.datamodel.ResponseBundle;
+import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.EnvironmentVariables;
 
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,38 +30,49 @@ public class DataManagerTest {
     public void testGetData() throws IOException, InterruptedException {
         EnvironmentVariables.load(".env");
         DataManager dm = DataManager.getInstance();
-        List<DataRequest> queries = new ArrayList<>();
-        final List<DataResult> results = new ArrayList<>();
+
+        String responseId = UUID.randomUUID().toString();
+        RequestBundle requests = new RequestBundle();
+        
+        final ResponseBundle responses = new ResponseBundle(responseId);
         final List<Exception> exceptions = new ArrayList<>();
         CountDownLatch latch = new CountDownLatch(1);
+
         Thread currentThread = Thread.currentThread();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         final Thread[] callbackThread = new Thread[2];
-
         System.out.println("TEST STARTING ON THREAD " + Thread.currentThread().toString());
-        queries.add(new DataRequest(DataType.TEMPERATURE, LocalDateTime.parse("2023-08-01 00:00:00", formatter), LocalDateTime.parse("2023-08-02 00:00:00", formatter), "tampere"));
-        //queries.add(new DataRequest(DataType.CONSUMPTION, LocalDateTime.now().minusDays(1), LocalDateTime.now(), "Helsinki"));
+
+        requests.addItem(
+            new DataRequest(
+                DataType.TEMPERATURE, 
+                LocalDateTime.parse("2023-08-01 00:00:00", formatter),
+                LocalDateTime.parse("2023-08-02 00:00:00", formatter),
+                "tampere"));
+        //requests.addItem(new DataRequest(DataType.CONSUMPTION, LocalDateTime.now().minusDays(1), LocalDateTime.now(), "Helsinki"));
+
         DataManagerListener listener = new DataManagerListener() {
             @Override
-            public void onDataReadyForChart(List<DataResult> data, Exception e) {
+            public void dataRequestSuccess(ResponseBundle responsesReceived) {
                 callbackThread[0] = Thread.currentThread();
-                if (data != null){
-                    results.addAll(data);
-                }
-
-                if (e != null){
-                    exceptions.add(e);
-                }
+                responses.setItems(responsesReceived.getItems());
                 latch.countDown();
+            }
 
+            @Override
+            public void dataRequestFailure(RequestBundle failedRequests, Exception e) {
+                callbackThread[0] = Thread.currentThread();
+                exceptions.add(e);
+                latch.countDown();
             }
         };
+
         assertTrue(dm.registerListener(listener));
-        dm.getData(queries);
+        dm.getData(requests);
 
         // Assuming that getData has been called but data is not ready yet..
-        assertEquals(0, results.size());
+        assertEquals(0, responses.getItems().size());
         assertEquals(0, exceptions.size());
 
         // Wait for data to be ready
@@ -71,10 +83,10 @@ public class DataManagerTest {
         // Assuming callback was run on a different thread
         assertNotEquals(callbackThread[0], Thread.currentThread());
 
-        assertEquals(1, results.size());
+        assertEquals(1, responses.getItems().size());
         assertEquals(0, exceptions.size());
-        for (DataResult result : results){
-            assertTrue(result.getData() instanceof WeatherModel);
+        for (DataResponse response : responses.getItems()){
+            assertTrue(response.getData() instanceof WeatherModel);
         }
         assertTrue(success);
 
@@ -90,40 +102,48 @@ public class DataManagerTest {
 
         assertTrue(threadTerminated);
 
-        List<DataRequest> queries2 = new ArrayList<>();
-        final List<DataResult> results2 = new ArrayList<>();
+        String responseId2 = UUID.randomUUID().toString();
+        RequestBundle requests2 = new RequestBundle();
+        ResponseBundle responses2 = new ResponseBundle(responseId2);
+
         final List<Exception> exceptions2 = new ArrayList<>();
         CountDownLatch latch2 = new CountDownLatch(1);
 
-        queries2.add(new DataRequest(DataType.CONSUMPTION, LocalDateTime.parse("2023-08-01 00:00:00", formatter), LocalDateTime.parse("2023-08-02 00:00:00", formatter), "helsinki"));
-        DataManagerListener listener2= new DataManagerListener() {
+        requests2.addItem(
+            new DataRequest(
+                DataType.CONSUMPTION,
+                LocalDateTime.parse("2023-08-01 00:00:00", formatter),
+                LocalDateTime.parse("2023-08-02 00:00:00", formatter), 
+                "helsinki"));
+
+        DataManagerListener listener2 = new DataManagerListener() {
             @Override
-            public void onDataReadyForChart(List<DataResult> data, Exception e) {
+            public void dataRequestSuccess(ResponseBundle responsesReceived) {
                 callbackThread[1] = Thread.currentThread();
-                if (data != null){
-                    results2.addAll(data);
-                }
-
-                if (e != null){
-                    exceptions2.add(e);
-                }
+                responses2.setItems(responsesReceived.getItems());
                 latch2.countDown();
+            }
 
+            @Override
+            public void dataRequestFailure(RequestBundle failedRequests, Exception e) {
+                callbackThread[1] = Thread.currentThread();
+                exceptions2.add(e);
+                latch2.countDown();
             }
         };
 
         assertTrue(dm.registerListener(listener2));
-        dm.getData(queries2);
+        dm.getData(requests2);
 
-        assertEquals(0, results2.size());
+        assertEquals(0, responses2.getItems().size());
         assertEquals(0, exceptions2.size());
 
         boolean success2 = latch2.await(5, java.util.concurrent.TimeUnit.SECONDS);
         assertTrue(dm.removeListener(listener2));
 
-        assertEquals(1, results2.size());
+        assertEquals(1, responses2.getItems().size());
         assertEquals(0, exceptions2.size());
-        for (DataResult result : results2){
+        for (DataResponse result : responses2.getItems()){
             assertTrue(result.getData() instanceof EnergyModel);
         }
         assertTrue(success2);
@@ -143,6 +163,7 @@ public class DataManagerTest {
         }
 
         assertTrue(threadTerminated);
+
 
     }
 

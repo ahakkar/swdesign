@@ -1,4 +1,4 @@
-package fi.nordicwatt.model.api;
+package fi.nordicwatt.model.api.fingrid;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -7,8 +7,9 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
-import fi.nordicwatt.model.data.ApiDataRequest;
-import fi.nordicwatt.model.data.EnergyModel;
+import fi.nordicwatt.model.api.APIParserInterface;
+import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.types.DataType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,7 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
      * @return Data object
      */
     @Override    
-    public EnergyModel parseToDataObject(ApiDataRequest request, String response) throws ParseException {
+    public EnergyModel parseToDataObject(DataRequest request, String response) throws ParseException {
         try {
             ObjectMapper mapper = new ObjectMapper();
     
@@ -57,7 +58,7 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
             DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
             String formattedTimestamp = dateTime.format(desiredFormat);
-            DataType type = request.getDataRequest().getDataType();
+            DataType type = request.getDataType();
     
             return new EnergyModel(type, type.getUnit(), formattedTimestamp, values);
 

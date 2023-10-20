@@ -1,5 +1,6 @@
-package fi.nordicwatt.model.api;
+package fi.nordicwatt.model.api.fingrid;
 
+import fi.nordicwatt.model.api.AbstractAPIRequestBuilder;
 import fi.nordicwatt.types.APIType;
 import fi.nordicwatt.utils.EnvironmentVariables;
 

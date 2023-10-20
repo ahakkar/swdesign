@@ -7,11 +7,11 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
-import fi.nordicwatt.model.api.FMIApiParser;
-import fi.nordicwatt.model.api.FmiAPIRequestBuilder;
-import fi.nordicwatt.model.data.ApiDataRequest;
+
+import fi.nordicwatt.model.api.fmi.FmiAPIRequestBuilder;
+import fi.nordicwatt.model.api.fmi.FmiApiParser;
 import fi.nordicwatt.model.data.DataRequest;
-import fi.nordicwatt.model.data.WeatherModel;
+import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 
@@ -48,13 +48,13 @@ public class FmiAPIRequestBuilderTest {
 
         // Build the request
         FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
-                .withPlace(place)
+                .withLocation(place)
                 .withStartTime(formattedStartTime)
                 .withEndTime(formattedEndTime)
                 .withDataType(DataType.TEMPERATURE.getVariableId());
 
         Response response = builder.execute();
-        FMIApiParser parser = new FMIApiParser();
+        FmiApiParser parser = new FmiApiParser();
 
         DataRequest dataRequest = 
             new DataRequest(
@@ -63,9 +63,8 @@ public class FmiAPIRequestBuilderTest {
                 LocalDateTime.of(2021, 10, 7, 0, 0),      
                 "tampere"
                 );
-        ApiDataRequest apiDataRequest = new ApiDataRequest(dataRequest);
 
-        WeatherModel responseBody = parser.parseToDataObject(apiDataRequest, response.body().string());
+        WeatherModel responseBody = parser.parseToDataObject(dataRequest, response.body().string());
         assertNotNull(responseBody);
 
         String realLocation = responseBody.getLocation().toLowerCase();

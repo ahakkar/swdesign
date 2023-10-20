@@ -1,8 +1,8 @@
-package fi.nordicwatt.model.services;
+package fi.nordicwatt.model.service;
 
-import fi.nordicwatt.model.data.AbstractDataModel;
+import fi.nordicwatt.model.datamodel.AbstractDataModel;
 import fi.nordicwatt.model.data.DataRequest;
-import fi.nordicwatt.model.data.WeatherModel;
+import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 

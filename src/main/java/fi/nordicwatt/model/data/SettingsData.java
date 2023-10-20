@@ -2,6 +2,7 @@ package fi.nordicwatt.model.data;
 
 import java.time.LocalDate;
 
+import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 
 /**
@@ -10,19 +11,29 @@ import fi.nordicwatt.types.DataType;
  */
 public class SettingsData 
 {
+    private final ChartType chartType;
     private final DataType xAxis;
     private final DataType yAxis;
     private final LocalDate starttime;
     private final LocalDate endtime;
     private final String location;
 
-    public SettingsData(DataType xAxis, DataType yAxis, LocalDate starttime, LocalDate endtime, String location)
+    public SettingsData(ChartType chartType, DataType xAxis, DataType yAxis, LocalDate starttime, LocalDate endtime, String location)
     {
+        this.chartType = chartType;
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.starttime = starttime;
         this.endtime = endtime;
         this.location = location;
+    }
+
+    /**
+     * @return ChartType return the chartType
+     */
+    public ChartType getChartType()
+    {
+        return chartType;
     }
 
     /**

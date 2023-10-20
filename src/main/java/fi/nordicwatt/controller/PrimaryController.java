@@ -1,15 +1,17 @@
 package fi.nordicwatt.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import fi.nordicwatt.App;
 import fi.nordicwatt.controller.factory.ChartFactory;
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.DataResult;
-import fi.nordicwatt.model.services.DataManager;
-import fi.nordicwatt.model.services.DataManagerListener;
+import fi.nordicwatt.model.data.DataResponse;
+import fi.nordicwatt.model.datamodel.RequestBundle;
+import fi.nordicwatt.model.datamodel.ResponseBundle;
+import fi.nordicwatt.model.service.DataManager;
+import fi.nordicwatt.model.service.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
+import fi.nordicwatt.model.session.TabInfo;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.EnvironmentVariables;
@@ -118,44 +120,37 @@ public class PrimaryController implements DataManagerListener, SessionController
      * @param exception  possible exception from the API
      */
     @Override
-    public void onDataReadyForChart(
-        List<DataResult> data,
-        Exception exception
-    ) {
-        if (exception == null && !data.isEmpty() && data != null) {
-            for (DataResult result : data) {     
-                String tabId = result.getRequest().getChartMetadata().getTabId();
-                String chartId = result.getRequest().getChartMetadata().getChartId();
-                ChartRequest chartRequest = sessionController.getChartRequest(tabId, chartId);
-               
-                if(chartRequest == null) {
-                    System.err.println("PrimaryController: chartRequest is null, can't generate chart");
-                    return;
-                }
-                Chart chart = chartFactory.generateChart(
-                    result.getData(), 
-                    chartRequest
-                    );
-                chart.setId(chartId);
-               
-                // execute the chart adding to UI in JavaFX application thread
-                Platform.runLater(() -> {
-                    requestController.addChartToTab(tabId, chart);
-                });
-            }           
+    public void dataRequestSuccess(ResponseBundle data) {   
+
+        ChartRequest chartRequest = 
+            sessionController.getChartRequest(data.getRequestId());
+        
+        if(chartRequest == null) {
+            System.out.println("PrimaryController: chartRequest is null, can't generate chart");
+            // TODO log error
+            return;
         }
-        else {
-            // Reroll back the placeholder chart from UI and SessionController
-            for (DataResult result : data) {
-                rollBackChart(result, exception);
-            }
-        }
+
+        Chart chart = chartFactory.generateChart(chartRequest, data);
+        chart.setId(chartRequest.getChartId());
+        String tabId = sessionController.getTabIdForChart(chartRequest.getChartId());
+        
+        // execute the chart adding to UI in JavaFX application thread
+        Platform.runLater(() -> {
+           requestController.addChartToTab(tabId, chart);
+        });              
     }
 
-    private void rollBackChart(DataResult result, Exception exception) {        
-        String tabId = result.getRequest().getChartMetadata().getTabId();
-        String chartId = result.getRequest().getChartMetadata().getChartId();
-        sessionController.removeChart(tabId, chartId);
+    @Override
+    public void dataRequestFailure(RequestBundle requests, Exception e) {
+        // TODO use rollbackchart to remove placeholder chart for failed requests
+    }
+
+    private void rollBackChart(DataResponse response, Exception exception) {        
+        String requestId = response.getRequest().getId();
+
+        // TODO add requestId to the chartRequest so we can use it here to remove the placeholder chart
+        //sessionController.removeChart(tabId, chartId);
         Platform.runLater(() -> {
             CustomAlerts.displayAlert(
                     AlertType.ERROR,

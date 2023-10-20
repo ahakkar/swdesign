@@ -8,9 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
-import fi.nordicwatt.model.data.ApiDataRequest;
+import fi.nordicwatt.model.api.fingrid.FingridAPIRequestBuilder;
+import fi.nordicwatt.model.api.fingrid.FingridApiParser;
 import fi.nordicwatt.model.data.DataRequest;
-import fi.nordicwatt.model.data.EnergyModel;
+import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 import fi.nordicwatt.utils.EnvironmentVariables;
@@ -48,10 +49,9 @@ public class FingridApiParserTest {
                     LocalDateTime.of(2021, 10, 4, 0, 0),
                     LocalDateTime.of(2021, 10, 7, 0, 0),      
                     "Helsinki"
-                    );
-            ApiDataRequest apiDataRequest = new ApiDataRequest(dataRequest);
+                    );  
 
-            EnergyModel model = parser.parseToDataObject(apiDataRequest, response.body().string());
+            EnergyModel model = parser.parseToDataObject(dataRequest, response.body().string());
             assertEquals(model.getDataType(), DataType.CONSUMPTION);
             assertEquals(model.getUnit(), MeasurementUnit.MEGA_WATT_HOUR);
 

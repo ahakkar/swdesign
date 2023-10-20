@@ -2,7 +2,7 @@ package fi.nordicwatt.model.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import fi.nordicwatt.model.data.EnergyModel;
+import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 
