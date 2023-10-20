@@ -57,7 +57,6 @@ public final class PresetParsing
         {
             e.printStackTrace();
         }
-
     }
 
     protected SettingsData loadSettings() 
