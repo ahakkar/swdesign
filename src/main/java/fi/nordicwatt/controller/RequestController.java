@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.SettingsData;
+import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.model.session.SessionChangeData;
 import fi.nordicwatt.types.AxisType;
@@ -494,7 +494,7 @@ public class RequestController {
             alert.showAndWait();
             DataManager dataManager = DataManager.getInstance();
             try {
-                dataManager.savePreset(DataType.TIME, yAxisChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                dataManager.savePreset(chartTypeChoiceBox.getValue(), DataType.TIME, yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -520,8 +520,11 @@ public class RequestController {
             DataManager dataManager = DataManager.getInstance();
             try {
                 SettingsData settingsData = dataManager.loadPreset();
+                chartTypeChoiceBox.setValue(settingsData.getChartType());
                 xAxisChoiceBox.setValue(settingsData.getXAxis().toString());
                 yAxisChoiceBox.setValue(settingsData.getYAxis());
+                relativeTimeToggle.setSelected(settingsData.isRelativeTime());
+                relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
                 fromDatePicker.setValue(settingsData.getStarttime());
                 toDatePicker.setValue(settingsData.getEndtime());
             } catch (IOException e) {

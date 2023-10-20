@@ -8,13 +8,15 @@ import fi.nordicwatt.model.api.APIDataListener;
 import fi.nordicwatt.model.api.APIQueue;
 import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.data.DataResponse;
-import fi.nordicwatt.model.data.SettingsData;
 import fi.nordicwatt.model.datamodel.AbstractDataModel;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.model.datamodel.ResponseBundle;
+import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.datamodel.WeatherModel;
+import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
+import fi.nordicwatt.types.RelativeTimePeriod;
 import fi.nordicwatt.utils.DataNotFoundException;
 
 /**
@@ -218,16 +220,19 @@ public class DataManager implements APIDataListener {
 
         /**
      * Sends the settings to be saved to PresetParsing.
+     * @param chartType
      * @param xAxis
      * @param yAxis
+     * @param relativeTime
+     * @param relativeTimePeriod
      * @param starttime
      * @param endtime
      * @param location
      * @throws IOException
      */
-    public void savePreset(DataType xAxis, DataType yAxis, LocalDate starttime, LocalDate endtime, String location) throws IOException
+    public void savePreset(ChartType chartType, DataType xAxis, DataType yAxis, Boolean relativeTime, RelativeTimePeriod relativeTimePeriod, LocalDate starttime, LocalDate endtime, String location) throws IOException
     {
-        presetParsing.saveSettings(xAxis, yAxis, starttime, endtime, location);
+        presetParsing.saveSettings(chartType, xAxis, yAxis, relativeTime, relativeTimePeriod, starttime, endtime, location);
     }
 
     /**
