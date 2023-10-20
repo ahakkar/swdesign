@@ -2,7 +2,9 @@ package fi.nordicwatt.model.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.types.APIType;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
@@ -26,7 +28,8 @@ public class ChartRequest
     private APIType apiType;
     private ChartType chartType;
     private Map<AxisType, DataType> axisMap = new HashMap<>();
-    private DataRequest dataRequest;
+    private RequestBundle bundle;
+    private final String chartId;
 
     /**
      * Initializes a new ChartRequest.
@@ -35,12 +38,14 @@ public class ChartRequest
         APIType apiType,
         ChartType chartType,
         Map<AxisType, DataType> axisMap, 
-        DataRequest dataRequest
+        RequestBundle bundle
+
     ) {
         this.apiType = apiType;
         this.chartType = chartType;
         this.axisMap = axisMap;
-        this.dataRequest = dataRequest;
+        this.bundle = bundle;
+        this.chartId = UUID.randomUUID().toString();
     }
 
 
@@ -64,8 +69,12 @@ public class ChartRequest
         return axisMap;
     }
 
-    public void setDataRequest(DataRequest dataRequest) {
-        this.dataRequest = dataRequest;
+    public void setRequestBundle(RequestBundle bundle) {
+        this.bundle = bundle;
+    }
+
+    public String getRequestBundleId() {
+        return bundle.getId();
     }
 
 
@@ -75,11 +84,15 @@ public class ChartRequest
      * 
      * @return DataRequest The data request of the chart's data
      */
-    public DataRequest getDataRequest() {
-        return dataRequest;
+    public RequestBundle getRequestBundle() {
+        return this.bundle;
     }
 
     public ChartType getChartType() {
         return chartType;
+    }
+
+    public String getChartId() {
+        return chartId;
     }
 }

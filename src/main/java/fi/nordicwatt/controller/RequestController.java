@@ -2,6 +2,7 @@ package fi.nordicwatt.controller;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.UUID;
 
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.session.SessionChangeData;
@@ -152,7 +153,7 @@ public class RequestController {
             yAxisChoiceBox.getValue().getAPIType(),
             chartTypeChoiceBox.getValue(),
             axisMap,
-            null         // Constructed in RequestDispatcher after validation         
+            null
         );
 
         requestDispatcher.validateAddChartRequest(
@@ -160,8 +161,7 @@ public class RequestController {
             yAxisChoiceBox.getValue(),
             fromDatePicker.getValue().atStartOfDay(),
             toDatePicker.getValue().atStartOfDay(),
-            "tampere", // TODO remove placeholder hardcoded location!!
-            sessionController.getTabIdForChart()
+            "tampere" // TODO remove placeholder hardcoded location!!            
         );
     }
 
@@ -203,6 +203,7 @@ public class RequestController {
 
         newTab.setContextMenu(contextMenu);
         mainTabPane.getTabs().add(newTab);
+        mainTabPane.getSelectionModel().select(newTab);
     }
 
     /**
@@ -228,6 +229,7 @@ public class RequestController {
             if (tabId.equals(tab.getId())) {
                 // TODO need to change this to support a specific chart in 1-4 chart mode
                 Platform.runLater(() -> {
+                    sessionController.removeChart(chartId);
                     tab.setContent(null);
                 });
                 break;

@@ -1,12 +1,13 @@
-package fi.nordicwatt.model.api;
+package fi.nordicwatt.model.api.fmi;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.nordicwatt.model.data.ApiDataRequest;
-import fi.nordicwatt.model.data.WeatherModel;
+import fi.nordicwatt.model.api.APIParserInterface;
+import fi.nordicwatt.model.data.DataRequest;
+import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
 
 /**
@@ -15,7 +16,7 @@ import fi.nordicwatt.types.DataType;
  * @see APIParserInterface
  * @author Markus Hissa ? 
  */
-public class FMIApiParser implements APIParserInterface<WeatherModel> {
+public class FmiApiParser implements APIParserInterface<WeatherModel> {
 
     /**
      * parseToDataObject - Parses response to data object.
@@ -25,7 +26,7 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
      *
      */
     @Override
-    public WeatherModel parseToDataObject(ApiDataRequest request, String response) throws ParseException {
+    public WeatherModel parseToDataObject(DataRequest request, String response) throws ParseException {
 
         String responseDataAsString = getStringBetween(response, "<gml:doubleOrNilReasonTupleList>",
                 "</gml:doubleOrNilReasonTupleList>");
@@ -38,8 +39,8 @@ public class FMIApiParser implements APIParserInterface<WeatherModel> {
         DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
         String formattedTimestamp = dateTime.format(desiredFormat);
-        DataType dataType = request.getDataRequest().getDataType();
-        String unit = "";
+        DataType dataType = request.getDataType();
+
         responseData.toArray(responseDataArray);
 
         WeatherModel model = 

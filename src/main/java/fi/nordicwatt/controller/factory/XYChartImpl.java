@@ -2,8 +2,9 @@ package fi.nordicwatt.controller.factory;
 
 import java.util.Map;
 
-import fi.nordicwatt.model.data.AbstractDataModel;
+import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.data.ChartRequest;
+import fi.nordicwatt.model.data.DataResponse;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
 
@@ -31,7 +32,7 @@ public class XYChartImpl extends ChartImpl {
      */
     public XYChart<Number, Number> createChart(
         ChartRequest request,
-        AbstractDataModel<Double> data
+        ResponseBundle data
     ) {  
         this.request = request;
         this.data = data;
@@ -92,8 +93,11 @@ public class XYChartImpl extends ChartImpl {
             series.setName(axisMap.get(AxisType.Y_AXIS).getDescription());
             int i = 0;
 
+            // TODO this is the first request, add support for multiple requests
+            DataResponse firstResponse = data.getItems().get(0);
+
             // First populate the chart with datapoints
-            for (Map.Entry<String, Double> entry : data.getDataPoints().entrySet()) {
+            for (Map.Entry<String, Double> entry : firstResponse.getData().getDataPoints().entrySet()) {
                 Number xValue = i; // TODO use some actual value here
                 Number yValue = entry.getValue();
                 series.getData().add(new XYChart.Data<>(xValue, yValue));
