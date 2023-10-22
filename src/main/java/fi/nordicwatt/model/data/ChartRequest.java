@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import fi.nordicwatt.model.datamodel.RequestBundle;
-import fi.nordicwatt.types.APIType;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
@@ -16,7 +15,6 @@ import fi.nordicwatt.types.DataType;
  * Data is fetched from DataManager, which gets it either from local storage
  * or over the internet via API calls.
  * 
- * @param apiType       FMI, Fingrid, something else?
  * @param chartType     Line chart, Area chart, Pie chart etc?
  * @param axisMap       A map specifying the axis types and their corresponding data types.
  * @param dataRequest   The data request used by DataManager.
@@ -25,7 +23,6 @@ import fi.nordicwatt.types.DataType;
  */
 public class ChartRequest
 {
-    private APIType apiType;
     private ChartType chartType;
     private Map<AxisType, DataType> axisMap = new HashMap<>();
     private RequestBundle bundle;
@@ -35,27 +32,15 @@ public class ChartRequest
      * Initializes a new ChartRequest.
      */
     public ChartRequest(
-        APIType apiType,
         ChartType chartType,
         Map<AxisType, DataType> axisMap, 
         RequestBundle bundle
 
     ) {
-        this.apiType = apiType;
         this.chartType = chartType;
         this.axisMap = axisMap;
         this.bundle = bundle;
         this.chartId = UUID.randomUUID().toString();
-    }
-
-
-    /**
-     * Get the APIType of the chart
-     * 
-     * @return APIType The API used to get the data from.
-     */
-    public APIType getApiType() {
-        return apiType;
     }
 
 

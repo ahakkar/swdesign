@@ -156,7 +156,6 @@ public class RequestController {
         );
 
         ChartRequest chartRequest = new ChartRequest(
-            yAxisChoiceBox.getValue().getAPIType(),
             chartTypeChoiceBox.getValue(),
             axisMap,
             null
