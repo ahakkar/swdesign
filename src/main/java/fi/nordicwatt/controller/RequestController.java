@@ -162,16 +162,9 @@ public class RequestController {
             toDatePicker.getValue().atTime(23, 59, 59)
         );
 
-        Logger.log("chartRequest3: " + chartRequest.toString());
         if (requestDispatcher.validateAddChartRequest(chartRequest)) {
-            Logger.log("chartRequest: " + chartRequest.toString());
-            requestDispatcher.dispatchRequest(
-                    chartRequest,
-                    yAxisChoiceBox.getValue(),
-                    fromDatePicker.getValue().atStartOfDay(),
-                    toDatePicker.getValue().atStartOfDay(),
-                    "tampere" // TODO remove placeholder hardcoded location!!
-            );
+            Logger.log("request validated, sending to sessioncontroller");
+            requestDispatcher.dispatchRequest(chartRequest);
         }
     }
 

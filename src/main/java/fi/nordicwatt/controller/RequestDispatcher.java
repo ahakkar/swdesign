@@ -8,6 +8,7 @@ import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.CustomAlerts;
+import fi.nordicwatt.utils.Logger;
 import javafx.scene.control.Alert.AlertType;
 
 
@@ -106,18 +107,20 @@ public final class RequestDispatcher
 
     }
 
-    public Boolean dispatchRequest(ChartRequest chartRequest,
-            DataType dataType,
-            LocalDateTime startTime,
-            LocalDateTime endTime,
-            String location) {
-        // TODO support for more complicated datarequests
-        // ie. add more requests to a bundle to get more complex data from
-        // multiple sources to a chart!
-        DataRequest dataRequest = new DataRequest(dataType, startTime, endTime, location);
+    public Boolean dispatchRequest(ChartRequest chartRequest) {     
         RequestBundle bundle = new RequestBundle();
-        bundle.addItem(dataRequest);
+
+        for (AxisType axisType : chartRequest.getAxisMap().keySet()) {
+            // If value in axisMap is Time then skip it 
+            if (chartRequest.getAxisMap().get(axisType) == DataType.TIME) {
+                continue;
+            }
+            DataType dataType = chartRequest.getAxisMap().get(axisType);
+            DataRequest dataRequest = new DataRequest(dataType, chartRequest.getStartTime(), chartRequest.getEndTime(), chartRequest.getLocation());
+            bundle.addItem(dataRequest);
+        }
         chartRequest.setRequestBundle(bundle);
+        Logger.log("Bundle is built. Dispatching chartrequest: " + chartRequest.toString());
 
         SessionController sessionController = SessionController.getInstance();
         sessionController.newChartRequest(chartRequest);
