@@ -153,7 +153,7 @@ public enum DataType
         MeasurementUnit.HOUR,
         Duration.ofHours(1),
         "Time (1 Hour)",
-        "",
+        "Time used on the x-axis",
         EnumSet.of(AxisType.X_AXIS),
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
 
@@ -251,4 +251,12 @@ public enum DataType
         }
         return stringValues;
     }
+
+    /**
+     * Get the API type of the data type
+     */
+    public APIType getAPI() {
+        return api; 
+    }
+
 }

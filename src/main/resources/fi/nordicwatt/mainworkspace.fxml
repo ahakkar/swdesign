@@ -88,11 +88,11 @@
                                                 <Label text="X-axis" />
                                                 <ChoiceBox prefHeight="27.0" prefWidth="241.0" GridPane.columnIndex="1" fx:id="xAxisChoiceBox" />
                                           <Label text="Description" GridPane.rowIndex="3" />
-                                          <TextArea prefHeight="61.0" prefWidth="261.0" text="This is general descrption of the dataset. It can be multiple rows long. It can contain for instance data update intervals, publication times, etc." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <TextArea fx:id="xDescriptionTextArea" prefHeight="61.0" prefWidth="261.0" text="Dynamic datatype descrition." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           <Label text="Data Source" GridPane.rowIndex="1" />
-                                          <Label text="Fingrid API" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label fx:id="xSourceLabel" text="dynamic name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <Label text="Data Unit" GridPane.rowIndex="2" />
-                                          <Label text="MWH/h" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label fx:id="xUnitLabel" text="dynamic unit" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                        </children>
                                     </GridPane>
                                  </content>
@@ -112,11 +112,11 @@
                                        </rowConstraints>
                                        <children>
                                           <Label text="Description" GridPane.rowIndex="3" />
-                                          <TextArea prefHeight="61.0" prefWidth="261.0" text="This is general descrption of the dataset. It can be multiple rows long. It can contain for instance data update intervals, publication times, etc." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <TextArea fx:id="yDescriptionTextArea" prefHeight="61.0" prefWidth="261.0" text="Dynamic datatype descrition." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           <Label text="Data Source" GridPane.rowIndex="1" />
-                                          <Label text="Fingrid API" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label fx:id="ySourceLabel" text="dynamic api name y" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <Label text="Data Unit" GridPane.rowIndex="2" />
-                                          <Label text="MWH/h" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label fx:id="yUnitLabel" text="dynamic unit y" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <ChoiceBox fx:id="yAxisChoiceBox" prefHeight="27.0" prefWidth="241.0" GridPane.columnIndex="1" />
                                                 <Label text="Y-axis" />
                                        </children>

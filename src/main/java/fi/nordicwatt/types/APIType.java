@@ -25,4 +25,19 @@ public enum APIType {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        // TODO: This is horrible, but it works for now
+        if (this == NOAPI) {
+            return "-";
+        } else if (this == FINGRID) {
+            return "Fingrid";
+        } else if (this == FMI) {
+            return "Finnish Meteorological Institute (FMI)";
+        } else {
+            return name();
+        }
+
+    }
 }

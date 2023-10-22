@@ -31,6 +31,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
@@ -102,6 +103,24 @@ public class RequestController {
 
     @FXML
     private Button addNewTabButton;
+
+    @FXML
+    private Label xSourceLabel;
+
+    @FXML
+    private Label ySourceLabel;
+
+    @FXML
+    private Label xUnitLabel;
+
+    @FXML
+    private Label yUnitLabel;
+
+    @FXML
+    private TextArea xDescriptionTextArea;
+
+    @FXML
+    private TextArea yDescriptionTextArea;
 
     /**
      * Populate choicebox values and select defaults
@@ -348,8 +367,22 @@ public class RequestController {
 
         xAxisChoiceBox.getItems().addAll(xDataTypeList);
         xAxisChoiceBox.setValue(DataType.TIME);
+        xAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateXAxisLabels();
+        });
+        updateXAxisLabels();
     }
 
+    /**
+     * Triggered every time x label is updated. Updates the x API info in the UI.
+     */
+    private void updateXAxisLabels() {
+        DataType dataType = xAxisChoiceBox.getValue();
+
+        xSourceLabel.setText(dataType.getAPI().toString());
+        xUnitLabel.setText(dataType.getUnit().toString());
+        xDescriptionTextArea.setText(dataType.getDescription());
+    }
 
     /**
      * Populates the yAxisChoiceBox with DataType enums and sets the default
@@ -376,8 +409,22 @@ public class RequestController {
 
         yAxisChoiceBox.getItems().addAll(yDataTypeList);
         yAxisChoiceBox.setValue(DataType.CONSUMPTION);
+        yAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateYAxisLabels();
+        });
+        updateYAxisLabels();
     }
 
+    /**
+     * Triggered every time y label is updated. Updates the y API info in the UI.
+     */
+    private void updateYAxisLabels() {
+        DataType dataType = yAxisChoiceBox.getValue();
+
+        ySourceLabel.setText(dataType.getAPI().toString());
+        yUnitLabel.setText(dataType.getUnit().toString());
+        yDescriptionTextArea.setText(dataType.getDescription());
+    }
 
     /**
      * Populates the relativeTimeChoiceBox with String values and sets the default
