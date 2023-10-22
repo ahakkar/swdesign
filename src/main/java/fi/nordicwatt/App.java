@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import fi.nordicwatt.controller.PrimaryController;
 
+import fi.nordicwatt.utils.Logger;
+
 /**
  * JavaFX App
  */
@@ -19,6 +21,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        Logger.log("\n==================================================\n" +
+            "Starting application\n" +
+            "==================================================");
         launch(args);
     }
 

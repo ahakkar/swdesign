@@ -13,6 +13,7 @@ import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
+import fi.nordicwatt.utils.Logger;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -147,7 +148,8 @@ public class RequestController {
      */
     @FXML
     public void createDiagramButtonAction() {
-        System.out.println("Create diagram button pressed");
+        Logger.log("createDiagramButton pressed", "notADefaultLogFile.log"); // writes to notADefaultLogFile.log
+        Logger.log("createDiagramButton pressed"); // writes to log.log
         Map<AxisType, DataType> axisMap = Map.of(
             AxisType.X_AXIS, xAxisChoiceBox.getValue(),
             AxisType.Y_AXIS, yAxisChoiceBox.getValue()
