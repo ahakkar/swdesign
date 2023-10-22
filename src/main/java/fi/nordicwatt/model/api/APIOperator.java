@@ -1,6 +1,7 @@
 package fi.nordicwatt.model.api;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import fi.nordicwatt.model.api.APIParserInterface.ParseException;
@@ -12,6 +13,7 @@ import fi.nordicwatt.model.data.*;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 
+import fi.nordicwatt.utils.DateTimeConverter;
 import okhttp3.Response;
 
 /**
@@ -49,11 +51,15 @@ public class APIOperator {
     private DataResponse getWeatherModelData(DataRequest request)
         throws ParseException
     {
+        LocalDateTime startTime = DateTimeConverter.finnishTimeToGMTTime(request.getStarttime());
+        LocalDateTime endTime = DateTimeConverter.finnishTimeToGMTTime(request.getEndtime());
+        //LocalDateTime startTime = request.getStarttime();
+        //LocalDateTime endTime = request.getEndtime();
         FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
             .withLocation(request.getLocation())
             .withDataType(request.getDataType().getVariableId())
-            .withStartTime(request.getStarttime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
-            .withEndTime(request.getEndtime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .withStartTime(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .withEndTime(endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
             .withTimestep("60");        
 
         try (Response httpResponse = builder.execute()) {

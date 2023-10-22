@@ -117,11 +117,11 @@ public class PrimaryController implements DataManagerListener, SessionController
      * PrimaryController must be registered as datamanager's observer beforehand.
      * 
      * @param data       data from the DataManager used to create charts
-     * @param exception  possible exception from the API
+     *
      */
     @Override
-    public void dataRequestSuccess(ResponseBundle data) {   
-
+    public void dataRequestSuccess(ResponseBundle data) {
+        System.out.println("PRIMARYCONTROLLER: Data request success");
         ChartRequest chartRequest = 
             sessionController.getChartRequest(data.getRequestId());
         
@@ -144,6 +144,8 @@ public class PrimaryController implements DataManagerListener, SessionController
     @Override
     public void dataRequestFailure(RequestBundle requests, Exception e) {
         // TODO use rollbackchart to remove placeholder chart for failed requests
+        System.out.println("PRIMARYCONTROLLER: Data request failure");
+
     }
 
     private void rollBackChart(DataResponse response, Exception exception) {        
