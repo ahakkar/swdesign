@@ -167,6 +167,14 @@ public class RequestController {
             toDatePicker.getValue().atStartOfDay(),
             "tampere" // TODO remove placeholder hardcoded location!!            
         );
+
+        requestDispatcher.dispatchRequest(
+            chartRequest,
+            yAxisChoiceBox.getValue(),
+            fromDatePicker.getValue().atStartOfDay(),
+            toDatePicker.getValue().atStartOfDay(),
+            "tampere" // TODO remove placeholder hardcoded location!!
+        );
     }
 
     @FXML 

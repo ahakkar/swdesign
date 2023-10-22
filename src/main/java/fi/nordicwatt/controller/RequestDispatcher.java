@@ -17,7 +17,7 @@ import javafx.scene.control.Alert.AlertType;
  * 
  * @author Antti Hakkarainen
  */
-public class RequestDispatcher
+public final class RequestDispatcher
 {    
     private static RequestDispatcher instance;
     private RequestDispatcher() { }
@@ -90,6 +90,15 @@ public class RequestDispatcher
             return false;
         }
 
+        return true;
+
+    }
+
+    public Boolean dispatchRequest(ChartRequest chartRequest,
+            DataType dataType,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            String location) {
         // TODO support for more complicated datarequests
         // ie. add more requests to a bundle to get more complex data from
         // multiple sources to a chart!
@@ -97,10 +106,10 @@ public class RequestDispatcher
         RequestBundle bundle = new RequestBundle();
         bundle.addItem(dataRequest);
         chartRequest.setRequestBundle(bundle);
-    
+
         SessionController sessionController = SessionController.getInstance();
         sessionController.newChartRequest(chartRequest);
-        
+
         return true;
     }
 
