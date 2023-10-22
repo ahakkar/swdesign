@@ -1,5 +1,6 @@
 package fi.nordicwatt.model.data;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,9 +28,10 @@ public class ChartRequest
     private ChartType chartType;
     private Map<AxisType, DataType> axisMap = new HashMap<>();
     private RequestBundle bundle;
-    private String startTime;
-    private String endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private final String chartId;
+    private String location;
 
     /**
      * Initializes a new ChartRequest.
@@ -38,15 +40,17 @@ public class ChartRequest
         ChartType chartType,
         Map<AxisType, DataType> axisMap, 
         RequestBundle bundle,
-        String startTime,
-        String endTime
+        LocalDateTime startTime,
+        LocalDateTime endTime
     ) {
+        Logger.log("Creating ChartRequest...");
         this.chartType = chartType;
         this.axisMap = axisMap;
         this.bundle = bundle;
         this.startTime = startTime;
         this.endTime = endTime;
         this.chartId = UUID.randomUUID().toString();
+        this.location = "tampere"; //Lets use this as a placeholder for now
         Logger.log("ChartRequest created: " + this.toString());
     }
 
@@ -63,6 +67,18 @@ public class ChartRequest
 
     public void setRequestBundle(RequestBundle bundle) {
         this.bundle = bundle;
+    }
+    
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public String getRequestBundleId() {

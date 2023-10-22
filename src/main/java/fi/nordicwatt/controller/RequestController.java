@@ -158,25 +158,21 @@ public class RequestController {
             chartTypeChoiceBox.getValue(),
             axisMap,
             null,
-            fromDatePicker.getValue().toString(),
-            toDatePicker.getValue().toString()
+            fromDatePicker.getValue().atStartOfDay(),
+            toDatePicker.getValue().atTime(23, 59, 59)
         );
 
-        requestDispatcher.validateAddChartRequest(
-            chartRequest,
-            yAxisChoiceBox.getValue(),
-            fromDatePicker.getValue().atStartOfDay(),
-            toDatePicker.getValue().atStartOfDay(),
-            "tampere" // TODO remove placeholder hardcoded location!!            
-        );
-
-        requestDispatcher.dispatchRequest(
-            chartRequest,
-            yAxisChoiceBox.getValue(),
-            fromDatePicker.getValue().atStartOfDay(),
-            toDatePicker.getValue().atStartOfDay(),
-            "tampere" // TODO remove placeholder hardcoded location!!
-        );
+        Logger.log("chartRequest3: " + chartRequest.toString());
+        if (requestDispatcher.validateAddChartRequest(chartRequest)) {
+            Logger.log("chartRequest: " + chartRequest.toString());
+            requestDispatcher.dispatchRequest(
+                    chartRequest,
+                    yAxisChoiceBox.getValue(),
+                    fromDatePicker.getValue().atStartOfDay(),
+                    toDatePicker.getValue().atStartOfDay(),
+                    "tampere" // TODO remove placeholder hardcoded location!!
+            );
+        }
     }
 
     @FXML 

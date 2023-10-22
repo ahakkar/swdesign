@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.RequestBundle;
+import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.CustomAlerts;
 import javafx.scene.control.Alert.AlertType;
@@ -40,27 +41,37 @@ public final class RequestDispatcher
      * Validates data from UI and passes it on to sessionmanager if it's good.
      * 
      * @param chartRequest  container for chart creation parameters
-     * @param dataType      Which type of data we want to display in chart
-     * @param startTime     Start of the range for data we want to display in chart
-     * @param endTime       End of the range for data we want to display in chart
-     * @param location      Ie. "Helsinki", "Tampere"
      * @return              True if data was good, false if not
      */
     public Boolean validateAddChartRequest(
-        ChartRequest chartRequest,
-        DataType dataType, 
-        LocalDateTime startTime,
-        LocalDateTime endTime,        
-        String location
+        ChartRequest chartRequest
     ) {
-        if (dataType == null) {
-            CustomAlerts.displayAlert(
-                AlertType.ERROR,
-                "Error in RequestDispatcher",
-                "Validation of dataType failed.\nDataType is null."
-                );
-            return false;
+        // Check that the keys araxisMap are not null
+        for (AxisType axisType : chartRequest.getAxisMap().keySet()) {
+            if (axisType == null) {
+                CustomAlerts.displayAlert(
+                    AlertType.ERROR,
+                    "Error in RequestDispatcher",
+                    "Validation of axisMap failed.\nAxisMap contains null keys."
+                    );
+                return false;
+            }
         }
+
+        // Check that values in axisMap are not null
+        for (DataType dataType : chartRequest.getAxisMap().values()) {
+            if (dataType == null) {
+                CustomAlerts.displayAlert(
+                    AlertType.ERROR,
+                    "Error in RequestDispatcher",
+                    "Validation of axisMap failed.\nAxisMap contains null values."
+                    );
+                return false;
+            }
+        }
+
+        LocalDateTime startTime = chartRequest.getStartTime();
+        LocalDateTime endTime = chartRequest.getEndTime();
 
         if (startTime == null || endTime == null) {
             CustomAlerts.displayAlert(
@@ -81,6 +92,7 @@ public final class RequestDispatcher
         }
 
         // TODO use regexp to support more chars... äöå etc.
+        String location = chartRequest.getLocation();
         if (location == null || location.trim().isEmpty() || !location.matches("^[a-zA-Z ]+$")) {
             CustomAlerts.displayAlert(
                 AlertType.ERROR,
