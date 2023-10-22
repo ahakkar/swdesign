@@ -49,6 +49,18 @@ public enum DataType
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
+    PRODUCTION_3MIN(
+        "Production 3min",
+        "192",
+        APIType.FINGRID, 
+        MeasurementUnit.MEGA_WATT_HOUR,
+        Duration.ofMinutes(3),
+        "Electricity Production (3 minutes)",
+        "Electricity production in Finland",
+        EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
+    ),
+
     HYDRO(
         "Hydro Production",
         "191",
