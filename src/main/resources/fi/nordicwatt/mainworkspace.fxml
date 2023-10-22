@@ -123,7 +123,7 @@
                                     </GridPane>
                                  </content>
                             </TitledPane>
-                              <TitledPane animated="false" text="Y2 - Data">
+                              <TitledPane visible="false" animated="false" text="Y2 - Data">
                                  <content>
                                     <GridPane prefHeight="161.0" prefWidth="362.0">
                                        <columnConstraints>
