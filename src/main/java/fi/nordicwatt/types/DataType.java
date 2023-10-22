@@ -34,7 +34,7 @@ public enum DataType
         "Electricity Consumption (1 Hour)",
         "Electricity consumption in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     PRODUCTION(
@@ -46,7 +46,7 @@ public enum DataType
         "Electricity Production (1 Hour)",
         "Electricity production in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     HYDRO(
@@ -58,7 +58,7 @@ public enum DataType
         "Hydro Production (3 minutes)",
         "Hydro Production in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     NUCLEAR(
@@ -70,7 +70,7 @@ public enum DataType
         "Nuclear Productionn (3 minutes)",
         "Nuclear Production in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     WINDPOWER(
@@ -82,7 +82,7 @@ public enum DataType
         "Nuclear Productionn (3 minutes)",
         "Nuclear Production in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     /*PRICE(
@@ -94,7 +94,7 @@ public enum DataType
         "Price",
         "Electricity price in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),*/
 
     TEMPERATURE(
@@ -106,7 +106,7 @@ public enum DataType
         "Temperature (1 Hour)",
         "Temperature in Finland",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     WIND(
@@ -118,7 +118,7 @@ public enum DataType
         "Wind (1 Hour)",
         "Wind speed in selected location",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     // Rain is depricated for now. 
@@ -131,7 +131,7 @@ public enum DataType
         "Rain (1 Hour)",
         "Rain in selected location",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),*/
 
     HUMIDITY(
@@ -143,7 +143,7 @@ public enum DataType
         "Humidity (1 Hour)",
         "Humidity in selected location",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     ),
 
     TIME(
@@ -155,7 +155,7 @@ public enum DataType
         "Time (1 Hour)",
         "Time used on the x-axis",
         EnumSet.of(AxisType.X_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
 
     ),   
 
@@ -168,7 +168,7 @@ public enum DataType
         "Air pressure (1 Hour)",
         "Air pressure in selected location",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
-        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
+        EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART)
     );
 
     private final String label;

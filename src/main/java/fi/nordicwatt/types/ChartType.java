@@ -11,8 +11,8 @@ import java.util.List;
 public enum ChartType {
     LINE_CHART("Line chart"),
     AREA_CHART("Area chart"),
-    SCATTER_DOT_CHART("Scatter chart"),
-    PIE_CHART("Pie chart");
+    SCATTER_DOT_CHART("Scatter chart");
+    //PIE_CHART("Pie chart");
 
     private final String label;
 

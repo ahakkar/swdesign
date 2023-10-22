@@ -57,9 +57,6 @@ public class ChartFactory {
             case SCATTER_DOT_CHART:
                 XYChartImpl xyCreator = new XYChartImpl();
                 return xyCreator.createChart(request, data);                  
-            case PIE_CHART:
-                PieChartImpl pieCreator = new PieChartImpl();
-                return pieCreator.createChart(request, data);    
             default:
                 return null;
         }     
