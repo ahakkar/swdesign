@@ -2,6 +2,8 @@ package fi.nordicwatt.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -336,7 +338,15 @@ public class RequestController {
             }            
         });
 
-        xAxisChoiceBox.getItems().addAll(DataType.values());
+        // Filter the DataType values to only include those with X_AXIS in their allowedAxes
+        List<DataType> xDataTypeList = new ArrayList<>();
+        for (DataType dataType : DataType.values()) {
+            if (dataType.isAxisAllowed(AxisType.X_AXIS)) {
+                xDataTypeList.add(dataType);
+            }
+        }
+
+        xAxisChoiceBox.getItems().addAll(xDataTypeList);
         xAxisChoiceBox.setValue(DataType.TIME);
     }
 
@@ -356,7 +366,15 @@ public class RequestController {
             }            
         });
 
-        yAxisChoiceBox.getItems().addAll(DataType.values());
+        // Filter the DataType values to only include those with Y_AXIS in their allowedAxes
+        List<DataType> yDataTypeList = new ArrayList<>();
+        for (DataType dataType : DataType.values()) {
+            if (dataType.isAxisAllowed(AxisType.Y_AXIS)) {
+                yDataTypeList.add(dataType);
+            }
+        }
+
+        yAxisChoiceBox.getItems().addAll(yDataTypeList);
         yAxisChoiceBox.setValue(DataType.CONSUMPTION);
     }
 

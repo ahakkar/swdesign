@@ -154,7 +154,7 @@ public enum DataType
         Duration.ofHours(1),
         "Time (1 Hour)",
         "",
-        EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+        EnumSet.of(AxisType.X_AXIS),
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
 
     ),   
