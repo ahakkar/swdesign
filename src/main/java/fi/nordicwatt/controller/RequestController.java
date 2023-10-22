@@ -50,7 +50,7 @@ public class RequestController {
     private ChoiceBox<ChartType> chartTypeChoiceBox;
 
     @FXML
-    private ChoiceBox<String> xAxisChoiceBox;
+    private ChoiceBox<DataType> xAxisChoiceBox;
 
     @FXML
     private ChoiceBox<DataType> yAxisChoiceBox;
@@ -147,8 +147,9 @@ public class RequestController {
      */
     @FXML
     public void createDiagramButtonAction() {
+        System.out.println("Create diagram button pressed");
         Map<AxisType, DataType> axisMap = Map.of(
-            AxisType.X_AXIS, DataType.TIME,
+            AxisType.X_AXIS, xAxisChoiceBox.getValue(),
             AxisType.Y_AXIS, yAxisChoiceBox.getValue()
         );
 
@@ -326,8 +327,18 @@ public class RequestController {
      * TODO replace hardcoded value with actual options
      */
     private void initializeXAxisChoiceBox() {
-        xAxisChoiceBox.getItems().add("Time");
-        xAxisChoiceBox.setValue("Time");
+        xAxisChoiceBox.setConverter(new StringConverter<DataType>() {
+            public String toString(DataType type) {
+                return (type == null) ? "" : type.toString();  
+            }
+
+            public DataType fromString(String label) {
+                return null; 
+            }            
+        });
+
+        xAxisChoiceBox.getItems().addAll(DataType.values());
+        xAxisChoiceBox.setValue(DataType.TIME);
     }
 
 
@@ -521,7 +532,7 @@ public class RequestController {
             try {
                 SettingsData settingsData = dataManager.loadPreset();
                 chartTypeChoiceBox.setValue(settingsData.getChartType());
-                xAxisChoiceBox.setValue(settingsData.getXAxis().toString());
+                xAxisChoiceBox.setValue(settingsData.getXAxis());
                 yAxisChoiceBox.setValue(settingsData.getYAxis());
                 relativeTimeToggle.setSelected(settingsData.isRelativeTime());
                 relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
