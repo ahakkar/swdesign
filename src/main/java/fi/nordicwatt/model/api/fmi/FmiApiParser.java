@@ -9,6 +9,7 @@ import fi.nordicwatt.model.api.APIParserInterface;
 import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
+import fi.nordicwatt.utils.DateTimeConverter;
 
 /**
  * FMIApiParser - Parses response from FMI API to WeatherModel.
@@ -37,19 +38,19 @@ public class FmiApiParser implements APIParserInterface<WeatherModel> {
         CharSequence firstEntryTimestamp = getStringBetween(response, "<gml:beginPosition>", "</gml:beginPosition>");
         DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
+        LocalDateTime dateTime = DateTimeConverter.gmtTimeToFinnishTime(LocalDateTime.parse(firstEntryTimestamp, originalFormat));
         String formattedTimestamp = dateTime.format(desiredFormat);
         DataType dataType = request.getDataType();
 
-        responseData.toArray(responseDataArray);
+        Double[] responseArray = responseData.toArray(responseDataArray);
 
         WeatherModel model = 
             new WeatherModel(
                 dataType,
                 dataType.getUnit(),
                 formattedTimestamp,
-                location, 
-                responseData.toArray(responseDataArray)
+                location,
+                responseArray
                 );
 
             return model;    
@@ -95,6 +96,7 @@ public class FmiApiParser implements APIParserInterface<WeatherModel> {
                 
                 if (number.isNaN()) {
                     // TODO Maybe skip, or add a sentinel value, or log an error
+                    parsedNumbers.add(null);
                 } else {
                     parsedNumbers.add(number);
                 }

@@ -12,6 +12,9 @@ import fi.nordicwatt.types.DataType;
 
 /**
  * @author ???
+ * Stores data models and provides methods for accessing them
+ * Singleton class
+ *
  */
 public class DataStorage {
 

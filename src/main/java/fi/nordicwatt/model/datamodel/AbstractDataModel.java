@@ -132,12 +132,20 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param value     - Data point
      * @throws IllegalArgumentException if timestamp is not valid
      */
-    public void addDataPoint(String timestamp, T value
+    public boolean addDataPoint(String timestamp, T value
     ) throws IllegalArgumentException {
         if (!isValidTimeStamp(timestamp)) {
             throw new IllegalArgumentException("Timestamp is not valid");
         }
-        dataPoints.put(timestamp, value);
+
+        if (value != null){
+            dataPoints.put(timestamp, value);
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     /**

@@ -41,14 +41,14 @@ public class DataManagerTest {
         Thread currentThread = Thread.currentThread();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        final Thread[] callbackThread = new Thread[2];
+        final Thread[] callbackThread = new Thread[3];
         System.out.println("TEST STARTING ON THREAD " + Thread.currentThread().toString());
 
         requests.addItem(
             new DataRequest(
                 DataType.TEMPERATURE, 
                 LocalDateTime.parse("2023-08-01 00:00:00", formatter),
-                LocalDateTime.parse("2023-08-02 00:00:00", formatter),
+                LocalDateTime.parse("2023-08-03 00:00:00", formatter),
                 "tampere"));
         //requests.addItem(new DataRequest(DataType.CONSUMPTION, LocalDateTime.now().minusDays(1), LocalDateTime.now(), "Helsinki"));
 
@@ -89,6 +89,8 @@ public class DataManagerTest {
             assertTrue(response.getData() instanceof WeatherModel);
         }
         assertTrue(success);
+        assertTrue(responses.getItems().get(0).getData().getDataPoints().containsKey("2023-08-01 00:00:00"));
+        assertFalse(responses.getItems().get(0).getData().getDataPoints().containsKey("2023-07-31 23:00:00"));
 
         // Assuming the callback thread eventually terminates
         boolean threadTerminated = false;
@@ -164,6 +166,44 @@ public class DataManagerTest {
 
         assertTrue(threadTerminated);
 
+        String responseId3 = UUID.randomUUID().toString();
+        RequestBundle requests3 = new RequestBundle();
+        ResponseBundle responses3 = new ResponseBundle(responseId3);
+
+        final List<Exception> exceptions3 = new ArrayList<>();
+        CountDownLatch latch3 = new CountDownLatch(1);
+
+        requests3.addItem(
+                new DataRequest(
+                        DataType.TEMPERATURE,
+                        LocalDateTime.parse("2023-08-01 00:00:00", formatter),
+                        LocalDateTime.parse("2023-08-30 00:00:00", formatter),
+                        "helsinki"));
+
+        DataManagerListener listener3 = new DataManagerListener() {
+            @Override
+            public void dataRequestSuccess(ResponseBundle responsesReceived) {
+                callbackThread[2] = Thread.currentThread();
+                responses3.setItems(responsesReceived.getItems());
+                latch3.countDown();
+            }
+
+            @Override
+            public void dataRequestFailure(RequestBundle failedRequests, Exception e) {
+                callbackThread[2] = Thread.currentThread();
+                exceptions3.add(e);
+                latch3.countDown();
+            }
+        };
+
+        assertTrue(dm.registerListener(listener3));
+        dm.getData(requests3);
+
+        boolean success3 = latch3.await(5, java.util.concurrent.TimeUnit.SECONDS);
+        assertTrue(success3);
+
+        //assertEquals(0, responses3.getItems().size());
+        //assertEquals(1, exceptions3.size());
 
     }
 
