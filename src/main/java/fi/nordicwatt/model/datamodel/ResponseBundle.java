@@ -14,4 +14,9 @@ public class ResponseBundle extends Bundle<DataResponse> {
     public String getRequestId() {
         return requestId;
     }
+
+    @Override
+    public String toString() {
+        return "ResponseBundle [requestId=" + requestId + ", toString()=" + super.toString() + "]";
+    }
 }

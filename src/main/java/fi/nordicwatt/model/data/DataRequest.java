@@ -48,4 +48,10 @@ public class DataRequest {
     public String getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "DataRequest [dataType=" + dataType + ", endTime=" + endTime + ", id=" + id + ", location=" + location
+                + ", startTime=" + startTime + "]";
+    }
 }

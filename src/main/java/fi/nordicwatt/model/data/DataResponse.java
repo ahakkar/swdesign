@@ -26,4 +26,9 @@ public class DataResponse {
     public String getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "DataResponse [data=" + data + ", id=" + id + ", request=" + request + "]";
+    }
 }

@@ -7,6 +7,7 @@ import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.data.*;
 import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.model.datamodel.ResponseBundle;
+import fi.nordicwatt.utils.Logger;
 
 /**
  * APIQueue
@@ -14,7 +15,7 @@ import fi.nordicwatt.model.datamodel.ResponseBundle;
  * 
  * @author ???
  */
-public class APIQueue {
+public final class APIQueue {
 
     private static APIQueue instance;
     private final  ArrayList<APIDataListener> listeners;
@@ -36,16 +37,22 @@ public class APIQueue {
 
     public void getData(RequestBundle requests)
     {
+        Logger.log("APIQueue.getData() called", "APIQueue.log");
         Future<ResponseBundle> future = getFuture(requests);
+        for (DataRequest request : requests.getItems()) {
+            Logger.log("APIQueue created Request: " + request.toString(), "APIQueue.log");
+        }
         new Thread(() -> {
             try {
                 ResponseBundle responses = future.get(Constants.API_TIMEOUT, TimeUnit.SECONDS);
                 System.out.println(responses.toString());
                 notifyDataRequestSuccess(responses);
+                Logger.log("APIQueue.getData() succeeded" + responses.toString(), "APIQueue.log");
 
             } catch (Exception e) {
                 future.cancel(true);
                 // TODO log exception
+                Logger.log("APIQueue.getData() failed" + e, "APIQueue.log");
                 notifyDataRequestFailure(requests, e);
             }
 
