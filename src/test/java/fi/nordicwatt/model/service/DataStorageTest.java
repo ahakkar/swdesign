@@ -59,15 +59,15 @@ public class DataStorageTest {
         assertTrue(dataWind.getDataPoints().size() == 5);
         assertTrue(dataWind.getDataPoints().get("2023-01-01 01:00:00") == 2.0);
 
-        // Test for DataType.RAIN
-        Double[] valuesRain = new Double[]{1.0, 2.0, 0.5, 1.5}; // 4 values
+        // Test for DataType.RAIN rain is depricated for now. 
+        /*Double[] valuesRain = new Double[]{1.0, 2.0, 0.5, 1.5}; // 4 values
         WeatherModel modelRain = new WeatherModel(DataType.RAIN, MeasurementUnit.MILLIMETERS, "2023-01-01 01:00:00", "tampere", valuesRain);
         storage.addData(modelRain);
 
         WeatherModel dataRain = (WeatherModel) getData("2023-01-01 01:00:00", "2023-01-01 04:00:00", DataType.RAIN);
         assertTrue(dataRain.getDataPoints().size() == 4);
         assertTrue(dataRain.getDataPoints().get("2023-01-01 01:00:00") == 1.0);
-
+*/
         // Test for DataType.HUMIDITY
         Double[] valuesHumidity = new Double[]{60.0, 55.0, 70.0, 65.0}; // 4 values
         WeatherModel modelHumidity = new WeatherModel(DataType.HUMIDITY, MeasurementUnit.HUMIDITY, "2023-01-01 01:00:00", "tampere", valuesHumidity);

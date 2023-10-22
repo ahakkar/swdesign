@@ -121,7 +121,8 @@ public enum DataType
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
     ),
 
-    RAIN(
+    // Rain is depricated for now. 
+    /*RAIN(
         "Rain",
         "Rain", 
         APIType.FMI,
@@ -131,7 +132,7 @@ public enum DataType
         "Rain in selected location",
         EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
         EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.PIE_CHART)
-    ),
+    ),*/
 
     HUMIDITY(
         "Humidity",
