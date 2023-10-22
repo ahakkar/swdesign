@@ -83,25 +83,36 @@ public class XYChartImpl extends ChartImpl {
      * 
      * //TODO refactor to use Chart instead of XYChart (possibly move this to a XYChartImpl subclass)
      */
-    public void populateChartData(Boolean hideNodes)
-    {
+    public void populateChartData(Boolean hideNodes) {
         try {
             Map<AxisType, DataType> axisMap = request.getAxisMap();
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            
+
             // Assume that Y_AXIS is the value we want to plot
             series.setName(axisMap.get(AxisType.Y_AXIS).getDescription());
             int i = 0;
 
-            // TODO this is the first request, add support for multiple requests
-            DataResponse firstResponse = data.getItems().get(0);
-
-            // First populate the chart with datapoints
-            for (Map.Entry<String, Double> entry : firstResponse.getData().getDataPoints().entrySet()) {
-                Number xValue = i; // TODO use some actual value here
-                Number yValue = entry.getValue();
-                series.getData().add(new XYChart.Data<>(xValue, yValue));
-                i++;
+            // Check if there is only one DataResponse object
+            if (data.getItems().size() == 1) {
+                // Use the placeholder value for the x-axis
+                for (Map.Entry<String, Double> entry : data.getItems().get(0).getData().getDataPoints().entrySet()) {
+                    Number xValue = i; // TODO use some actual value here
+                    Number yValue = entry.getValue();
+                    series.getData().add(new XYChart.Data<>(xValue, yValue));
+                    i++;
+                }
+            } else if (data.getItems().size() == 2) {
+                // Use the first DataResponse object for the x-axis and the second for the y-axis
+                Map<String, Double> xDataPoints = data.getItems().get(0).getData().getDataPoints();
+                Map<String, Double> yDataPoints = data.getItems().get(1).getData().getDataPoints();
+                for (Map.Entry<String, Double> entry : xDataPoints.entrySet()) {
+                    Number xValue = entry.getValue();
+                    Number yValue = yDataPoints.get(entry.getKey());
+                    series.getData().add(new XYChart.Data<>(xValue, yValue));
+                }
+            } else {
+                // Handle the case where there are more than two DataResponse objects
+                // ...
             }
 
             chart.getData().clear();
@@ -115,10 +126,9 @@ public class XYChartImpl extends ChartImpl {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // could be InstantiationException, IllegalAccessException, etc.
             e.printStackTrace();
         }
-    }    
+    } 
 }

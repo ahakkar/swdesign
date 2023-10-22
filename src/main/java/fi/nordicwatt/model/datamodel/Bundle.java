@@ -40,4 +40,13 @@ public class Bundle<T> {
     public Status getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        String str = "";
+        for (T item : items) {
+            str += item.toString() + "\n";
+        }
+        return str;
+    }
 }

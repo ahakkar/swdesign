@@ -15,7 +15,7 @@ import fi.nordicwatt.model.session.TabInfo;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.EnvironmentVariables;
-
+import fi.nordicwatt.utils.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -122,12 +122,14 @@ public class PrimaryController implements DataManagerListener, SessionController
     @Override
     public void dataRequestSuccess(ResponseBundle data) {
         System.out.println("PRIMARYCONTROLLER: Data request success");
+        Logger.log("dataRequestSuccess: " + data.toString());
+        
         ChartRequest chartRequest = 
             sessionController.getChartRequest(data.getRequestId());
         
         if(chartRequest == null) {
             System.out.println("PrimaryController: chartRequest is null, can't generate chart");
-            // TODO log error
+            Logger.log("PrimaryController: chartRequest is null, can't generate chart");
             return;
         }
 
