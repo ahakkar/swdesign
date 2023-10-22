@@ -148,7 +148,6 @@ public class RequestController {
      */
     @FXML
     public void createDiagramButtonAction() {
-        Logger.log("createDiagramButton pressed", "notADefaultLogFile.log"); // writes to notADefaultLogFile.log
         Logger.log("createDiagramButton pressed"); // writes to log.log
         Map<AxisType, DataType> axisMap = Map.of(
             AxisType.X_AXIS, xAxisChoiceBox.getValue(),
@@ -158,7 +157,9 @@ public class RequestController {
         ChartRequest chartRequest = new ChartRequest(
             chartTypeChoiceBox.getValue(),
             axisMap,
-            null
+            null,
+            fromDatePicker.getValue().toString(),
+            toDatePicker.getValue().toString()
         );
 
         requestDispatcher.validateAddChartRequest(

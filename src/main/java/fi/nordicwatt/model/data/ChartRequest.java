@@ -8,6 +8,7 @@ import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
+import fi.nordicwatt.utils.Logger;
 
 
 /**
@@ -26,6 +27,8 @@ public class ChartRequest
     private ChartType chartType;
     private Map<AxisType, DataType> axisMap = new HashMap<>();
     private RequestBundle bundle;
+    private String startTime;
+    private String endTime;
     private final String chartId;
 
     /**
@@ -34,13 +37,17 @@ public class ChartRequest
     public ChartRequest(
         ChartType chartType,
         Map<AxisType, DataType> axisMap, 
-        RequestBundle bundle
-
+        RequestBundle bundle,
+        String startTime,
+        String endTime
     ) {
         this.chartType = chartType;
         this.axisMap = axisMap;
         this.bundle = bundle;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.chartId = UUID.randomUUID().toString();
+        Logger.log("ChartRequest created: " + this.toString());
     }
 
 
@@ -79,5 +86,9 @@ public class ChartRequest
 
     public String getChartId() {
         return chartId;
+    }
+
+    public String toString() {
+        return "ChartRequest: " + chartType + ", " + axisMap + ", " + bundle + ", " + startTime + ", " + endTime;
     }
 }
