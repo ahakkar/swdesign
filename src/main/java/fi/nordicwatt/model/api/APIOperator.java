@@ -99,11 +99,13 @@ public class APIOperator {
      * 
      * @return a single dataresponse for a single api call
      */
-    private DataResponse getEnergyModelData(DataRequest request) {        
+    private DataResponse getEnergyModelData(DataRequest request) {
+        LocalDateTime startTime = DateTimeConverter.finnishTimeToGMTTime(request.getStarttime());
+        LocalDateTime endTime = DateTimeConverter.finnishTimeToGMTTime(request.getEndtime());
         FingridAPIRequestBuilder builder = new FingridAPIRequestBuilder()
             .withDataType(request.getDataType().getVariableId())
-            .withStartTime(request.getStarttime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
-            .withEndTime(request.getEndtime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+            .withStartTime(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .withEndTime(endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
         try (Response httpResponse = builder.execute()) {
             if (!httpResponse.isSuccessful()) {   

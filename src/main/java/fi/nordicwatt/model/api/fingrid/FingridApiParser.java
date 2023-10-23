@@ -14,6 +14,8 @@ import fi.nordicwatt.types.DataType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import fi.nordicwatt.utils.DateTimeConverter;
+
 /**
  * FingridApiParser - Parses response from Fingrid API to EnergyModel.
  * 
@@ -56,7 +58,7 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
             String firstEntryTimestamp = (String) entries.get(0).get("start_time");
             DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
             DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime dateTime = LocalDateTime.parse(firstEntryTimestamp, originalFormat);
+            LocalDateTime dateTime = DateTimeConverter.gmtTimeToFinnishTime(LocalDateTime.parse(firstEntryTimestamp, originalFormat));
             String formattedTimestamp = dateTime.format(desiredFormat);
             DataType type = request.getDataType();
     

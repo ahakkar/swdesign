@@ -1,5 +1,6 @@
 package fi.nordicwatt.model.service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
@@ -72,8 +73,8 @@ public class DataStorage {
         if (model != null){
 
             String start = query.getStarttime().format(formatter);
-            String end = query.getEndtime().format(formatter);
-
+            String end = query.getEndtime().withMinute(0).withSecond(0).format(formatter);
+            LocalDateTime now = LocalDateTime.now();
             Map<String, Double> dataPoints = model.getDataPointsWithRange(start, end);
             Double[] values = new Double[dataPoints.size()];
 
@@ -83,7 +84,7 @@ public class DataStorage {
                 ++i;
             }
 
-            if (dataPoints.containsKey(start) && dataPoints.containsKey(end)){
+            if (dataPoints.containsKey(start) && (dataPoints.containsKey(end))){
                 if (model instanceof EnergyModel){
                     return new EnergyModel(model.getDataType(), model.getUnit(), start, values);
                 }
