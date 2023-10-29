@@ -27,7 +27,7 @@ regarding the design document and code, some hightlights of the work distributio
   - Focus on big picture and acting as "Scrum master"
 
 ### Design document
-The latest version of the design document can be found from projects root directory "DesignDocument.docx"
+The latest version of the design document and it's attachments can be found from folder "doc"
 
 ## How to test the program
 
