@@ -1,18 +1,16 @@
 package fi.nordicwatt.controller.factory;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.DataResponse;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
-
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
+import javafx.util.converter.NumberStringConverter;
 
 /**
  * XYChart specific methods
@@ -36,9 +34,9 @@ public class XYChartImpl extends ChartImpl {
     ) {  
         this.request = request;
         this.data = data;
-        
-        NumberAxis xAxis = new NumberAxis();
-        NumberAxis yAxis = new NumberAxis();
+
+        ValueAxis<Number> xAxis = new NumberAxis();
+        ValueAxis<Number> yAxis = new NumberAxis();
 
         switch(request.getChartType()) {
             case LINE_CHART:            
@@ -74,7 +72,31 @@ public class XYChartImpl extends ChartImpl {
 
         xAxis.setLabel(axisMap.get(AxisType.X_AXIS).toString());
         yAxis.setLabel(axisMap.get(AxisType.Y_AXIS).toString());
-    } 
+    }
+
+    private void updateXAxisForDateTimeRange(long min, long max){
+        NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+        xAxis.setAutoRanging(false);
+        long tickUnit = calculateTickUnit(min, max);
+        xAxis.setTickUnit(tickUnit);
+        xAxis.setLowerBound(min);
+        xAxis.setUpperBound(max);
+        xAxis.setTickLabelRotation(75);
+        xAxis.setTickLabelFormatter(new NumberStringConverter() {
+            @Override
+            public String toString(Number object) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                Date date = new Date(object.longValue());
+                return dateFormat.format(date);
+            }
+        });
+    }
+
+    private long calculateTickUnit(long min, long max){
+        long diff = max - min;
+        long tickUnit = diff / 25;
+        return tickUnit == 0 ? 1 : tickUnit;
+    }
 
      /**
      * Populates the Chart object with provided data
@@ -90,17 +112,29 @@ public class XYChartImpl extends ChartImpl {
 
             // Assume that Y_AXIS is the value we want to plot
             series.setName(axisMap.get(AxisType.Y_AXIS).getDescription());
-            int i = 0;
 
             // Check if there is only one DataResponse object
             if (data.getItems().size() == 1) {
                 // Use the placeholder value for the x-axis
+                long min = Long.MAX_VALUE;
+                long max = Long.MIN_VALUE;
                 for (Map.Entry<String, Double> entry : data.getItems().get(0).getData().getDataPoints().entrySet()) {
-                    Number xValue = i; // TODO use some actual value here
+                    String dateString = entry.getKey();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = dateFormat.parse(dateString);
+                    long epoch = date.getTime();
+                    if (epoch < min) {
+                        min = epoch;
+                    }
+                    else if (epoch > max) {
+                        max = epoch;
+                    }
+                    Number xValue = epoch;
                     Number yValue = entry.getValue();
                     series.getData().add(new XYChart.Data<>(xValue, yValue));
-                    i++;
                 }
+                updateXAxisForDateTimeRange(min, max);
+
             } else if (data.getItems().size() == 2) {
                 // Use the first DataResponse object for the x-axis and the second for the y-axis
                 Map<String, Double> xDataPoints = data.getItems().get(0).getData().getDataPoints();
