@@ -74,17 +74,18 @@ public class XYChartImpl extends ChartImpl {
         yAxis.setLabel(axisMap.get(AxisType.Y_AXIS).toString());
     }
 
-    private void updateXAxisForTime(long min, long max){
+    private void updateXAxisForDateTimeRange(long min, long max){
         NumberAxis xAxis = (NumberAxis) chart.getXAxis();
         xAxis.setAutoRanging(false);
         long tickUnit = calculateTickUnit(min, max);
         xAxis.setTickUnit(tickUnit);
         xAxis.setLowerBound(min);
         xAxis.setUpperBound(max);
+        xAxis.setTickLabelRotation(75);
         xAxis.setTickLabelFormatter(new NumberStringConverter() {
             @Override
             public String toString(Number object) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                 Date date = new Date(object.longValue());
                 return dateFormat.format(date);
             }
@@ -93,7 +94,7 @@ public class XYChartImpl extends ChartImpl {
 
     private long calculateTickUnit(long min, long max){
         long diff = max - min;
-        long tickUnit = diff / 100;
+        long tickUnit = diff / 25;
         return tickUnit == 0 ? 1 : tickUnit;
     }
 
@@ -132,7 +133,7 @@ public class XYChartImpl extends ChartImpl {
                     Number yValue = entry.getValue();
                     series.getData().add(new XYChart.Data<>(xValue, yValue));
                 }
-                updateXAxisForTime(min, max);
+                updateXAxisForDateTimeRange(min, max);
 
             } else if (data.getItems().size() == 2) {
                 // Use the first DataResponse object for the x-axis and the second for the y-axis
