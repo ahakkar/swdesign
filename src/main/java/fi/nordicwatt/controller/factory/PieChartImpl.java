@@ -20,8 +20,10 @@ public class PieChartImpl extends ChartImpl {
 
     }
 
-    protected void populateChartData(Boolean hidenodes) {
+    protected void populateChartData() {
         
     }
+
+    protected void hideNodes(){}
     
 }
