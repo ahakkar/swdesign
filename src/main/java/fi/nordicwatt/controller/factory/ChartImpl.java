@@ -21,5 +21,7 @@ public abstract class ChartImpl
 
     public abstract Chart createChart(ChartRequest request, ResponseBundle data);
 
-    protected abstract void populateChartData(Boolean hidenodes);
+    protected abstract void populateChartData();
+
+    protected abstract void hideNodes();
 }
