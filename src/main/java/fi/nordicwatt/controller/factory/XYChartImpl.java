@@ -79,8 +79,7 @@ public class XYChartImpl extends ChartImpl {
 
      /**
      * Populates the Chart object with provided data
-     * 
-     * @param hideNodes  boolean for hiding the datapoints' nodes
+     *
      * 
      * //TODO refactor to use Chart instead of XYChart (possibly move this to a XYChartImpl subclass)
      */
