@@ -4,7 +4,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
@@ -197,6 +199,10 @@ public abstract class AbstractDataModel<T extends Number> {
             throw new IllegalArgumentException("Units do not match");
         }
         this.dataPoints.putAll(other.dataPoints);
+    }
+
+    public <E extends AbstractDataModel> void combineModels(E model) {
+        dataPoints.putAll(model.getDataPoints());
     }
 
     @Override

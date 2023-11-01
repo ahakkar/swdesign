@@ -55,43 +55,57 @@ public class APIOperator {
         LocalDateTime endTime = DateTimeConverter.finnishTimeToGMTTime(request.getEndtime());
         //LocalDateTime startTime = request.getStarttime();
         //LocalDateTime endTime = request.getEndtime();
-        FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
-            .withLocation(request.getLocation())
-            .withDataType(request.getDataType().getVariableId())
-            .withStartTime(startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
-            .withEndTime(endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
-            .withTimestep("60");        
 
-        try (Response httpResponse = builder.execute()) {
-            if (!httpResponse.isSuccessful()) {   
-                // TODO log exception
-                throw new IOException("FMI Httprequest not successful. Code: " + httpResponse.code() + ", Message: " + httpResponse.message());
+        FmiAPIRequestBuilder builder = null;
+        int loopIndex = 0;
+        WeatherModel data = new WeatherModel(null, null, null);
+
+        while ( request.getStarttime().plusHours(loopIndex*168).isBefore(request.getEndtime()) ) {
+            builder = new FmiAPIRequestBuilder()
+                .withLocation(request.getLocation())
+                .withDataType(request.getDataType().getVariableId())
+                .withStartTime(startTime.plusHours(loopIndex*168).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+                .withEndTime(endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+                .withTimestep("60");   
+
+            try (Response httpResponse = builder.execute()) {
+                if (!httpResponse.isSuccessful()) {   
+                    // TODO log exception
+                    throw new IOException("FMI Httprequest not successful. Code: " + httpResponse.code() + ", Message: " + httpResponse.message());
             }
             String jsonData = httpResponse.body().string();          
-            FmiApiParser parser = new FmiApiParser();            
-            WeatherModel data = parser.parseToDataObject(request, jsonData);
-            DataResponse response = new DataResponse(request, data);
+            FmiApiParser parser = new FmiApiParser();   
+            if (loopIndex == 0)
+            {
+                data = parser.parseToDataObject(request, jsonData);
+            }
+            else
+            {
+                WeatherModel moreData = parser.parseToDataObject(request, jsonData);
+                data.combineModels(moreData);
+            }         
+            ++loopIndex;
+            
+            } 
+            catch (IllegalStateException e) {
+                System.out.println("[APIOperator]: IllegalStateException");
+                // TODO log exception
+            }
+            catch (IOException e) {
+                System.out.println("[APIOperator]: IO Exception");
+                // TODO log exception
+            } catch (ParseException e) {
+                System.out.println("[APIOperator]: ParseException while trying to parse API response to DataModel");
+                // TODO log exception
+            }
+            catch (Exception e) {
+                System.out.println("[APIOperator]: Exception");
+                // TODO log exception
+            }
 
-            return response;            
-
-        } 
-        catch (IllegalStateException e) {
-            System.out.println("[APIOperator]: IllegalStateException");
-            // TODO log exception
         }
-        catch (IOException e) {
-            System.out.println("[APIOperator]: IO Exception");
-            // TODO log exception
-        } catch (ParseException e) {
-            System.out.println("[APIOperator]: ParseException while trying to parse API response to DataModel");
-            // TODO log exception
-        }
-        catch (Exception e) {
-            System.out.println("[APIOperator]: Exception");
-            // TODO log exception
-        }
-
-        return null;
+        DataResponse response = new DataResponse(request, data); 
+        return response;
     }
 
     /**
