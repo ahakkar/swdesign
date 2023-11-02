@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.xml.sax.Parser;
+
 import fi.nordicwatt.model.api.APIParserInterface.ParseException;
 import fi.nordicwatt.model.api.fingrid.FingridApiParser;
 import fi.nordicwatt.model.api.fingrid.FingridAPIRequestBuilder;
 import fi.nordicwatt.model.api.fmi.FmiApiParser;
 import fi.nordicwatt.model.api.fmi.FmiAPIRequestBuilder;
+import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.data.*;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.model.datamodel.EnergyModel;
@@ -42,6 +45,9 @@ public class APIOperator {
         } 
     }
 
+    /**
+     * Creates a single WeatherModel from FMI data.
+     */
     private WeatherModel getOneWeatherModel(DataRequest request, LocalDateTime startTime, LocalDateTime endTime) {
 
         FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
@@ -80,7 +86,7 @@ public class APIOperator {
     }
 
     /**
-     * Fetches and parses data from FMI API
+     * Fetches and parses data from FMI API, chops requests into smaller pieces * if required (maximum interval for FMI is Constants.MAX_FMI_INTERVAL hours in a single API call)
      * 
      * @return a single dataresponse for a single api call
      */
@@ -92,23 +98,30 @@ public class APIOperator {
         LocalDateTime startTime = DateTimeConverter.finnishTimeToGMTTime(request.getStarttime());
         LocalDateTime endTime = DateTimeConverter.finnishTimeToGMTTime(request.getEndtime());
 
-        int loopIndex = 0;
-        WeatherModel data = new WeatherModel(null, null, null);
+        int weekMultiplier = 0;
+        WeatherModel data = new WeatherModel(request.getDataType(), null, null);
 
-        // Loops the full weeks
-        while (startTime.plusHours(((loopIndex+1)*168+1)).isBefore(endTime)) {
-            System.out.println(startTime.plusHours((loopIndex)*168+1).toString());
-            System.out.println(startTime.plusHours((loopIndex+1)*168).toString());
-            if (loopIndex == 0) {
-                data = getOneWeatherModel(request,startTime,startTime.plusHours(((loopIndex+1)*168)));
+        // Separates the full weeks into their separate API requests, the '+1'
+        // in start times is to avoid data overlapping.
+        if (startTime.plusHours(((weekMultiplier+1)*Constants.MAX_FMI_INTERVAL+1)).isBefore(endTime)) {
+            
+            while (startTime.plusHours(((weekMultiplier+1)*Constants.MAX_FMI_INTERVAL+1)).isBefore(endTime)) {
+
+                if (weekMultiplier == 0) {
+                    data = getOneWeatherModel(request,startTime,startTime.plusHours(((weekMultiplier+1)*Constants.MAX_FMI_INTERVAL)));
+                }
+                else {
+                    data.combineModels(getOneWeatherModel(request, startTime.plusHours(weekMultiplier*Constants.MAX_FMI_INTERVAL+1), startTime.plusHours(((weekMultiplier+1)*Constants.MAX_FMI_INTERVAL))));
+                }
+                ++weekMultiplier;
             }
-            else {
-                data.combineModels(getOneWeatherModel(request, startTime.plusHours(loopIndex*168+1), startTime.plusHours(((loopIndex+1)*168))));
-            }
-            ++loopIndex;
+
+            data.combineModels(getOneWeatherModel(request, startTime.plusHours((weekMultiplier*Constants.MAX_FMI_INTERVAL+1)), endTime));
         }
-
-        data.combineModels(getOneWeatherModel(request, startTime.plusHours((loopIndex*168+1)), endTime));
+        else
+        {
+            data = getOneWeatherModel(request, startTime, endTime);
+        }
 
         DataResponse response = new DataResponse(request, data); 
         return response;
