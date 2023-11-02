@@ -96,17 +96,19 @@ public class APIOperator {
         WeatherModel data = new WeatherModel(null, null, null);
 
         // Loops the full weeks
-        while (startTime.plusHours((loopIndex+1)*168).isBefore(endTime)) {
+        while (startTime.plusHours(((loopIndex+1)*168+1)).isBefore(endTime)) {
+            System.out.println(startTime.plusHours((loopIndex)*168+1).toString());
+            System.out.println(startTime.plusHours((loopIndex+1)*168).toString());
             if (loopIndex == 0) {
-                data = getOneWeatherModel(request,startTime,startTime.plusHours((loopIndex+1)*168));
+                data = getOneWeatherModel(request,startTime,startTime.plusHours(((loopIndex+1)*168)));
             }
             else {
-                data.combineModels(getOneWeatherModel(request, startTime.plusHours(loopIndex*168), startTime.plusHours((loopIndex+1)*168)));
+                data.combineModels(getOneWeatherModel(request, startTime.plusHours(loopIndex*168+1), startTime.plusHours(((loopIndex+1)*168))));
             }
             ++loopIndex;
         }
 
-        data.combineModels(getOneWeatherModel(request, startTime.plusHours(loopIndex*168), endTime));
+        data.combineModels(getOneWeatherModel(request, startTime.plusHours((loopIndex*168+1)), endTime));
 
         DataResponse response = new DataResponse(request, data); 
         return response;
