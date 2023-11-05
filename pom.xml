@@ -51,6 +51,13 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.14.1</version>
         </dependency>
+
+        <!-- Jackson Datatype: JSR310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.14.1</version>
+        </dependency>
                 
         <!-- JUnit 5 --> 
         <dependency>

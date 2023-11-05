@@ -8,12 +8,13 @@ module fi.nordicwatt {
 
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
     requires java.xml;
 
     opens fi.nordicwatt to javafx.fxml;
     opens fi.nordicwatt.controller to javafx.fxml;    
     opens fi.nordicwatt.model.data to com.fasterxml.jackson.databind;
-    opens fi.nordicwatt.model.service to com.fasterxml.jackson.databind;
+    opens fi.nordicwatt.model.service to com.fasterxml.jackson.databind, com.fasterxml.jackson.datatype.jsr310;
 
     exports fi.nordicwatt.model.data;
     exports fi.nordicwatt.model.datamodel;
