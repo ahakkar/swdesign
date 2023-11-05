@@ -1,7 +1,6 @@
 package fi.nordicwatt.model.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import fi.nordicwatt.model.api.APIDataListener;
@@ -14,9 +13,7 @@ import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.datamodel.WeatherModel;
-import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
-import fi.nordicwatt.types.RelativeTimePeriod;
 import fi.nordicwatt.utils.DataNotFoundException;
 
 /**
@@ -28,14 +25,14 @@ public class DataManager implements APIDataListener {
 
     private static DataManager instance;
     private static DataStorage dataStorage;
-    private static PresetParsing presetParsing;
+    private static PresetManager presetManager;
     private static APIQueue apiQueue;
     private final  ArrayList<DataManagerListener> listeners;
 
     private DataManager() {
         this.listeners = new ArrayList<>();
         DataManager.dataStorage = DataStorage.getInstance();
-        DataManager.presetParsing = PresetParsing.getInstance();
+        DataManager.presetManager = PresetManager.getInstance();
         apiQueue = APIQueue.getInstance();
         apiQueue.registerListener(this);
     }
@@ -219,31 +216,25 @@ public class DataManager implements APIDataListener {
     }
 
         /**
-     * Sends the settings to be saved to PresetParsing.
-     * @param chartType
-     * @param xAxis
-     * @param yAxis
-     * @param relativeTime
-     * @param relativeTimePeriod
-     * @param starttime
-     * @param endtime
-     * @param location
+     * Sends the settings to be saved to PresetManager.
+     * @param id
+     * @param settingsData
      * @throws IOException
      */
-    public void savePreset(ChartType chartType, DataType xAxis, DataType yAxis, Boolean relativeTime, RelativeTimePeriod relativeTimePeriod, LocalDate starttime, LocalDate endtime, String location) throws IOException
+    public void savePreset(String id, SettingsData settingsData) throws IOException
     {
-        presetParsing.saveSettings(chartType, xAxis, yAxis, relativeTime, relativeTimePeriod, starttime, endtime, location);
+        presetManager.saveSettingsData(id, settingsData);
     }
 
     /**
-     * Loads the setting from PresetParsing.
+     * Loads the setting from PresetManager.
+     * @param id
      * @return The saved settings as SettingsData object.
      * @throws IOException
      */
-    public SettingsData loadPreset() throws IOException
+    public SettingsData loadPreset(String id) throws IOException
     {
-        return presetParsing.loadSettings();
+        return presetManager.loadSettingsData(id);
     }
-
-    
+ 
 }

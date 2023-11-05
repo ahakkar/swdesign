@@ -11,7 +11,6 @@ import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.model.service.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
-import fi.nordicwatt.model.session.TabInfo;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.EnvironmentVariables;
@@ -101,9 +100,8 @@ public class PrimaryController implements DataManagerListener, SessionController
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(sceneName + ".fxml"));
             Parent parent = fxmlLoader.load(); 
-
             this.requestController = fxmlLoader.getController();
-            
+
             return parent;
         }
         catch (IOException e) {

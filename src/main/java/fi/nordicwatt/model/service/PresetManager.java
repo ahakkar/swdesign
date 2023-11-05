@@ -36,7 +36,7 @@ public final class PresetManager
     }
 
     // Method to serialize a Map of SettingsData objects to JSON and save it to a file
-    public static void saveSettingsData(String id, SettingsData settingsData) throws IOException {
+    public void saveSettingsData(String id, SettingsData settingsData) throws IOException {
         Map<String, SettingsData> settingsDataMap = new TreeMap<>();
         settingsDataMap.put(id, settingsData);
         objectMapper.registerModule(new JavaTimeModule());
@@ -48,7 +48,7 @@ public final class PresetManager
 
     // Method to read JSON data from a file, deserialize it into a map of SettingsData objects
     // and return a specific SettingsData object by ID
-    public static SettingsData loadSettingsData(String id) throws IOException {
+    public SettingsData loadSettingsData(String id) throws IOException {
         objectMapper.registerModule(new JavaTimeModule());
 
         // Deserialize JSON from the file into a map of SettingsData objects

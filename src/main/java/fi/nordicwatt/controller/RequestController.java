@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import fi.nordicwatt.App;
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.service.DataManager;
@@ -15,17 +16,21 @@ import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
+import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.Logger;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
+import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
@@ -551,6 +556,21 @@ public class RequestController {
         });
     }
 
+    private void createNewWindow(String sceneName)
+    {
+        try
+        {
+            Stage stage = new Stage();
+            stage.setTitle("Save preset");
+            stage.setScene(new Scene(FXMLLoader.load(App.class.getResource(sceneName + ".fxml")),400,400));
+            stage.show(); 
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+        
+    }
 
     /**
      * initiates the button to open up a dialog. Currently only sets
@@ -569,7 +589,10 @@ public class RequestController {
             alert.showAndWait();
             DataManager dataManager = DataManager.getInstance();
             try {
-                dataManager.savePreset(chartTypeChoiceBox.getValue(), DataType.TIME, yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                String presetId = "";
+                createNewWindow(Scenes.SaveSettingsWindow.toString());
+                dataManager.savePreset(presetId, settingsData);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -594,7 +617,8 @@ public class RequestController {
             alert.showAndWait();
             DataManager dataManager = DataManager.getInstance();
             try {
-                SettingsData settingsData = dataManager.loadPreset();
+                String id = ""; 
+                SettingsData settingsData = dataManager.loadPreset(id);
                 chartTypeChoiceBox.setValue(settingsData.getChartType());
                 xAxisChoiceBox.setValue(settingsData.getXAxis());
                 yAxisChoiceBox.setValue(settingsData.getYAxis());
