@@ -47,6 +47,8 @@ public class RequestController {
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
 
+    private ChartType selectedChartType = null;
+
     @FXML
     private TabPane mainTabPane;
 
@@ -310,8 +312,14 @@ public class RequestController {
     /** TODO what is this method used for? -ah */
     @FXML
     private void chartTypeChoiceBoxAction() {
-        // System.out.println("Chart type Choice Box: Value " +
-        // chartTypeChoiceBox.getValue() + " was selected");
+         System.out.println("Chart type Choice Box: Value " +
+        chartTypeChoiceBox.getValue() + " was selected");
+
+         if (this.selectedChartType != null && this.selectedChartType != chartTypeChoiceBox.getValue()) {
+             System.out.println("UPDATE XY AXIS BOXES");
+             updateXYAxisChoiceBoxes();
+         }
+        this.selectedChartType = chartTypeChoiceBox.getValue();
     }
 
     /** TODO what is this method used for? -ah */
@@ -347,6 +355,10 @@ public class RequestController {
      * TODO replace hardcoded value with actual options
      */
     private void initializeXAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        System.out.println("InitilaizeXAxisChoiceBox");
+        System.out.println("selected chart: " + selectedChart.toString());
         xAxisChoiceBox.setConverter(new StringConverter<DataType>() {
             public String toString(DataType type) {
                 return (type == null) ? "" : type.toString();  
@@ -358,19 +370,57 @@ public class RequestController {
         });
 
         // Filter the DataType values to only include those with X_AXIS in their allowedAxes
-        List<DataType> xDataTypeList = new ArrayList<>();
-        for (DataType dataType : DataType.values()) {
-            if (dataType.isAxisAllowed(AxisType.X_AXIS)) {
-                xDataTypeList.add(dataType);
-            }
-        }
+        List<DataType> xDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
 
         xAxisChoiceBox.getItems().addAll(xDataTypeList);
         xAxisChoiceBox.setValue(DataType.TIME);
         xAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateXAxisLabels();
+            if (newValue != null && oldValue != newValue) {
+                updateXAxisLabels();
+            }
+
         });
         updateXAxisLabels();
+    }
+
+    private List<DataType> getFilteredDataTypeList(ChartType selectedChart, AxisType axisType) {
+        List<DataType> dataTypeList = new ArrayList<>();
+        for (DataType dataType : DataType.values()) {
+            if (dataType.isAxisAllowed(axisType) && dataType.isChartAllowed(selectedChart)) {
+                dataTypeList.add(dataType);
+            }
+        }
+        return dataTypeList;
+    }
+
+    private void updateXYAxisChoiceBoxes(){
+
+        DataType xSelection = xAxisChoiceBox.getValue();
+        DataType ySelection = yAxisChoiceBox.getValue();
+
+        List<DataType> xData = xAxisChoiceBox.getItems();
+        List<DataType> yData = yAxisChoiceBox.getItems();
+        xData.clear();
+        yData.clear();
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        List<DataType> newXData = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
+        List<DataType> newYData = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
+        xData.addAll(newXData);
+        yData.addAll(newYData);
+        if (xData.contains(xSelection)) {
+            xAxisChoiceBox.setValue(xSelection);
+        } else {
+            xAxisChoiceBox.setValue(xData.get(0));
+        }
+
+        if (yData.contains(ySelection)) {
+            yAxisChoiceBox.setValue(ySelection);
+        } else {
+            yAxisChoiceBox.setValue(yData.get(0));
+        }
+        updateXAxisLabels();
+        updateYAxisLabels();
     }
 
     /**
@@ -389,6 +439,8 @@ public class RequestController {
      * value to CONSUMPTION.
      */
     private void initializeYAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
         yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
             public String toString(DataType type) {
                 return (type == null) ? "" : type.toString();  
@@ -400,17 +452,14 @@ public class RequestController {
         });
 
         // Filter the DataType values to only include those with Y_AXIS in their allowedAxes
-        List<DataType> yDataTypeList = new ArrayList<>();
-        for (DataType dataType : DataType.values()) {
-            if (dataType.isAxisAllowed(AxisType.Y_AXIS)) {
-                yDataTypeList.add(dataType);
-            }
-        }
+        List<DataType> yDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
 
         yAxisChoiceBox.getItems().addAll(yDataTypeList);
-        yAxisChoiceBox.setValue(DataType.CONSUMPTION);
+        yAxisChoiceBox.setValue(yDataTypeList.get(0));
         yAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateYAxisLabels();
+            if (newValue != null && oldValue != newValue) {
+                updateYAxisLabels();
+            }
         });
         updateYAxisLabels();
     }
