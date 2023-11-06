@@ -43,14 +43,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 
 /**
- * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements.
+ * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements. Listens to SaveSettingsController and LoadSettingsController.
  * 
  * @author Antti Hakkarainen
  */
-public class RequestController {
+public class RequestController implements SaveSettingsControllerListener, LoadSettingsControllerListener {
 
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
+    private static final ArrayList<RequestControllerListener> listeners = new ArrayList<>();
+    private static final DataManager dataManager = DataManager.getInstance();
 
     @FXML
     private TabPane mainTabPane;
@@ -148,6 +150,15 @@ public class RequestController {
         savePresetButton();   
     }
 
+    public void addListener(RequestControllerListener listener)
+    {
+        listeners.add(listener);
+    }
+
+    public void removeListener(RequestControllerListener listener)
+    {
+        listeners.remove(listener);
+    }
 
     /**
      * Observes changes in mainTabPane and updates the tab id in
@@ -556,20 +567,12 @@ public class RequestController {
         });
     }
 
-    private void createNewWindow(String sceneName)
+    private void openAWindow(String sceneName) throws IOException
     {
-        try
+        for ( RequestControllerListener l : listeners )
         {
-            Stage stage = new Stage();
-            stage.setTitle("Save preset");
-            stage.setScene(new Scene(FXMLLoader.load(App.class.getResource(sceneName + ".fxml")),400,400));
-            stage.show(); 
+            l.LoadScene(sceneName);
         }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-        
     }
 
     /**
@@ -587,13 +590,10 @@ public class RequestController {
             alert.setContentText(
                     "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
             alert.showAndWait();
-            DataManager dataManager = DataManager.getInstance();
             try {
-                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
-                String presetId = "";
-                createNewWindow(Scenes.SaveSettingsWindow.toString());
-                dataManager.savePreset(presetId, settingsData);
+                openAWindow(Scenes.SaveSettingsWindow.toString());
             } catch (IOException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
@@ -630,5 +630,21 @@ public class RequestController {
                 e.printStackTrace();
             }
         });
+    }
+    @Override
+    public void saveSettings(String id)
+    {
+        try {
+                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                dataManager.savePreset(id, settingsData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadSettings(SettingsData settings)
+    {
+        
     }
 }

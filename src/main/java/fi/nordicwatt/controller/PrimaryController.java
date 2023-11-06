@@ -28,11 +28,11 @@ import javafx.stage.Stage;
  * application-level logic, like forwarding requests when other classes ask
  * "what should we do with this event?".
  * 
- * Listens (=subscribes to) to DataManager and SessionController events.
+ * Listens (=subscribes to) to DataManager, RequestController and SessionController events.
  * 
  * @author Antti Hakkarainen
  */
-public class PrimaryController implements DataManagerListener, SessionControllerListener
+public class PrimaryController implements DataManagerListener, SessionControllerListener, RequestControllerListener
 {
     private static PrimaryController instance;
     private RequestController requestController;
@@ -81,7 +81,8 @@ public class PrimaryController implements DataManagerListener, SessionController
      * @param sceneName     name of the scene to be loaded, without .fxml extension
      * @throws IOException  if the scene file is not found
      */
-    private void LoadScene(String sceneName) throws IOException {
+    @Override
+    public void LoadScene(String sceneName) throws IOException {
         scene = new Scene(loadFXML(sceneName), 1400, 1000);
         stage.setScene(scene);
         stage.show();
@@ -99,8 +100,12 @@ public class PrimaryController implements DataManagerListener, SessionController
     private Parent loadFXML(String sceneName) throws IOException {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(sceneName + ".fxml"));
-            Parent parent = fxmlLoader.load(); 
-            this.requestController = fxmlLoader.getController();
+            Parent parent = fxmlLoader.load();
+            if (sceneName.equals(Scenes.MainWorkspace.toString()))
+            {
+                this.requestController = fxmlLoader.getController();
+                requestController.addListener(instance);
+            }
 
             return parent;
         }

@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
  */
 public class SaveSettingsController 
 {
+    SaveSettingsControllerListener listener;
 
     @FXML
     private Button saveButton;
@@ -22,7 +23,7 @@ public class SaveSettingsController
 
     public void saveButtonAction()
     {
-        System.out.println("Placeholder: save");
+
     }
 
     public void cancelSaveButtonAction()
