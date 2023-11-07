@@ -5,16 +5,14 @@ import java.io.IOException;
 import fi.nordicwatt.App;
 import fi.nordicwatt.controller.factory.ChartFactory;
 import fi.nordicwatt.model.data.ChartRequest;
-import fi.nordicwatt.model.data.DataResponse;
 import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.model.service.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
-import fi.nordicwatt.model.session.TabInfo;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.CustomAlerts;
-import fi.nordicwatt.utils.EnvironmentVariables;
+import fi.nordicwatt.utils.ApiSettings;
 import fi.nordicwatt.utils.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -65,8 +63,8 @@ public class PrimaryController implements DataManagerListener, SessionController
             this.stage = stage;
         }
 
-        EnvironmentVariables.getInstance();
-        EnvironmentVariables.load(".env");
+        ApiSettings.getInstance();
+        ApiSettings.load();
 
         LoadScene(Scenes.MainWorkspace.toString());        
         dataManager.registerListener(this);
@@ -125,7 +123,7 @@ public class PrimaryController implements DataManagerListener, SessionController
         Logger.log("dataRequestSuccess: " + data.toString());
         
         ChartRequest chartRequest = 
-            sessionController.getChartRequest(data.getRequestId());
+            sessionController.getPendingChartRequest();
         
         if(chartRequest == null) {
             System.out.println("PrimaryController: chartRequest is null, can't generate chart");
@@ -135,34 +133,35 @@ public class PrimaryController implements DataManagerListener, SessionController
 
         Chart chart = chartFactory.generateChart(chartRequest, data);
         chart.setId(chartRequest.getChartId());
-        String tabId = sessionController.getTabIdForChart(chartRequest.getChartId());
+        String tabId = sessionController.getPendingTabId();
         
         // execute the chart adding to UI in JavaFX application thread
         Platform.runLater(() -> {
-           requestController.addChartToTab(tabId, chart);
+            sessionController.pendingChartRequestSuccess(true);
+            requestController.addChartToTab(tabId, chart);
+            requestController.restoreGenerateButtons();
         });              
     }
 
+
+    /**
+     * In case of failure, notify sessionController about failure. It will discard
+     * pending request and tab. Restore generate button functionality, display an 
+     * error to user about the cause of the failure.     * 
+     */
     @Override
     public void dataRequestFailure(RequestBundle requests, Exception e) {
-        // TODO use rollbackchart to remove placeholder chart for failed requests
-        System.out.println("PRIMARYCONTROLLER: Data request failure");
-
-    }
-
-    private void rollBackChart(DataResponse response, Exception exception) {        
-        String requestId = response.getRequest().getId();
-
-        // TODO add requestId to the chartRequest so we can use it here to remove the placeholder chart
-        //sessionController.removeChart(tabId, chartId);
         Platform.runLater(() -> {
+            sessionController.pendingChartRequestSuccess(false);
+            requestController.restoreGenerateButtons();
             CustomAlerts.displayAlert(
-                    AlertType.ERROR,
-                    "Exception from DataManager",
-                    "Can't create a chart because of an exception.\nResponse error message below:",
-                    exception.toString()
+                AlertType.ERROR,
+                "Exception from DataManager",
+                "Can't create a chart because of an exception.\nResponse error message below:",
+                e.toString()
             );
-         });
+            Logger.log("dataRequestFailure: " + e.toString());
+        }); 
 
     }
 
@@ -176,46 +175,49 @@ public class PrimaryController implements DataManagerListener, SessionController
      * @throws IllegalArgumentException if the session change type is unknown
      */
     @Override
-    public void onSessionChange(
-        SessionChangeData data
-    ) throws IllegalArgumentException {   
-        
-        // System.out.println("[PrimaryController]: Session change: " + data.getType().toString());
-
+    public void onSessionChange(SessionChangeData data) throws IllegalArgumentException {   
         switch (data.getType()) {
             case TAB_ADDED:
+                Logger.log("[PrymaryController] Tab added to session, tab: " + 
+                    data.getTabId());
                 requestController.addNewTabToUI(data);
                 break;
 
             case TAB_REMOVED:
+                Logger.log("[PrymaryController] Tab removed from session, tab: " + 
+                    data.getTabId());
                 requestController.removeTabFromUI(data.getTabId());
                 break;
 
             case TAB_MOVED:
-                // TODO: handle tab moved event
+                // Not implemented
                 break;
 
             case TAB_UPDATED:
-                // TODO: handle tab updated event
+                // Not implemented
                 break;
 
             case CHART_ADDED:                
-                requestController.displayProgressIndicator(data);
+                //requestController.displayProgressIndicator(data);
                 break;
 
             case CHART_REMOVED:
+                Logger.log("[PrymaryController] Chart removed from session, tab: " + 
+                    data.getTabId() + " chart: " + data.getChartId());
                 requestController.removeChartFromUI(data);
                 break;
 
             case CHART_MOVED:
-                // TODO: handle chart moved event
+                // Not implemented
                 break;
 
             case CHART_UPDATED:
-                // TODO: handle chart updated event
+                // Not implemented
                 break;
   
             default:
+                Logger.log("[PrymaryController] Unknown session change type: " + 
+                    data.getType().toString());
                 throw new IllegalArgumentException(
                     "[PrimaryController]: Unknown session change type: " + 
                     data.getType().toString()

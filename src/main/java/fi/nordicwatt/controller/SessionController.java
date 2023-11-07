@@ -41,6 +41,11 @@ public class SessionController implements DataManagerListener {
     // TODO should be somehow synced bidirectionally with UI
     private String currentTabId; 
 
+    // Pending (not yet displayed, because data retrieval from backend is asynchronous)
+    private ChartRequest pendingChartRequest;
+    private TabInfo pendingTab;
+    private String pendingTabId;
+
     /**
      * Singleton class  
      *   
@@ -67,6 +72,9 @@ public class SessionController implements DataManagerListener {
         SessionController.tabMap = new HashMap<>();
         SessionController.chartMap = new HashMap<>();
         dataManager.registerListener(this);
+
+        pendingChartRequest = null;
+        pendingTab = null;
     }
 
 
@@ -105,15 +113,22 @@ public class SessionController implements DataManagerListener {
     /**
      *
      */
-    public String addTab() {
-        TabInfo newTab = new TabInfo("Tab");        
-        
-        SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_ADDED);  
-        data.setTabId(newTab.getId());
-        data.setTitle(newTab.getTitle());
-        this.currentTabId = newTab.getId();       
+    public String addTab() {     
+        SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_ADDED);     
+        if(pendingTab == null) {
+            TabInfo newTab = new TabInfo("Tab");  
+            data.setTabId(newTab.getId());
+            data.setTitle(newTab.getTitle());
+            this.currentTabId = newTab.getId(); 
+            tabMap.put(newTab.getId(), newTab);
+        } 
+        else {
+            data.setTabId(pendingTabId);
+            data.setTitle(pendingTab.getTitle());
+            this.currentTabId = pendingTabId;
+            tabMap.put(pendingTabId, pendingTab);
+        }        
 
-        tabMap.put(newTab.getId(), newTab);
         notifyListeners(data);  // Used to notify PrimaryController to add a new Tab to UI
 
         return currentTabId;
@@ -143,12 +158,71 @@ public class SessionController implements DataManagerListener {
     /**
      * 
      * @param chartRequest ChartRequest object
+     * @param toNewTab
      */
-    public void newChartRequest (ChartRequest chartRequest)
-        throws IllegalArgumentException
-    {
-        this.addChart(chartRequest);         
-        dataManager.getData(chartRequest.getRequestBundle());  
+    public void newPendingChartRequest (
+        ChartRequest chartRequest,
+        boolean toNewTab
+    ) throws IllegalArgumentException {
+        this.pendingChartRequest = chartRequest;
+
+        if (toNewTab) {
+            pendingTab = new TabInfo("Tab");  
+            pendingTabId = pendingTab.getId();
+        } else {
+            pendingTab = null;
+            pendingTabId = currentTabId;
+        }         
+    }
+
+    
+    /**
+     * Retrieve parameters for creating a chart from the specified tab.
+     * 
+     * @param chartId Unique UUID string for which chart to choose from the tab
+     * @return        Object containing data required for a Chart creation task.
+     */
+    public ChartRequest getPendingChartRequest() {
+        // search chartmap for chartrequest with matching requestbundleid
+        if (pendingChartRequest != null) {
+            return pendingChartRequest;
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieve pending tab id
+     * 
+     * @return pending tab id or null
+     */
+    public String getPendingTabId() {
+        if (pendingTabId != null) {
+            return pendingTabId;
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Moves pending tab and chart info to maps, if operation is successful.
+     * Otherwise discards pending data.
+     * 
+     * @param isSuccessful success of chart generation operation
+     */
+    public void pendingChartRequestSuccess(boolean isSuccessful) {
+        if(isSuccessful) {
+            // tab doesn't exist?
+            if(!tabMap.containsKey(pendingTabId)) {
+                this.addTab();
+            }          
+            chartMap.put(pendingChartRequest.getChartId(), pendingChartRequest);
+        }
+
+        pendingChartRequest = null;
+        pendingTab = null;
+        pendingTabId = null;
     }
 
 
@@ -210,25 +284,6 @@ public class SessionController implements DataManagerListener {
         notifyListeners(data);
     }
 
-
-    /**
-     * Retrieve parameters for creating a chart from the specified tab.
-     * 
-     * @param chartId Unique UUID string for which chart to choose from the tab
-     * @return        Object containing data required for a Chart creation task.
-     */
-    public ChartRequest getChartRequest(String requestBundleId) {
-        // search chartmap for chartrequest with matching requestbundleid
-        ChartRequest chartRequest = null;
-        for (Map.Entry<String, ChartRequest> entry : chartMap.entrySet()) {
-            if (entry.getValue().getRequestBundleId().equals(requestBundleId)) {
-                chartRequest = entry.getValue();
-                break;
-            }
-        }
-
-        return chartRequest;
-    }
 
     public String getTabIdForChart(String chartId) {
         String tabId = "";

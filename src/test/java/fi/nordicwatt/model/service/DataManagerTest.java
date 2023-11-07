@@ -8,7 +8,7 @@ import fi.nordicwatt.model.datamodel.RequestBundle;
 import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
-import fi.nordicwatt.utils.EnvironmentVariables;
+import fi.nordicwatt.utils.ApiSettings;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class DataManagerTest {
 
     @Test
     public void testGetData() throws IOException, InterruptedException {
-        EnvironmentVariables.load(".env");
+        ApiSettings.load();
         DataManager dm = DataManager.getInstance();
 
         String responseId = UUID.randomUUID().toString();
@@ -38,7 +38,6 @@ public class DataManagerTest {
         final List<Exception> exceptions = new ArrayList<>();
         CountDownLatch latch = new CountDownLatch(1);
 
-        Thread currentThread = Thread.currentThread();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         final Thread[] callbackThread = new Thread[3];

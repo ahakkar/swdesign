@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.RequestBundle;
+import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.CustomAlerts;
@@ -21,6 +22,8 @@ import javafx.scene.control.Alert.AlertType;
  */
 public final class RequestDispatcher
 {    
+    private final SessionController sessionController = SessionController.getInstance(); 
+    private final DataManager dataManager = DataManager.getInstance();
     private static RequestDispatcher instance;
     private RequestDispatcher() { }
 
@@ -29,12 +32,14 @@ public final class RequestDispatcher
      * @return instance of this class
      */
     public static RequestDispatcher getInstance() {
-        synchronized (RequestDispatcher.class) {
-            if (instance == null) {
-                instance = new RequestDispatcher();
+        if (instance == null) {
+            synchronized (RequestDispatcher.class) {
+                if (instance == null) {
+                    instance = new RequestDispatcher();
+                }                
             }
-            return instance;
         }
+        return instance;
     }
 
 
@@ -107,7 +112,10 @@ public final class RequestDispatcher
 
     }
 
-    public Boolean dispatchRequest(ChartRequest chartRequest) {     
+    public Boolean dispatchRequest(
+        ChartRequest chartRequest,
+        boolean toNewTab
+    ) {           
         RequestBundle bundle = new RequestBundle();
 
         for (AxisType axisType : chartRequest.getAxisMap().keySet()) {
@@ -122,8 +130,8 @@ public final class RequestDispatcher
         chartRequest.setRequestBundle(bundle);
         Logger.log("Bundle is built. Dispatching chartrequest: " + chartRequest.toString());
 
-        SessionController sessionController = SessionController.getInstance();
-        sessionController.newChartRequest(chartRequest);
+        sessionController.newPendingChartRequest(chartRequest, toNewTab);
+        dataManager.getData(chartRequest.getRequestBundle());         
 
         return true;
     }

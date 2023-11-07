@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 
 import fi.nordicwatt.model.api.fingrid.FingridAPIRequestBuilder;
-import fi.nordicwatt.utils.EnvironmentVariables;
+import fi.nordicwatt.utils.ApiSettings;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,7 @@ import okhttp3.Response;
 public class FingridAPIRequestBuilderTest {
     @Test
     public void testFingridApiRequestBuilder() throws Exception {
-        EnvironmentVariables.load(".env");
+        ApiSettings.load();
         String dataType = "241";
 
         // Set fixed date as 7.10.2023 and get the previous 3 full calendar days

@@ -1,0 +1,33 @@
+Generate/regenerate chart buttons:
+
+.. break out tab/chart handling logic for a separate 
+from reqeustcontroller?
+
+User selects variables for a chart he wants and:
+X 1. view: press generate/regenerate
+X 2. requestcontroller: disable both buttons
+X 3. requestcontroller: replace pressed button's text with a progressindicator spinner
+X 4. requestcontroller: generate chartrequest (containing params for chart creation)
+X 4. requestcontroller: validate chart request with requestdispatcher
+X 5. requestcontroller: send valid chartrequest to requestdispatcher
+X 6. requestdispatcher: bundle datarequests and attach them to chartrequest
+X 7. requestdispatcher: inform sessioncontroller that a new pending chartrequest was made
+X 8. sessioncontroller: keeps note of the current tab
+X 9. sessioncontroller: saves a pending chartrequest and figures out
+   the pending tab (is a new tab needed or will we reuse existing tab)
+X 10. requestdispatcher: sends the data requestbundle to datamanager (backend)
+X 11. primarycontroller: gets the data for chart from backend
+
+Path for data retrieval success:
+X 1. primarycontroller: tells chartfactory to create a chart
+X 2. primarycontroller: notify sessioncontroller to move pending data to storage
+X 3. primarycontroller: notifies requestcontroller that chart is ready
+X 4. requestcontroller: displays chart in the tab, possibly replacing an 
+    existing chart, or putting the new chart into a new tab
+X 5. requestcontroller: restores functionality of generate/regenerate buttons
+
+Path for data retrieval failure:
+X 1. primarycontroller: tells sessioncontroller that the pending request failed
+X 2. sessioncontroller: clears the pending tab&chartrequest
+X 3. primarycontroller: tell requestcontroller to restore generate button functionality
+X 4. primarycontroller: displays an error msg to user with alert
