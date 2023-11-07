@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.xml.sax.Parser;
-
 import fi.nordicwatt.model.api.APIParserInterface.ParseException;
 import fi.nordicwatt.model.api.fingrid.FingridApiParser;
 import fi.nordicwatt.model.api.fingrid.FingridAPIRequestBuilder;

@@ -1,6 +1,5 @@
 package fi.nordicwatt.model.service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
@@ -74,7 +73,7 @@ public class DataStorage {
 
             String start = query.getStarttime().format(formatter);
             String end = query.getEndtime().withMinute(0).withSecond(0).format(formatter);
-            LocalDateTime now = LocalDateTime.now();
+
             Map<String, Double> dataPoints = model.getDataPointsWithRange(start, end);
             Double[] values = new Double[dataPoints.size()];
 

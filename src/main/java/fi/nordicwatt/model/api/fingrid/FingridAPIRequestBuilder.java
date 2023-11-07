@@ -2,7 +2,7 @@ package fi.nordicwatt.model.api.fingrid;
 
 import fi.nordicwatt.model.api.AbstractAPIRequestBuilder;
 import fi.nordicwatt.types.APIType;
-import fi.nordicwatt.utils.EnvironmentVariables;
+import fi.nordicwatt.utils.ApiSettings;
 
 import okhttp3.HttpUrl;
 
@@ -26,8 +26,8 @@ import okhttp3.HttpUrl;
  */
 public class FingridAPIRequestBuilder extends AbstractAPIRequestBuilder<FingridAPIRequestBuilder> {
 
-    private final EnvironmentVariables envVars = EnvironmentVariables.getInstance();
-    private final String API_KEY = envVars.get(APIType.FINGRID);
+    private final ApiSettings apiSettings = ApiSettings.getInstance();
+    private final String API_KEY = apiSettings.getApiKey(APIType.FINGRID);
     private final String API_ENDPOINT = "https://api.fingrid.fi/v1";
 
     public FingridAPIRequestBuilder() {
