@@ -67,7 +67,7 @@ public class PrimaryController implements DataManagerListener, SessionController
         EnvironmentVariables.getInstance();
         EnvironmentVariables.load(".env");
 
-        LoadScene(Scenes.MainWorkspace.toString());        
+        scene = LoadScene(Scenes.MainWorkspace.toString(),stage);        
         dataManager.registerListener(this);
 
         sessionController.registerListener(this);
@@ -78,14 +78,18 @@ public class PrimaryController implements DataManagerListener, SessionController
     /**
      * Creates a new window for the application
      * 
-     * @param sceneName     name of the scene to be loaded, without .fxml extension
+     * @param sceneName     name of the scene to be loaded, without .fxml 
+     * extension
+     * @param stageToUse the stage where the scene will be loaded to.
+     * @return The scene loaded.
      * @throws IOException  if the scene file is not found
      */
     @Override
-    public void LoadScene(String sceneName) throws IOException {
-        scene = new Scene(loadFXML(sceneName), 1400, 1000);
-        stage.setScene(scene);
-        stage.show();
+    public Scene LoadScene(String sceneName, Stage stageToUse) throws IOException {
+        Scene sceneToOpen = new Scene(loadFXML(sceneName), 1400, 1000);
+        stageToUse.setScene(sceneToOpen);
+        stageToUse.show();
+        return sceneToOpen;
     }
 
 

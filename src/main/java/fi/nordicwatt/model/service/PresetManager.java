@@ -44,6 +44,7 @@ public final class PresetManager
 
         // Serialize the map of settingsData to JSON and save it to a file
         objectMapper.writeValue(new File("settings.conf"), settingsDataMap);
+        System.out.println("Preset saved!");
     }
 
     // Method to read JSON data from a file, deserialize it into a map of SettingsData objects

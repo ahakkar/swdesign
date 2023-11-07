@@ -2,11 +2,14 @@ package fi.nordicwatt.controller;
 
 import java.io.IOException;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 /**
  * Classes listening to RequestController.
  * @author Markus Hissa
  */
 public interface RequestControllerListener 
 {
-    public void LoadScene(String sceneName) throws IOException;
+    public Scene LoadScene(String sceneName, Stage stageToUse) throws IOException;
 }

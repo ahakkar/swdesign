@@ -51,6 +51,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
 
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
+    private static SaveSettingsController saveSettingsController;
     private static final ArrayList<RequestControllerListener> listeners = new ArrayList<>();
     private static final DataManager dataManager = DataManager.getInstance();
 
@@ -567,12 +568,14 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         });
     }
 
-    private void openAWindow(String sceneName) throws IOException
+    private Stage openAWindow(String sceneName) throws IOException
     {
+        Stage stage = new Stage();
         for ( RequestControllerListener l : listeners )
         {
-            l.LoadScene(sceneName);
+            l.LoadScene(sceneName,stage);
         }
+        return stage;
     }
 
     /**
@@ -591,6 +594,8 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
                     "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
             alert.showAndWait();
             try {
+                saveSettingsController = SaveSettingsController.getInstance();
+                saveSettingsController.addListener(this);
                 openAWindow(Scenes.SaveSettingsWindow.toString());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -615,7 +620,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             alert.setContentText(
                     "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
             alert.showAndWait();
-            DataManager dataManager = DataManager.getInstance();
             try {
                 String id = ""; 
                 SettingsData settingsData = dataManager.loadPreset(id);
