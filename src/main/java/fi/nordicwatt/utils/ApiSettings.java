@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import fi.nordicwatt.Constants;
 import fi.nordicwatt.types.APIType;
 import javafx.scene.control.Alert.AlertType;
 
@@ -23,7 +24,6 @@ import javafx.scene.control.Alert.AlertType;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class ApiSettings {
 
-    private static final String filePath = ".env";
     private static ApiSettings instance;
 
     @JsonProperty("apiKeys")
@@ -73,7 +73,7 @@ public final class ApiSettings {
     private static ApiSettings createNewSettingsFile() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(new File(filePath), instance);
+            mapper.writeValue(new File(Constants.APISETTIGS_FILEPATH), instance);
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -91,7 +91,7 @@ public final class ApiSettings {
     public static ApiSettings load() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(new File(filePath), ApiSettings.class);
+            return mapper.readValue(new File(Constants.APISETTIGS_FILEPATH), ApiSettings.class);
         } 
         catch (FileNotFoundException e) {
             return createNewSettingsFile();
@@ -120,6 +120,6 @@ public final class ApiSettings {
     public void save() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.writeValue(new File(filePath), this);
+        mapper.writeValue(new File(Constants.APISETTIGS_FILEPATH), this);
     }
 }

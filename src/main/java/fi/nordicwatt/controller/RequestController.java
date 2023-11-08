@@ -15,7 +15,6 @@ import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
-import fi.nordicwatt.types.SessionChangeType;
 import fi.nordicwatt.utils.Logger;
 
 import javafx.application.Platform;
@@ -32,7 +31,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -269,8 +267,7 @@ public class RequestController {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource("apioptions.fxml"));
             Parent root = loader.load();
-            ApiOptionsController controller = loader.getController();
-            // TODO do we need the controller for something?
+            // ApiOptionsController controller = loader.getController();
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

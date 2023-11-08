@@ -285,6 +285,27 @@ public class SessionController implements DataManagerListener {
     }
 
 
+    /**
+     * Retrieve parameters for creating a chart from the specified tab.
+     * 
+     * @param chartId Unique UUID string for which chart to choose from the tab
+     * @return        Object containing data required for a Chart creation task.
+     */
+    public ChartRequest getChartRequest(String requestBundleId) {
+        // search chartmap for chartrequest with matching requestbundleid
+        ChartRequest chartRequest = null;
+        for (Map.Entry<String, ChartRequest> entry : chartMap.entrySet()) {
+            if (entry.getValue().getRequestBundleId().equals(requestBundleId)) {
+                chartRequest = entry.getValue();
+                break;
+            }
+        }
+
+        return chartRequest;
+    }
+
+
+
     public String getTabIdForChart(String chartId) {
         String tabId = "";
         for (Map.Entry<String, TabInfo> entry : tabMap.entrySet()) {

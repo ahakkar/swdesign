@@ -7,6 +7,7 @@ import fi.nordicwatt.utils.ApiSettings;
 import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.Logger;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -72,6 +73,8 @@ public class ApiOptionsController {
 
             if (apiType.apiKeyRequired()) {
                 addApiKeyTextField(apiType);
+            } else {
+                addApiKeyNotRequiredLabel(apiType);
             }
 
             if (first) {
@@ -126,6 +129,18 @@ public class ApiOptionsController {
         apiTextField.setId(apiType.name());
 
         apiKeyVBox.getChildren().addAll(apiLabel, apiTextField);
+    }
+
+
+    /**
+     * Informs the user about apis which don't require a keyu
+     * 
+     * @param apiType
+     */
+    private void addApiKeyNotRequiredLabel(APIType apiType) {
+        Label apiLabel = new Label("API-key is not required for " + apiType.toString());
+        apiLabel.setPadding(new Insets(10.0, 0.0, 0.0, 0.0));
+        apiKeyVBox.getChildren().addAll(apiLabel);
     }
     
 }
