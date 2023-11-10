@@ -1,5 +1,7 @@
 package fi.nordicwatt.types;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * TODO least effort solution for prototype
  * 
@@ -13,31 +15,29 @@ package fi.nordicwatt.types;
  * @author Antti Hakkarainen
  */
 public enum APIType {
-    NOAPI,
-    FINGRID, 
-    FMI;
+    NOAPI("-", false),
+    FINGRID("Fingrid", true), 
+    FMI("Finnish Meteorological Institute (FMI)", false);
 
-    public static boolean contains(String value) {
-        for (APIType type : APIType.values()) {
-            if (type.name().equals(value)) {
-                return true;
-            }
-        }
-        return false;
+    private final String label;
+    private final boolean apiKeyRequired;
+
+    APIType(String label, boolean apiKeyRequired) {
+        this.label = label;
+        this.apiKeyRequired = apiKeyRequired;
     }
 
     @Override
     public String toString() {
-        // TODO: This is horrible, but it works for now
-        if (this == NOAPI) {
-            return "-";
-        } else if (this == FINGRID) {
-            return "Fingrid";
-        } else if (this == FMI) {
-            return "Finnish Meteorological Institute (FMI)";
-        } else {
-            return name();
-        }
-
+        return label;
     }
+
+    public boolean apiKeyRequired() {
+        return apiKeyRequired;
+    }
+/* 
+    @JsonValue
+    public String getValue() {
+        return label;
+    } */
 }

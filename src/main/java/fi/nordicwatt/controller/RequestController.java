@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import fi.nordicwatt.App;
 import fi.nordicwatt.model.data.ChartRequest;
@@ -18,18 +17,22 @@ import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.StackPane;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -39,7 +42,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.CheckBox;
 
 /**
@@ -54,6 +56,8 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     private static SaveSettingsController saveSettingsController;
     private static final ArrayList<RequestControllerListener> listeners = new ArrayList<>();
     private static final DataManager dataManager = DataManager.getInstance();
+
+    private ChartType selectedChartType = null;
 
     @FXML
     private TabPane mainTabPane;
@@ -102,6 +106,12 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
 
     @FXML
     private Button createDiagramButton;
+
+    @FXML
+    private Button regenDiagramButton;
+
+    @FXML
+    private Button apiSettingsButton;
 
     @FXML
     private Button savePresetButton;
@@ -175,18 +185,50 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
                 }
             }
         );
+
+        regenDiagramButton.setDisable(true); // initially disable regen button, fix if session restore is implemented
+        mainTabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> c) -> {
+            if (mainTabPane.getTabs().isEmpty()) {
+                System.out.println("No tabs... disabling regen button");                
+                regenDiagramButton.setDisable(true);
+                regenDiagramButton.setStyle("-fx-opacity: 0.4;");
+            } else if(regenDiagramButton.isDisabled()) {
+                System.out.println("At least one tab.. enabling regen button");
+                regenDiagramButton.setDisable(false);
+                regenDiagramButton.setStyle("-fx-opacity: 1.0;");
+            }
+        });
     }
 
+    public void setGenerateButtonsDisabled(boolean state) {
+        createDiagramButton.setDisable(state);
+        regenDiagramButton.setDisable(state);;
+    }
+
+    public void restoreGenerateButtons() 
+    {
+        setGenerateButtonsDisabled(false);
+        createDiagramButton.setGraphic(null);
+        createDiagramButton.setText("Generate");
+        regenDiagramButton.setGraphic(null);
+        regenDiagramButton.setText("Regenerate");
+    }
 
     /**
-     * Called when user clicks the "Generate" button. Creates a ChartRequest
-     * based on user's selections in UI, and sends it with more user choices
-     * to RequestDispatcher for validation. If validation is successful,
-     * RequestDispatcher will send a DataRequest to DataManager.
+     * 
+     * @param toNewTab replace current chart or add a new chart to new tab?
      */
-    @FXML
-    public void createDiagramButtonAction() {
+    private void sendChartRequest(boolean toNewTab) {
+        // figure out tabid
+
+        // either add the chart to new tab or replace an existing tab's content
+
+        // Disable buttons and re-enable them only after failure or success
+        // TODO keep buttons always enabled after implementing frontend support for it        
+        //setGenerateButtonDisabled(true);
+
         Logger.log("createDiagramButton pressed"); // writes to log.log
+
         Map<AxisType, DataType> axisMap = Map.of(
             AxisType.X_AXIS, xAxisChoiceBox.getValue(),
             AxisType.Y_AXIS, yAxisChoiceBox.getValue()
@@ -200,15 +242,61 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             toDatePicker.getValue().atTime(23, 59, 59)
         );
 
-        if (requestDispatcher.validateAddChartRequest(chartRequest)) {
+        if (requestDispatcher.validateAddChartRequest(chartRequest)) {            
             Logger.log("request validated, sending to sessioncontroller");
-            requestDispatcher.dispatchRequest(chartRequest);
+            requestDispatcher.dispatchRequest(chartRequest, toNewTab);
         }
+    }
+
+    /**
+     * Called when user clicks the "Generate" button. Creates a ChartRequest
+     * based on user's selections in UI, and sends it with more user choices
+     * to RequestDispatcher for validation. If validation is successful,
+     * RequestDispatcher will send a DataRequest to DataManager.
+     */
+    @FXML
+    public void createDiagramButtonAction() {
+        setGenerateButtonsDisabled(true);
+        displayProgressIndicator(createDiagramButton);        
+        sendChartRequest(true);
+    }
+
+
+    @FXML
+    public void regenDiagramButtonAction() {    
+        setGenerateButtonsDisabled(true);
+        displayProgressIndicator(regenDiagramButton);        
+        sendChartRequest(false);
+
     }
 
     @FXML 
     public void addNewTabAction() {        
         sessionController.addTab();
+    }
+
+    @FXML
+    public void apiSettingsButtonAction() throws IOException, IllegalStateException {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("apioptions.fxml"));
+            Parent root = loader.load();
+            // ApiOptionsController controller = loader.getController();
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("NordicWatt - API Options");
+            stage.getIcons().add(new Image("file:doc/logo_small.png"));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } 
+        catch (IOException e) {
+            System.err.println("[RequestController]: IOException while loading apioptions.fxml");
+            e.printStackTrace();
+        }
+        catch (IllegalStateException e) {
+            System.err.println("[RequestController]: IllegalStateException while loading apioptions.fxml");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -290,9 +378,8 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             if (tabId.equals(tab.getId())) {
                 tab.setContent(chart);
                 mainTabPane.getSelectionModel().select(tab);
-
-                break;
-            }
+                return;
+            } 
         }
     }
 
@@ -303,37 +390,32 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      * 
      * @param data object containing tabid and chartid where to place the spinner
      */
-    public void displayProgressIndicator(SessionChangeData data) {
-        // TODO implement support to place indicator in specific chart after multiple chart support is implemted
-        String tabId = data.getTabId();
-        // String chartId = data.getChartId();
-
-/*         System.out.println(
-            "[RequestController]: Displaying progress indicator at tab " + 
-            tabId + " and chart " + chartId); */
-   
+    private void displayProgressIndicator(Button button)
+    {   
         ProgressIndicator progressIndicator = new ProgressIndicator();
-        StackPane stackPane = new StackPane(progressIndicator);
 
-        for (Tab tab : mainTabPane.getTabs()) {
-            if (tabId.equals(tab.getId())) {
-                tab.setContent(stackPane);
-                break;
-            }
-        }
+        progressIndicator.setMinSize(25, 25);
+        progressIndicator.setMaxSize(25, 25); 
+        progressIndicator.setStyle("-fx-opacity: 1.0; -fx-progress-color: red;");
+
+        button.setStyle("-fx-opacity: 1.0;");        
+        button.setText("");       
+        button.setGraphic(progressIndicator); 
     }
 
 
     /** TODO what is this method used for? -ah */
     @FXML
     private void chartTypeChoiceBoxAction() {
-        // System.out.println("Chart type Choice Box: Value " +
-        // chartTypeChoiceBox.getValue() + " was selected");
-    }
+         System.out.println("Chart type Choice Box: Value " +
+        chartTypeChoiceBox.getValue() + " was selected");
 
-    /** TODO what is this method used for? -ah */
-    @FXML
-    private void testSomething() {  }
+         if (this.selectedChartType != null && this.selectedChartType != chartTypeChoiceBox.getValue()) {
+             System.out.println("UPDATE XY AXIS BOXES");
+             updateXYAxisChoiceBoxes();
+         }
+        this.selectedChartType = chartTypeChoiceBox.getValue();
+    }
 
 
     /**
@@ -364,6 +446,10 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      * TODO replace hardcoded value with actual options
      */
     private void initializeXAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        System.out.println("InitilaizeXAxisChoiceBox");
+        System.out.println("selected chart: " + selectedChart.toString());
         xAxisChoiceBox.setConverter(new StringConverter<DataType>() {
             public String toString(DataType type) {
                 return (type == null) ? "" : type.toString();  
@@ -375,19 +461,57 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         });
 
         // Filter the DataType values to only include those with X_AXIS in their allowedAxes
-        List<DataType> xDataTypeList = new ArrayList<>();
-        for (DataType dataType : DataType.values()) {
-            if (dataType.isAxisAllowed(AxisType.X_AXIS)) {
-                xDataTypeList.add(dataType);
-            }
-        }
+        List<DataType> xDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
 
         xAxisChoiceBox.getItems().addAll(xDataTypeList);
         xAxisChoiceBox.setValue(DataType.TIME);
         xAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateXAxisLabels();
+            if (newValue != null && oldValue != newValue) {
+                updateXAxisLabels();
+            }
+
         });
         updateXAxisLabels();
+    }
+
+    private List<DataType> getFilteredDataTypeList(ChartType selectedChart, AxisType axisType) {
+        List<DataType> dataTypeList = new ArrayList<>();
+        for (DataType dataType : DataType.values()) {
+            if (dataType.isAxisAllowed(axisType) && dataType.isChartAllowed(selectedChart)) {
+                dataTypeList.add(dataType);
+            }
+        }
+        return dataTypeList;
+    }
+
+    private void updateXYAxisChoiceBoxes(){
+
+        DataType xSelection = xAxisChoiceBox.getValue();
+        DataType ySelection = yAxisChoiceBox.getValue();
+
+        List<DataType> xData = xAxisChoiceBox.getItems();
+        List<DataType> yData = yAxisChoiceBox.getItems();
+        xData.clear();
+        yData.clear();
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        List<DataType> newXData = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
+        List<DataType> newYData = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
+        xData.addAll(newXData);
+        yData.addAll(newYData);
+        if (xData.contains(xSelection)) {
+            xAxisChoiceBox.setValue(xSelection);
+        } else {
+            xAxisChoiceBox.setValue(xData.get(0));
+        }
+
+        if (yData.contains(ySelection)) {
+            yAxisChoiceBox.setValue(ySelection);
+        } else {
+            yAxisChoiceBox.setValue(yData.get(0));
+        }
+        updateXAxisLabels();
+        updateYAxisLabels();
     }
 
     /**
@@ -406,6 +530,8 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      * value to CONSUMPTION.
      */
     private void initializeYAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
         yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
             public String toString(DataType type) {
                 return (type == null) ? "" : type.toString();  
@@ -417,17 +543,14 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         });
 
         // Filter the DataType values to only include those with Y_AXIS in their allowedAxes
-        List<DataType> yDataTypeList = new ArrayList<>();
-        for (DataType dataType : DataType.values()) {
-            if (dataType.isAxisAllowed(AxisType.Y_AXIS)) {
-                yDataTypeList.add(dataType);
-            }
-        }
+        List<DataType> yDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
 
         yAxisChoiceBox.getItems().addAll(yDataTypeList);
-        yAxisChoiceBox.setValue(DataType.CONSUMPTION);
+        yAxisChoiceBox.setValue(yDataTypeList.get(0));
         yAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateYAxisLabels();
+            if (newValue != null && oldValue != newValue) {
+                updateYAxisLabels();
+            }
         });
         updateYAxisLabels();
     }

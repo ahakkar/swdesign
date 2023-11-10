@@ -6,7 +6,7 @@ import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
-import fi.nordicwatt.utils.EnvironmentVariables;
+import fi.nordicwatt.utils.ApiSettings;
 import okhttp3.Response;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class FingridApiParserTest {
 
     @Test
     public void testFingridParser124() throws IOException {
-        EnvironmentVariables.load(".env");
+        ApiSettings.load();
         // Make Fingrid API request
         FingridAPIRequestBuilder builder = new FingridAPIRequestBuilder()
                 .withDataType("124")

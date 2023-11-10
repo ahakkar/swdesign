@@ -30,9 +30,10 @@
                <children>
                   <AnchorPane minHeight="100.0">
                      <children>
-                        <Button layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text="Generate" />
-                        <Button layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
+                        <Button fx:id="createDiagramButton" layoutX="211.0" layoutY="15.0" mnemonicParsing="false" onAction="#createDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Generate" />
+                        <Button fx:id="regenDiagramButton" layoutX="14.0" layoutY="15.0" mnemonicParsing="false" onAction="#regenDiagramButtonAction" prefHeight="30.0" prefWidth="160.0" text="Regenerate" />
                         <Button fx:id="addNewTabButton" layoutX="211.0" layoutY="60.0" mnemonicParsing="false" onAction="#addNewTabAction" prefHeight="30.0" prefWidth="160.0" text="New tab (temp button)" />
+                        <Button fx:id="apiSettingsButton" layoutX="14.0" layoutY="60.0" mnemonicParsing="false" onAction="#apiSettingsButtonAction" prefHeight="30.0" prefWidth="160.0" text="API Keys" />
                      </children>
                   </AnchorPane>
                   <ScrollPane>
@@ -88,11 +89,11 @@
                                                 <Label text="X-axis" />
                                                 <ChoiceBox prefHeight="27.0" prefWidth="241.0" GridPane.columnIndex="1" fx:id="xAxisChoiceBox" />
                                           <Label text="Description" GridPane.rowIndex="3" />
-                                          <TextArea fx:id="xDescriptionTextArea" prefHeight="61.0" prefWidth="261.0" text="Dynamic datatype descrition." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <TextArea prefHeight="61.0" prefWidth="261.0" text="Dynamic datatype descrition." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="xDescriptionTextArea" />
                                           <Label text="Data Source" GridPane.rowIndex="1" />
-                                          <Label fx:id="xSourceLabel" text="dynamic name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label text="dynamic name" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="xSourceLabel" />
                                           <Label text="Data Unit" GridPane.rowIndex="2" />
-                                          <Label fx:id="xUnitLabel" text="dynamic unit" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label text="dynamic unit" GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="xUnitLabel" />
                                        </children>
                                     </GridPane>
                                  </content>
@@ -123,7 +124,7 @@
                                     </GridPane>
                                  </content>
                             </TitledPane>
-                              <TitledPane visible="false" animated="false" text="Y2 - Data">
+                              <TitledPane animated="false" text="Y2 - Data" visible="false">
                                  <content>
                                     <GridPane prefHeight="161.0" prefWidth="362.0">
                                        <columnConstraints>

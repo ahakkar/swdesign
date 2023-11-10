@@ -56,7 +56,6 @@ public class XYChartImpl extends ChartImpl {
         }
 
         this.populateChartData();
-        this.hideNodes();
         updateXYAxisLabels();   
 
         return chart;
@@ -99,6 +98,9 @@ public class XYChartImpl extends ChartImpl {
             series.setName(axisMap.get(AxisType.Y_AXIS).getDescription());
             chart.getData().clear();
             chart.getData().add(series);
+            if (!(chart instanceof ScatterChart)) {
+                this.hideNodes();
+            }
 
         } catch (Exception e) {
             // could be InstantiationException, IllegalAccessException, etc.
@@ -199,6 +201,7 @@ public class XYChartImpl extends ChartImpl {
     /**
     * Returns the intersection of two maps using the keys. Assumes that the keys are string written as timestamps in form of "yyyy-MM-dd HH:mm:ss"
     * Supports rounding in minutes. E.g. if rounding is set as 2, keys "2019-01-01 12:01" and "2019-01-01 12:02" are considered equal.
+    * In case of rounding the key of the returned map is the first key of the intersecting values. "2019-01-01 12:01" in the previous example.
     */
     private List<Map<String, Double>> getIntersectingValues(Map<String, Double> xDataPoints, Map<String, Double> yDataPoints, int roundingInMinutes) {
         List<Map<String, Double>> intersectingValues = new ArrayList<>();
