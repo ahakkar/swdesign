@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.nordicwatt.model.datamodel.SettingsData;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,8 +43,10 @@ public final class PresetManager
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+        FileWriter fw = new FileWriter("settings.conf", true);
+
         // Serialize the map of settingsData to JSON and save it to a file
-        objectMapper.writeValue(new File("settings.conf"), settingsDataMap);
+        objectMapper.writeValue(fw, settingsDataMap);
         System.out.println("Preset saved!");
     }
 
