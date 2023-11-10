@@ -7,7 +7,8 @@ package fi.nordicwatt.types;
  */
 public enum Scenes {
     MainWorkspace("mainworkspace"),
-    SaveSettingsWindow("savesettingswindow");
+    SaveSettingsWindow("savesettingswindow"),
+    LoadSettingsWindow("loadsettingswindow");
 
     private final String label;
 

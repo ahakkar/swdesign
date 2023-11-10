@@ -54,6 +54,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
     private static SaveSettingsController saveSettingsController;
+    private static LoadSettingsController loadSettingsController;
     private static final ArrayList<RequestControllerListener> listeners = new ArrayList<>();
     private static final DataManager dataManager = DataManager.getInstance();
 
@@ -743,17 +744,13 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             alert.setContentText(
                     "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
             alert.showAndWait();
+            loadSettingsController = LoadSettingsController.getInstance();
             try {
-                String id = ""; 
-                SettingsData settingsData = dataManager.loadPreset(id);
-                chartTypeChoiceBox.setValue(settingsData.getChartType());
-                xAxisChoiceBox.setValue(settingsData.getXAxis());
-                yAxisChoiceBox.setValue(settingsData.getYAxis());
-                relativeTimeToggle.setSelected(settingsData.isRelativeTime());
-                relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
-                fromDatePicker.setValue(settingsData.getStarttime());
-                toDatePicker.setValue(settingsData.getEndtime());
+                loadSettingsController.initialize();
+                loadSettingsController.addListener(this);
+                openAWindow(Scenes.LoadSettingsWindow.toString());
             } catch (IOException e) {
+                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
@@ -770,8 +767,14 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     }
 
     @Override
-    public void loadSettings(SettingsData settings)
+    public void loadSettings(SettingsData settingsData)
     {
-        
+        chartTypeChoiceBox.setValue(settingsData.getChartType());
+        xAxisChoiceBox.setValue(settingsData.getXAxis());
+        yAxisChoiceBox.setValue(settingsData.getYAxis());
+        relativeTimeToggle.setSelected(settingsData.isRelativeTime());
+        relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
+        fromDatePicker.setValue(settingsData.getStarttime());
+        toDatePicker.setValue(settingsData.getEndtime());
     }
 }

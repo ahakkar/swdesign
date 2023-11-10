@@ -236,5 +236,14 @@ public class DataManager implements APIDataListener {
     {
         return presetManager.loadSettingsData(id);
     }
+
+    /**
+     * Loads all the stored presets' ids from PresetManager.
+     * @return The ids in an ArrayList
+     */
+    public ArrayList<String> getPresetIds() throws IOException
+    {
+        return presetManager.getPresetIds();
+    }
  
 }

@@ -10,7 +10,9 @@ import fi.nordicwatt.model.datamodel.SettingsData;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -50,15 +52,36 @@ public final class PresetManager
         System.out.println("Preset saved!");
     }
 
-    // Method to read JSON data from a file, deserialize it into a map of SettingsData objects
-    // and return a specific SettingsData object by ID
+    
+    /// Return a specific SettingsData object by ID
     public SettingsData loadSettingsData(String id) throws IOException {
+        Map<String,SettingsData> settingsDataMap = readFromFile();
+        // Retrieve and return the specific SettingsData object by ID
+        return settingsDataMap.get(id);
+    }
+
+    // Method to read JSON data from a file, deserialize it into a map of SettingsData objects
+    private Map<String, SettingsData> readFromFile()
+        throws IOException
+    {
         objectMapper.registerModule(new JavaTimeModule());
 
         // Deserialize JSON from the file into a map of SettingsData objects
         Map<String, SettingsData> settingsDataMap = objectMapper.readValue(new File("settings.conf"), new TypeReference<Map<String, SettingsData>>() {});
-
-        // Retrieve and return the specific SettingsData object by ID
-        return settingsDataMap.get(id);
+        return settingsDataMap;
+    }
+    
+    // Returns all the IDs
+    public ArrayList<String> getPresetIds()
+        throws IOException
+    {
+        ArrayList<String> keys = new ArrayList<>();
+        Map<String,SettingsData> settingsDataMap = readFromFile();
+        Set<String> set = settingsDataMap.keySet();
+        for (String string : set) 
+        {
+            keys.add(string);
+        }
+        return keys;
     }
 }

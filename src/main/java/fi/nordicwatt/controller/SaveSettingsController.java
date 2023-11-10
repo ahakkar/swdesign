@@ -16,15 +16,6 @@ public class SaveSettingsController
     private static SaveSettingsController instance;
     private static final ArrayList<SaveSettingsControllerListener> listeners = new ArrayList<>();
 
-    public static SaveSettingsController getInstance() 
-    {
-        if (instance == null) 
-        {
-            instance = new SaveSettingsController();
-        }
-        return instance;
-    }
-
     @FXML
     private Button saveButton;
 
@@ -33,6 +24,15 @@ public class SaveSettingsController
 
     @FXML
     private TextField presetIdField;
+
+    public static SaveSettingsController getInstance() 
+    {
+        if (instance == null) 
+        {
+            instance = new SaveSettingsController();
+        }
+        return instance;
+    }
 
     public void addListener(SaveSettingsControllerListener listener)
     {
@@ -52,7 +52,7 @@ public class SaveSettingsController
     public void cancelSaveButtonAction()
     {
         System.out.print("Placeholder: cancel");
-        Stage stage = (Stage) saveButton.getScene().getWindow();
+        Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 }
