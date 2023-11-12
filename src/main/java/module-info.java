@@ -23,4 +23,5 @@ module fi.nordicwatt {
     exports fi.nordicwatt.controller;
     exports fi.nordicwatt.model.service;
     exports fi.nordicwatt.model.session;
+    exports fi.nordicwatt.model.api;
 }

@@ -1,6 +1,9 @@
 package fi.nordicwatt.model.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.Test;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
@@ -17,6 +20,7 @@ public class WeatherModelTest {
         assertEquals(DataType.TEMPERATURE, model.getDataType());
         assertEquals(MeasurementUnit.CELSIUS, model.getUnit());
     }
+
     @Test
     public void testGetLocation() {
         WeatherModel model = new WeatherModel(DataType.TEMPERATURE, MeasurementUnit.CELSIUS, "Helsinki");
@@ -34,9 +38,9 @@ public class WeatherModelTest {
     @Test
     public void testGetDataPointsWithData() {
         WeatherModel model = new WeatherModel(DataType.TEMPERATURE, MeasurementUnit.CELSIUS, "Helsinki");
-        model.addDataPoint("2021-01-01 01:00:00", 1.0);
-        model.addDataPoint("2021-01-01 02:00:00", 2.0);
-        model.addDataPoint("2021-01-01 03:00:00", 3.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 1, 0), 1.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 2, 0), 2.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 3, 0), 3.0);
         assertEquals(3, model.getDataPoints().size());
     }
 
@@ -44,20 +48,23 @@ public class WeatherModelTest {
     @Test
     public void testGetDataPointsWithRange() {
         WeatherModel model = new WeatherModel(DataType.TEMPERATURE, MeasurementUnit.CELSIUS, "Helsinki");
-        model.addDataPoint("2021-01-01 00:00:00", 1.0);
-        model.addDataPoint("2021-01-01 00:05:00", 2.0);
-        model.addDataPoint("2021-01-01 00:10:00", 3.0);
-        assertEquals(1, model.getDataPointsWithRange("2021-01-01 00:02:00", "2021-01-01 00:08:00").size());
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 0), 1.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 5), 2.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 10), 3.0);
+        assertEquals(1, model.getDataPointsWithRange(
+                LocalDateTime.of(2021, 1, 1, 0, 2), LocalDateTime.of(2021, 1, 1, 0, 8)).size());
     }
 
     // Test getdatapoints with range when bottom and top equal to some datapoint
     @Test
     public void testGetDataPointsWithRangeWhenBottomAndTopEqual() {
         WeatherModel model = new WeatherModel(DataType.TEMPERATURE, MeasurementUnit.CELSIUS, "Helsinki");
-        model.addDataPoint("2021-01-01 00:00:00", 1.0);
-        model.addDataPoint("2021-01-01 00:05:00", 2.0);
-        model.addDataPoint("2021-01-01 00:10:00", 3.0);
-        assertEquals(2, model.getDataPointsWithRange("2021-01-01 00:05:00", "2021-01-01 00:10:00").size());
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 0), 1.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 5), 2.0);
+        model.addDataPoint(LocalDateTime.of(2021, 1, 1, 0, 10), 3.0);
+        assertEquals(2,
+                model.getDataPointsWithRange(LocalDateTime.of(2021, 1, 1, 0, 5), LocalDateTime.of(2021, 1, 1, 0, 10))
+                        .size());
     }
 
 }

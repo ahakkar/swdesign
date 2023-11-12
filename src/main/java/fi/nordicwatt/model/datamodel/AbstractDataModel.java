@@ -2,8 +2,6 @@ package fi.nordicwatt.model.datamodel;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -30,10 +28,9 @@ public abstract class AbstractDataModel<T extends Number> {
 
     private DataType dataType;
     private MeasurementUnit unit;
-    private Map<String, T> dataPoints;
+    private Map<LocalDateTime, T> dataPoints;
 
-    public AbstractDataModel(DataType dataType, MeasurementUnit unit)
-    {
+    public AbstractDataModel(DataType dataType, MeasurementUnit unit) {
         this.dataType = dataType;
         this.unit = unit;
         this.dataPoints = new TreeMap<>();
@@ -54,14 +51,13 @@ public abstract class AbstractDataModel<T extends Number> {
      * @return AbstractDataModel
      */
     public AbstractDataModel(
-        DataType dataType, 
-        MeasurementUnit unit, 
-        String firstEntryTimestamp,
-        T[] values
-    ) {
+            DataType dataType,
+            MeasurementUnit unit,
+            LocalDateTime firstEntryTimestamp,
+            T[] values) {
         this.dataType = dataType;
         this.unit = unit;
-        String timestamp = firstEntryTimestamp;
+        LocalDateTime timestamp = firstEntryTimestamp;
         this.dataPoints = new TreeMap<>();
         for (T value : values) {
             addDataPoint(timestamp, value);
@@ -70,16 +66,16 @@ public abstract class AbstractDataModel<T extends Number> {
     }
 
     /**
-     * Returns timestamp that is incremented by interval.
+     * Returns timestamp that is incremented by one hour.
      * 
      * @param timestamp
      * @return
      */
-    public static String incrementTimestamp(String timestamp) {
-        LocalDateTime dateTime = LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    public static LocalDateTime incrementTimestamp(LocalDateTime timestamp) {
+        LocalDateTime dateTime = timestamp;
         Duration interval = Duration.ofHours(1);
         dateTime = dateTime.plus(interval);
-        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return dateTime;
     }
 
     /**
@@ -105,7 +101,7 @@ public abstract class AbstractDataModel<T extends Number> {
      * 
      * @return Collection<T>
      */
-    public Map<String, T> getDataPoints() {
+    public Map<LocalDateTime, T> getDataPoints() {
         return dataPoints;
     }
 
@@ -116,9 +112,9 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param endTimestamp
      * @return
      */
-    public Map<String, T> getDataPointsWithRange(String startTimestamp, String endTimestamp) {
-        Map<String, T> dataPoints = new TreeMap<>();
-        for (String timestamp : this.dataPoints.keySet()) {
+    public Map<LocalDateTime, T> getDataPointsWithRange(LocalDateTime startTimestamp, LocalDateTime endTimestamp) {
+        Map<LocalDateTime, T> dataPoints = new TreeMap<>();
+        for (LocalDateTime timestamp : this.dataPoints.keySet()) {
             if (timestamp.compareTo(startTimestamp) >= 0 && timestamp.compareTo(endTimestamp) <= 0) {
                 dataPoints.put(timestamp, this.dataPoints.get(timestamp));
             }
@@ -134,43 +130,15 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param value     - Data point
      * @throws IllegalArgumentException if timestamp is not valid
      */
-    public boolean addDataPoint(String timestamp, T value
-    ) throws IllegalArgumentException {
-        if (!isValidTimeStamp(timestamp)) {
-            throw new IllegalArgumentException("Timestamp is not valid");
-        }
+    public boolean addDataPoint(LocalDateTime timestamp, T value) {
 
-        if (value != null){
+        if (value != null) {
             dataPoints.put(timestamp, value);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
-    }
-
-    /**
-     * Checks if timestamp is valid. Timestamp is valid if it is in format
-     * "yyyy-MM-dd HH:mm:ss".
-     * 
-     * @param timestamp - Timestamp to be checked
-     * @return boolean - True if timestamp is valid, false if not
-     * @throws DateTimeParseException if timestamp is not in correct format
-     */
-    public static boolean isValidTimeStamp(
-        String timestamp
-    ) throws DateTimeParseException  {
-        String regex = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]) ([01]\\d|2[0-3]):([0-5]\\d):([0-5]\\d)$";
-        if (!timestamp.matches(regex)) {
-            return false;
-        }
-        try {
-            LocalDateTime.parse(timestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            return true;
-        } catch (DateTimeParseException  e) {
-            return false;
-        }
     }
 
     /**
@@ -181,8 +149,8 @@ public abstract class AbstractDataModel<T extends Number> {
      * @return boolean - True if there are no missing data points, false if there
      */
     public boolean checkDataPoints() {
-        String timestamp = dataPoints.keySet().iterator().next();
-        for (String key : dataPoints.keySet()) {
+        LocalDateTime timestamp = dataPoints.keySet().iterator().next();
+        for (LocalDateTime key : dataPoints.keySet()) {
             if (!timestamp.equals(key)) {
                 return false;
             }
@@ -192,10 +160,10 @@ public abstract class AbstractDataModel<T extends Number> {
     }
 
     public void merge(AbstractDataModel<T> other) throws IllegalArgumentException {
-        if (this.dataType != other.dataType){
+        if (this.dataType != other.dataType) {
             throw new IllegalArgumentException("Data types do not match");
         }
-        if (!Objects.equals(this.unit, other.unit)){
+        if (!Objects.equals(this.unit, other.unit)) {
             throw new IllegalArgumentException("Units do not match");
         }
         this.dataPoints.putAll(other.dataPoints);

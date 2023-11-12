@@ -1,6 +1,8 @@
 package fi.nordicwatt.model.datamodel;
 
 
+import java.time.LocalDateTime;
+
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 
@@ -48,7 +50,7 @@ public class WeatherModel extends AbstractDataModel<Double> {
     public WeatherModel(
         DataType dataType, 
         MeasurementUnit unit,
-        String firstEntryTimestamp,
+        LocalDateTime firstEntryTimestamp,
         String location,
         Double[] values
     ) {
