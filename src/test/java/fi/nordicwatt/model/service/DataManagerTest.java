@@ -88,8 +88,8 @@ public class DataManagerTest {
             assertTrue(response.getData() instanceof WeatherModel);
         }
         assertTrue(success);
-        assertTrue(responses.getItems().get(0).getData().getDataPoints().containsKey("2023-08-01 00:00:00"));
-        assertFalse(responses.getItems().get(0).getData().getDataPoints().containsKey("2023-07-31 23:00:00"));
+        assertTrue(responses.getItems().get(0).getData().getDataPoints().containsKey(LocalDateTime.of(2023, 8, 1, 0, 0)));
+        assertFalse(responses.getItems().get(0).getData().getDataPoints().containsKey(LocalDateTime.of(2023, 7, 31, 23, 0)));
 
         // Assuming the callback thread eventually terminates
         boolean threadTerminated = false;

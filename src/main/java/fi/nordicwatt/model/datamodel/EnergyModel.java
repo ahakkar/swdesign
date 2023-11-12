@@ -1,5 +1,7 @@
 package fi.nordicwatt.model.datamodel;
 
+import java.time.LocalDateTime;
+
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.MeasurementUnit;
 
@@ -26,7 +28,7 @@ public class EnergyModel extends AbstractDataModel<Double> {
      * @param values              - Array of data points
      * @inheritDoc - AbstractDataModel
      */
-    public EnergyModel(DataType dataType, MeasurementUnit unit, String firstEntryTimestamp, Double[] values) {
+    public EnergyModel(DataType dataType, MeasurementUnit unit, LocalDateTime firstEntryTimestamp, Double[] values) {
         super(dataType, unit, firstEntryTimestamp, values);
     }
 

@@ -57,12 +57,12 @@ public class FingridApiParser implements APIParserInterface<EnergyModel> {
             // Extract first entry timestamp and format it
             String firstEntryTimestamp = (String) entries.get(0).get("start_time");
             DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-            DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            //DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime dateTime = DateTimeConverter.gmtTimeToFinnishTime(LocalDateTime.parse(firstEntryTimestamp, originalFormat));
-            String formattedTimestamp = dateTime.format(desiredFormat);
+            // String formattedTimestamp = dateTime.format(desiredFormat);
             DataType type = request.getDataType();
     
-            return new EnergyModel(type, type.getUnit(), formattedTimestamp, values);
+            return new EnergyModel(type, type.getUnit(), dateTime, values);
 
         } catch (IOException e) {  // ObjectMapper's readVlue can throw IOException
             throw new ParseException("[FingridAPIParser]: Error reading and processing the JSON response", e);

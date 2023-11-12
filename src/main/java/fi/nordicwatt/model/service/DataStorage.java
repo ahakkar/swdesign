@@ -1,5 +1,6 @@
 package fi.nordicwatt.model.service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
@@ -9,6 +10,7 @@ import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
+import fi.nordicwatt.utils.Logger;
 
 /**
  * @author ???
@@ -16,7 +18,7 @@ import fi.nordicwatt.types.DataType;
  * Singleton class
  *
  */
-public class DataStorage {
+public final class DataStorage {
 
     private static DataStorage instance;
     private final ArrayList<AbstractDataModel<Double>> dataModels;
@@ -71,10 +73,10 @@ public class DataStorage {
 
         if (model != null){
 
-            String start = query.getStarttime().format(formatter);
-            String end = query.getEndtime().withMinute(0).withSecond(0).format(formatter);
+            LocalDateTime start = query.getStarttime();
+            LocalDateTime end = query.getEndtime().withMinute(0).withSecond(0);
 
-            Map<String, Double> dataPoints = model.getDataPointsWithRange(start, end);
+            Map<LocalDateTime, Double> dataPoints = model.getDataPointsWithRange(start, end);
             Double[] values = new Double[dataPoints.size()];
 
             int i = 0;
@@ -83,7 +85,14 @@ public class DataStorage {
                 ++i;
             }
 
-            if (dataPoints.containsKey(start) && (dataPoints.containsKey(end))){
+            LocalDateTime firstKey = dataPoints.keySet().iterator().next();
+            LocalDateTime lastKey = null;
+            for (LocalDateTime key : dataPoints.keySet()) {
+                lastKey = key;
+            }
+
+            // TODO: Seems like this is not working properly every time
+            if (firstKey.toString().equals(start.toString()) && lastKey.toString().equals(end.toString())){
                 if (model instanceof EnergyModel){
                     return new EnergyModel(model.getDataType(), model.getUnit(), start, values);
                 }

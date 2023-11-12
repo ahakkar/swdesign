@@ -58,22 +58,22 @@ public class FingridApiParserTest {
             assertEquals(model.getUnit(), MeasurementUnit.MEGA_WATT_HOUR);
 
             // Get all datapoints in a map
-            Map<String, Double> dataPoints = model.getDataPoints();
+            Map<LocalDateTime, Double> dataPoints = model.getDataPoints();
             assertEquals(73, dataPoints.size());
 
             // Check first four data points and first -1
-            assertEquals(null, dataPoints.get("2021-10-03 23:00:00"));
-            assertEquals(7983, dataPoints.get("2021-10-04 00:00:00"), 0.01);
-            assertEquals(7470, dataPoints.get("2021-10-04 03:00:00"), 0.01);
-            assertEquals(7595, dataPoints.get("2021-10-04 04:00:00"), 0.01);
-            assertEquals(7957, dataPoints.get("2021-10-04 05:00:00"), 0.01);
+            assertEquals(null, dataPoints.get(LocalDateTime.of(2021, 10, 3, 23, 0)));
+            assertEquals(7983, dataPoints.get(LocalDateTime.of(2021, 10, 4, 0, 0)), 0.01);
+            assertEquals(7470, dataPoints.get(LocalDateTime.of(2021, 10, 4, 3, 0)), 0.01);
+            assertEquals(7595, dataPoints.get(LocalDateTime.of(2021, 10, 4, 4, 0)), 0.01);
+            assertEquals(7957, dataPoints.get(LocalDateTime.of(2021, 10, 4, 5, 0)), 0.01);
 
             // Check datapoint from middle
-            assertEquals(9333, dataPoints.get("2021-10-05 15:00:00"), 0.01);
+            assertEquals(9333, dataPoints.get(LocalDateTime.of(2021, 10, 5, 15, 0)), 0.01);
 
             // Check the last and last +1
-            assertEquals(8071, dataPoints.get("2021-10-07 00:00:00"), 0.01);
-            assertEquals(null, dataPoints.get("2021-10-07 01:00:00"));
+            assertEquals(8071, dataPoints.get(LocalDateTime.of(2021, 10, 7, 0, 0)), 0.01);
+            assertEquals(null, dataPoints.get(LocalDateTime.of(2021, 10, 7, 1, 0)));
 
         } catch (Exception e) {
             e.printStackTrace();

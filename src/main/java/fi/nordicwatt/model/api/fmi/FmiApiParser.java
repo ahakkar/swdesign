@@ -37,9 +37,9 @@ public class FmiApiParser implements APIParserInterface<WeatherModel> {
         String location = getStringBetween(response, "<target:region codeSpace="+"\""+"http://xml.fmi.fi/namespace/location/region"+"\""+">", "</target:region>");
         CharSequence firstEntryTimestamp = getStringBetween(response, "<gml:beginPosition>", "</gml:beginPosition>");
         DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //DateTimeFormatter desiredFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = DateTimeConverter.gmtTimeToFinnishTime(LocalDateTime.parse(firstEntryTimestamp, originalFormat));
-        String formattedTimestamp = dateTime.format(desiredFormat);
+        //String formattedTimestamp = dateTime.format(desiredFormat);
         DataType dataType = request.getDataType();
 
         Double[] responseArray = responseData.toArray(responseDataArray);
@@ -48,7 +48,7 @@ public class FmiApiParser implements APIParserInterface<WeatherModel> {
             new WeatherModel(
                 dataType,
                 dataType.getUnit(),
-                formattedTimestamp,
+                dateTime,
                 location,
                 responseArray
                 );
