@@ -2,9 +2,13 @@ package fi.nordicwatt.model.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -252,17 +256,22 @@ public class DataManager implements APIDataListener {
 
     public ArrayList<String> loadLocations()
     {
+        System.out.println(Charset.defaultCharset());
         ArrayList<String> locations = new ArrayList<>();
         try
         {
             File file = new File(Constants.LOCATIONS_FILEPATH);
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                    new FileInputStream(file), StandardCharsets.UTF_8));
+                
             String town;
             while((town = br.readLine()) != null)
             {
                 town = town.trim();
                 locations.add(town);
             }
+            br.close();
         }
         catch (FileNotFoundException e)
         {
