@@ -40,12 +40,20 @@ public final class PresetManager
 
     // Method to serialize a Map of SettingsData objects to JSON and save it to a file
     public void saveSettingsData(String id, SettingsData settingsData) throws IOException {
-        Map<String, SettingsData> settingsDataMap = new TreeMap<>();
+        Map<String, SettingsData> settingsDataMap;
+        if (readFromFile() == null)
+        {
+            settingsDataMap = new TreeMap<>();
+        }
+        else
+        {
+            settingsDataMap = readFromFile();
+        }
         settingsDataMap.put(id, settingsData);
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        FileWriter fw = new FileWriter("settings.conf", true);
+        FileWriter fw = new FileWriter("settings.conf", false);
 
         // Serialize the map of settingsData to JSON and save it to a file
         objectMapper.writeValue(fw, settingsDataMap);
