@@ -40,6 +40,7 @@ public class ChartRequest
         ChartType chartType,
         Map<AxisType, DataType> axisMap, 
         RequestBundle bundle,
+        String location,
         LocalDateTime startTime,
         LocalDateTime endTime
     ) {
@@ -50,7 +51,7 @@ public class ChartRequest
         this.startTime = startTime;
         this.endTime = endTime;
         this.chartId = UUID.randomUUID().toString();
-        this.location = "tampere"; //Lets use this as a placeholder for now
+        this.location = location; //Lets use this as a placeholder for now
         Logger.log("ChartRequest created: " + this.toString());
     }
 

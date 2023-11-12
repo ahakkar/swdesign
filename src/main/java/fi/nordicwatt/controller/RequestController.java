@@ -17,32 +17,31 @@ import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
 import fi.nordicwatt.types.Scenes;
 import fi.nordicwatt.utils.Logger;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DatePicker;
-import javafx.util.StringConverter;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements. Listens to SaveSettingsController and LoadSettingsController.
@@ -141,6 +140,9 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     @FXML
     private TextArea yDescriptionTextArea;
 
+    @FXML
+    private ChoiceBox<String> locationChoiceBox;
+
     /**
      * Populate choicebox values and select defaults
      */
@@ -159,7 +161,8 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         exportCurrentButton();
         showYAverageCheckBoxClick();
         showYQClick();
-        savePresetButton();   
+        savePresetButton();
+        initializeLocationChoiceBox();
     }
 
     public void addListener(RequestControllerListener listener)
@@ -170,6 +173,15 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     public void removeListener(RequestControllerListener listener)
     {
         listeners.remove(listener);
+    }
+    
+    /**
+     * Fills the choice box with values.
+     */
+    private void initializeLocationChoiceBox()
+    {
+        locationChoiceBox.getItems().addAll(dataManager.loadLocations());
+        locationChoiceBox.setValue("Tampere");
     }
 
     /**
@@ -239,6 +251,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             chartTypeChoiceBox.getValue(),
             axisMap,
             null,
+            locationChoiceBox.getValue(),
             fromDatePicker.getValue().atStartOfDay(),
             toDatePicker.getValue().atTime(23, 59, 59)
         );

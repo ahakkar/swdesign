@@ -1,8 +1,13 @@
 package fi.nordicwatt.model.service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.api.APIDataListener;
 import fi.nordicwatt.model.api.APIQueue;
 import fi.nordicwatt.model.data.DataRequest;
@@ -246,4 +251,29 @@ public class DataManager implements APIDataListener {
         return presetManager.getPresetIds();
     }
  
+    public ArrayList<String> loadLocations()
+    {
+        ArrayList<String> locations = new ArrayList<>();
+        try
+        {
+            File file = new File(Constants.LOCATIONS_FILEPATH);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String town;
+            while((town = br.readLine()) != null)
+            {
+                town = town.trim();
+                locations.add(town);
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+        return locations;
+    }
+    
 }
