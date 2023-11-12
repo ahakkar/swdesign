@@ -16,32 +16,31 @@ import fi.nordicwatt.types.ChartType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.types.RelativeTimePeriod;
 import fi.nordicwatt.utils.Logger;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DatePicker;
-import javafx.util.StringConverter;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements.
@@ -52,6 +51,7 @@ public class RequestController {
 
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
+    private static final DataManager dataManager = DataManager.getInstance();
 
     private ChartType selectedChartType = null;
 
@@ -136,6 +136,9 @@ public class RequestController {
     @FXML
     private TextArea yDescriptionTextArea;
 
+    @FXML
+    private ChoiceBox<String> locationChoiceBox;
+
     /**
      * Populate choicebox values and select defaults
      */
@@ -154,9 +157,18 @@ public class RequestController {
         exportCurrentButton();
         showYAverageCheckBoxClick();
         showYQClick();
-        savePresetButton();   
+        savePresetButton();
+        initializeLocationChoiceBox();
     }
 
+    /**
+     * Fills the choice box with values.
+     */
+    private void initializeLocationChoiceBox()
+    {
+        locationChoiceBox.getItems().addAll(dataManager.loadLocations());
+        locationChoiceBox.setValue("Tampere");
+    }
 
     /**
      * Observes changes in mainTabPane and updates the tab id in
@@ -225,6 +237,7 @@ public class RequestController {
             chartTypeChoiceBox.getValue(),
             axisMap,
             null,
+            locationChoiceBox.getValue(),
             fromDatePicker.getValue().atStartOfDay(),
             toDatePicker.getValue().atTime(23, 59, 59)
         );
@@ -694,9 +707,8 @@ public class RequestController {
             alert.setContentText(
                     "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
             alert.showAndWait();
-            DataManager dataManager = DataManager.getInstance();
             try {
-                dataManager.savePreset(chartTypeChoiceBox.getValue(), DataType.TIME, yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                dataManager.savePreset(chartTypeChoiceBox.getValue(), DataType.TIME, yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), locationChoiceBox.getValue());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -719,7 +731,6 @@ public class RequestController {
             alert.setContentText(
                     "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
             alert.showAndWait();
-            DataManager dataManager = DataManager.getInstance();
             try {
                 SettingsData settingsData = dataManager.loadPreset();
                 chartTypeChoiceBox.setValue(settingsData.getChartType());
@@ -729,6 +740,7 @@ public class RequestController {
                 relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
                 fromDatePicker.setValue(settingsData.getStarttime());
                 toDatePicker.setValue(settingsData.getEndtime());
+                locationChoiceBox.setValue(settingsData.getLocation());
             } catch (IOException e) {
                 e.printStackTrace();
             }
