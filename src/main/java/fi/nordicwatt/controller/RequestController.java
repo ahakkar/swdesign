@@ -759,7 +759,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             alert.showAndWait();
             loadSettingsController = LoadSettingsController.getInstance();
             try {
-                loadSettingsController.initialize();
                 loadSettingsController.addListener(this);
                 openAWindow(Scenes.LoadSettingsWindow.toString());
             } catch (IOException e) {

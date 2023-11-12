@@ -27,7 +27,7 @@ public class LoadSettingsController
     private Button cancelButton;
 
     @FXML
-    private ChoiceBox choosePresetBox;
+    private ChoiceBox<String> choosePresetBox;
 
     public static LoadSettingsController getInstance() 
     {
@@ -37,17 +37,19 @@ public class LoadSettingsController
         }
         return instance;
     }
-
+    @FXML
     public void initialize() throws IOException
     {
         initializeChoosePresetBox();
     }
 
+    @FXML
     private void initializeChoosePresetBox() throws IOException
     {
-        choosePresetBox.getItems().addAll((dataManager.getPresetIds()));
+        choosePresetBox.getItems().addAll(dataManager.getPresetIds());
     }
 
+    @FXML
     public void loadButtonAction() throws IOException
     {
         String id = String.valueOf(choosePresetBox.getValue());
@@ -61,6 +63,7 @@ public class LoadSettingsController
         stage.close();
     }
 
+    @FXML
     public void cancelLoadButtonAction()
     {
         Stage stage = (Stage) cancelButton.getScene().getWindow();

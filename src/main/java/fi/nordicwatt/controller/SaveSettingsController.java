@@ -39,6 +39,7 @@ public class SaveSettingsController
         listeners.add(listener);
     }
 
+    @FXML
     public void saveButtonAction()
     {
         for ( SaveSettingsControllerListener listener : listeners )
@@ -48,7 +49,8 @@ public class SaveSettingsController
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
     }
-
+    
+    @FXML
     public void cancelSaveButtonAction()
     {
         System.out.print("Placeholder: cancel");
