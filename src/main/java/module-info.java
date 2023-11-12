@@ -15,6 +15,7 @@ module fi.nordicwatt {
     opens fi.nordicwatt.controller to javafx.fxml;    
     opens fi.nordicwatt.model.data to com.fasterxml.jackson.databind;
     opens fi.nordicwatt.model.service to com.fasterxml.jackson.databind, com.fasterxml.jackson.datatype.jsr310;
+    opens fi.nordicwatt.model.datamodel to com.fasterxml.jackson.databind;
 
     exports fi.nordicwatt.utils to com.fasterxml.jackson.databind;
     exports fi.nordicwatt.model.data;

@@ -772,7 +772,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     public void saveSettings(String id)
     {
         try {
-                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(), "tampere");
+                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(),locationChoiceBox.getValue());
                 dataManager.savePreset(id, settingsData);
         } catch (IOException e) {
             e.printStackTrace();
@@ -789,5 +789,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         relativeTimeChoiceBox.setValue(settingsData.getRelativeTimePeriod());
         fromDatePicker.setValue(settingsData.getStarttime());
         toDatePicker.setValue(settingsData.getEndtime());
+        locationChoiceBox.setValue(settingsData.getLocation());
     }
 }

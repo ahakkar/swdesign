@@ -1,12 +1,5 @@
 package fi.nordicwatt.model.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import fi.nordicwatt.model.datamodel.SettingsData;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import fi.nordicwatt.model.datamodel.SettingsData;
 
 /**
  * A Singleton class.
@@ -64,10 +64,11 @@ public final class PresetManager
     private Map<String, SettingsData> readFromFile()
         throws IOException
     {
-        objectMapper.registerModule(new JavaTimeModule());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
 
         // Deserialize JSON from the file into a map of SettingsData objects
-        Map<String, SettingsData> settingsDataMap = objectMapper.readValue(new File("settings.conf"), new TypeReference<Map<String, SettingsData>>() {});
+        Map<String, SettingsData> settingsDataMap = mapper.readValue(new File("settings.conf"), new TypeReference<Map<String, SettingsData>>() {});
         return settingsDataMap;
     }
     

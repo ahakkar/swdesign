@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.service.DataManager;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -46,7 +45,7 @@ public class LoadSettingsController
 
     private void initializeChoosePresetBox() throws IOException
     {
-        choosePresetBox.setItems((ObservableList) dataManager.getPresetIds());
+        choosePresetBox.getItems().addAll((dataManager.getPresetIds()));
     }
 
     public void loadButtonAction() throws IOException
