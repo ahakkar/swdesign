@@ -26,6 +26,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -180,6 +181,15 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      */
     private void initializeLocationChoiceBox()
     {
+        if (dataManager.loadLocations() == null)
+        {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Location initialization error");
+            alert.setContentText("File locations.conf not found.");
+            alert.showAndWait();
+            Stage stage = (Stage) locationChoiceBox.getScene().getWindow();
+            stage.close(); 
+        }
         locationChoiceBox.getItems().addAll(dataManager.loadLocations());
         locationChoiceBox.setValue("Tampere");
     }

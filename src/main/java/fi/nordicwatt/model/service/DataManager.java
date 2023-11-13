@@ -275,7 +275,7 @@ public class DataManager implements APIDataListener {
         }
         catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            return null;
         }
         catch (IOException e) 
         {
