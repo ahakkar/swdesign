@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -13,6 +14,7 @@ import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.types.AxisType;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.Logger;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.*;
 import javafx.util.converter.NumberStringConverter;
 
@@ -112,9 +114,13 @@ public class XYChartImpl extends ChartImpl {
 
     private XYChart.Series<Number, Number> populateDateNumberChart() throws ParseException {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        // Creating ObservableList AND ArrayList because adding single data value to ObservableList is slow
+        ObservableList<XYChart.Data<Number, Number>> dataList = series.getData();
+        ArrayList<XYChart.Data<Number, Number>> dataPoints = new ArrayList<>();
         long min = Long.MAX_VALUE;
         long max = Long.MIN_VALUE;
-        for (Map.Entry<LocalDateTime, Double> entry : data.getItems().get(0).getData().getDataPoints().entrySet()) {
+        Set<Map.Entry<LocalDateTime, Double>> entries =  data.getItems().get(0).getData().getDataPoints().entrySet();
+        for (Map.Entry<LocalDateTime, Double> entry : entries) {
             LocalDateTime localDateTime = entry.getKey();
             ZoneId defaultZoneId = ZoneId.systemDefault();
             ZonedDateTime zonedDateTime = localDateTime.atZone(defaultZoneId);
@@ -128,8 +134,10 @@ public class XYChartImpl extends ChartImpl {
             }
             Number xValue = epoch;
             Number yValue = entry.getValue();
-            series.getData().add(new XYChart.Data<>(xValue, yValue));
+            XYChart.Data<Number, Number> dataPoint = new XYChart.Data<>(xValue, yValue);
+            dataPoints.add(dataPoint);
         }
+        dataList.addAll(dataPoints);
         updateXAxisForDateTimeRange(min, max);
         return series;
     }
@@ -210,8 +218,8 @@ public class XYChartImpl extends ChartImpl {
         List<Map<LocalDateTime, Double>> intersectingValues = new ArrayList<>();
         Map<LocalDateTime, Double> xIntersecting = new HashMap<>();
         Map<LocalDateTime, Double> yIntersecting = new HashMap<>();
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        long start = System.currentTimeMillis();
         for (LocalDateTime xKey : xDataPoints.keySet()) {
             for (LocalDateTime yKey : yDataPoints.keySet()) {
                 try {
@@ -233,6 +241,8 @@ public class XYChartImpl extends ChartImpl {
                 }
             }
         }
+        long time = System.currentTimeMillis() - start;
+
 
         intersectingValues.add(xIntersecting);
         intersectingValues.add(yIntersecting);

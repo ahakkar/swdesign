@@ -64,9 +64,9 @@ public class DataStorageTest {
                 "tampere", valuesWind);
         storage.addData(modelWind);
 
-        WeatherModel dataWind = (WeatherModel) getData(LocalDateTime.of(2023, 1, 1, 1, 0), LocalDateTime.of(2023, 1, 1, 5, 0), DataType.WIND);
+        WeatherModel dataWind = (WeatherModel) getData(LocalDateTime.of(2023, 1, 1, 0, 0), LocalDateTime.of(2023, 1, 1, 4, 0), DataType.WIND);
         assertTrue(dataWind.getDataPoints().size() == 5);
-        assertTrue(dataWind.getDataPoints().get(LocalDateTime.of(2023, 1, 1, 1, 0)) == 2.0);
+        assertTrue(dataWind.getDataPoints().get(LocalDateTime.of(2023, 1, 1, 0, 0)) == 2.0);
 
         // Test for DataType.RAIN rain is depricated for now.
         /*
@@ -87,9 +87,9 @@ public class DataStorageTest {
                 "tampere", valuesHumidity);
         storage.addData(modelHumidity);
 
-        WeatherModel dataHumidity = (WeatherModel) getData(LocalDateTime.of(2023, 1, 1, 1, 0), LocalDateTime.of(2023, 1, 1, 4, 0), DataType.HUMIDITY);
+        WeatherModel dataHumidity = (WeatherModel) getData(LocalDateTime.of(2023, 1, 1, 0, 0), LocalDateTime.of(2023, 1, 1, 3, 0), DataType.HUMIDITY);
         assertTrue(dataHumidity.getDataPoints().size() == 4);
-        assertTrue(dataHumidity.getDataPoints().get(LocalDateTime.of(2023, 1, 1, 1, 0)) == 60.0);
+        assertTrue(dataHumidity.getDataPoints().get(LocalDateTime.of(2023, 1, 1, 0, 0)) == 60.0);
 
     }
 

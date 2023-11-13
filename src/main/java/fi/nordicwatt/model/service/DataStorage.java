@@ -69,7 +69,6 @@ public final class DataStorage {
     protected AbstractDataModel<Double> getData(DataRequest query) {
 
         AbstractDataModel<Double> model = getModelByType(query.getDataType());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         if (model != null){
 
@@ -85,20 +84,16 @@ public final class DataStorage {
                 ++i;
             }
 
-            LocalDateTime firstKey = dataPoints.keySet().iterator().next();
-            LocalDateTime lastKey = null;
-            for (LocalDateTime key : dataPoints.keySet()) {
-                lastKey = key;
-            }
-
-            // TODO: Seems like this is not working properly every time
-            if (firstKey.toString().equals(start.toString()) && lastKey.toString().equals(end.toString())){
+            if (dataPoints.containsKey(start) && dataPoints.containsKey(end)){
                 if (model instanceof EnergyModel){
                     return new EnergyModel(model.getDataType(), model.getUnit(), start, values);
                 }
                 else if (model instanceof WeatherModel){
                     return new WeatherModel(model.getDataType(), model.getUnit(), start, ((WeatherModel) model).getLocation(), values);
                 }
+            }
+            else {
+                return null;
             }
         }
 
