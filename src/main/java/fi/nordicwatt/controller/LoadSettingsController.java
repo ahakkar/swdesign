@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.service.DataManager;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
@@ -52,6 +54,14 @@ public class LoadSettingsController
     @FXML
     public void loadButtonAction() throws IOException
     {
+        if ( choosePresetBox.getValue() == null )
+        {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Load error");
+            alert.setContentText("Please select a preset.");
+            alert.showAndWait();
+            return;
+        }
         String id = String.valueOf(choosePresetBox.getValue());
         SettingsData settingsData = dataManager.loadPreset(id);
         for ( LoadSettingsControllerListener listener : listeners )

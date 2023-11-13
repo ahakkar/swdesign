@@ -11,5 +11,5 @@ import javafx.stage.Stage;
  */
 public interface RequestControllerListener 
 {
-    public Scene LoadScene(String sceneName, Stage stageToUse) throws IOException;
+    public Scene LoadScene(String sceneName, Stage stageToUse, int width, int height) throws IOException;
 }

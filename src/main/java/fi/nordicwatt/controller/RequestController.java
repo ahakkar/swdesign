@@ -705,16 +705,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         });
     }
 
-    private Stage openAWindow(String sceneName) throws IOException
-    {
-        Stage stage = new Stage();
-        for ( RequestControllerListener l : listeners )
-        {
-            l.LoadScene(sceneName,stage);
-        }
-        return stage;
-    }
-
     /**
      * initiates the button to open up a dialog. Currently only sets
      * a placeholder text in dialog and does nothing. Dialog should be able
@@ -724,16 +714,16 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      */
     private void savePresetButton() {
         savePresetButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would save the current diagram search terms as a preset. One could then load the preset to get the same diagram by selecting the preset from the general tab.");
-            alert.showAndWait();
             try {
                 saveSettingsController = SaveSettingsController.getInstance();
                 saveSettingsController.addListener(this);
-                openAWindow(Scenes.SaveSettingsWindow.toString());
+                Stage stage = new Stage();
+                stage.setTitle("NordicWatt - Save preset");
+                stage.getIcons().add(new Image("file:doc/logo_small.png"));
+                for ( RequestControllerListener l : listeners )
+                {
+                    l.LoadScene(Scenes.SaveSettingsWindow.toString(),stage, 400, 200);
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -751,16 +741,16 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      */
     private void initLoadPresetButton() {
         loadPresetButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would load a preset and set the search terms to to predifend values. \nThis could be imlpelemented by opening a dialog where one could select the preset from a list.\nOther option would be to have a dropdown menu in the tab you just pressed.");
-            alert.showAndWait();
             loadSettingsController = LoadSettingsController.getInstance();
             try {
                 loadSettingsController.addListener(this);
-                openAWindow(Scenes.LoadSettingsWindow.toString());
+                Stage stage = new Stage();
+                stage.setTitle("NordicWatt - Load preset");
+                stage.getIcons().add(new Image("file:doc/logo_small.png"));
+                for ( RequestControllerListener l : listeners )
+                {
+                    l.LoadScene(Scenes.LoadSettingsWindow.toString(),stage, 400, 200);
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

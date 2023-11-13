@@ -11,8 +11,8 @@ import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.model.service.DataManagerListener;
 import fi.nordicwatt.model.session.SessionChangeData;
 import fi.nordicwatt.types.Scenes;
-import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.ApiSettings;
+import fi.nordicwatt.utils.CustomAlerts;
 import fi.nordicwatt.utils.Logger;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -66,7 +66,7 @@ public class PrimaryController implements DataManagerListener, SessionController
         ApiSettings.getInstance();
         ApiSettings.load();
 
-        scene = LoadScene(Scenes.MainWorkspace.toString(),stage);        
+        scene = LoadScene(Scenes.MainWorkspace.toString(),stage, 1400, 1000);        
         dataManager.registerListener(this);
 
         sessionController.registerListener(this);
@@ -80,12 +80,14 @@ public class PrimaryController implements DataManagerListener, SessionController
      * @param sceneName     name of the scene to be loaded, without .fxml 
      * extension
      * @param stageToUse the stage where the scene will be loaded to.
+     * @param width of the window.
+     * @param height of the window.
      * @return The scene loaded.
      * @throws IOException  if the scene file is not found
      */
     @Override
-    public Scene LoadScene(String sceneName, Stage stageToUse) throws IOException {
-        Scene sceneToOpen = new Scene(loadFXML(sceneName), 1400, 1000);
+    public Scene LoadScene(String sceneName, Stage stageToUse, int width, int height) throws IOException {
+        Scene sceneToOpen = new Scene(loadFXML(sceneName), width, height);
         stageToUse.setScene(sceneToOpen);
         stageToUse.show();
         return sceneToOpen;

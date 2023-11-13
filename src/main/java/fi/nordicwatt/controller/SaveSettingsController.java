@@ -3,6 +3,8 @@ package fi.nordicwatt.controller;
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -42,9 +44,17 @@ public class SaveSettingsController
     @FXML
     public void saveButtonAction()
     {
+        if ( presetIdField.getCharacters().toString().trim().equals("") )
+        {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Save error");
+            alert.setContentText("Please enter a name for your preset.");
+            alert.showAndWait();
+            return;
+        }
         for ( SaveSettingsControllerListener listener : listeners )
         {
-            listener.saveSettings(presetIdField.getCharacters().toString()); 
+            listener.saveSettings(presetIdField.getCharacters().toString().trim()); 
         }
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
@@ -53,7 +63,6 @@ public class SaveSettingsController
     @FXML
     public void cancelSaveButtonAction()
     {
-        System.out.print("Placeholder: cancel");
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }

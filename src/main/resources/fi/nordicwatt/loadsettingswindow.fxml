@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Button?>
@@ -9,9 +10,12 @@
 
 <VBox alignment="CENTER" minHeight="150.0" minWidth="400.0" spacing="20.0" xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.nordicwatt.controller.LoadSettingsController">
     <children>
-        <ChoiceBox fx:id="choosePresetBox" prefWidth="150" layoutX="14.0" layoutY="15.0" />
         <Label text="Choose preset"/>
-        <Button fx:id="loadButton" layoutX="14.0" layoutY="100.0" mnemonicParsing="false" onAction="#loadButtonAction" prefHeight="30.0" prefWidth="160.0" text="Load"/>
-        <Button fx:id="cancelButton" layoutX="200.0" layoutY="100.0" mnemonicParsing="false" onAction="#cancelLoadButtonAction" prefHeight="30.0" prefWidth="160.0" text="Cancel"/>
+        <ChoiceBox fx:id="choosePresetBox" prefWidth="150" />
+        <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadButtonAction" prefHeight="30.0" prefWidth="160.0" text="Load"/>
+        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelLoadButtonAction" prefHeight="30.0" prefWidth="160.0" text="Cancel"/>
     </children>
+    <padding>
+        <Insets top="10.0" left="10.0" right="10.0" bottom="10.0" />
+    </padding>
 </VBox>
