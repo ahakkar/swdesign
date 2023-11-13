@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.datamodel.SettingsData;
 
 /**
@@ -55,7 +56,7 @@ public final class PresetManager
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        FileWriter fw = new FileWriter("settings.conf", false);
+        FileWriter fw = new FileWriter(Constants.PRESETS_FILEPATH, false);
 
         // Serialize the map of settingsData to JSON and save it to a file
         objectMapper.writeValue(fw, settingsDataMap);
@@ -78,7 +79,7 @@ public final class PresetManager
         mapper.registerModule(new JavaTimeModule());
 
         // Deserialize JSON from the file into a map of SettingsData objects
-        Map<String, SettingsData> settingsDataMap = mapper.readValue(new File("settings.conf"), new TypeReference<Map<String, SettingsData>>() {});
+        Map<String, SettingsData> settingsDataMap = mapper.readValue(new File(Constants.PRESETS_FILEPATH), new TypeReference<Map<String, SettingsData>>() {});
         return settingsDataMap;
     }
     
