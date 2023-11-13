@@ -61,7 +61,7 @@ public abstract class AbstractDataModel<T extends Number> {
         this.dataPoints = new TreeMap<>();
         for (T value : values) {
             addDataPoint(timestamp, value);
-            timestamp = incrementTimestamp(timestamp);
+            timestamp = incrementTimestamp(timestamp, dataType.getInterval());
         }
     }
 
@@ -71,9 +71,8 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param timestamp
      * @return
      */
-    public static LocalDateTime incrementTimestamp(LocalDateTime timestamp) {
+    public static LocalDateTime incrementTimestamp(LocalDateTime timestamp, Duration interval) {
         LocalDateTime dateTime = timestamp;
-        Duration interval = Duration.ofHours(1);
         dateTime = dateTime.plus(interval);
         return dateTime;
     }
@@ -154,7 +153,7 @@ public abstract class AbstractDataModel<T extends Number> {
             if (!timestamp.equals(key)) {
                 return false;
             }
-            timestamp = incrementTimestamp(timestamp);
+            timestamp = incrementTimestamp(timestamp, this.dataType.getInterval());
         }
         return true;
     }

@@ -1,5 +1,6 @@
 package fi.nordicwatt.model.data;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -100,13 +101,13 @@ public class AbstractDataModelTest {
     @Test
     public void testIncrementTimestamp() {
         assertEquals(LocalDateTime.of(2022, 1, 1, 1, 0),
-                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 1, 0, 0)));
+                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 1, 0, 0), Duration.ofHours(1)));
         assertEquals(LocalDateTime.of(2022, 1, 2, 0, 0),
-                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 1, 23, 0)));
+                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 1, 23, 0), Duration.ofHours(1)));
         assertEquals(LocalDateTime.of(2022, 2, 1, 0, 0),
-                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 31, 23, 0)));
+                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 1, 31, 23, 0), Duration.ofHours(1)));
         assertEquals(LocalDateTime.of(2023, 1, 1, 0, 0),
-                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 12, 31, 23, 0)));
+                AbstractDataModel.incrementTimestamp(LocalDateTime.of(2022, 12, 31, 23, 0), Duration.ofHours(1)));
     }
 
     // test checkDataPoints
