@@ -302,16 +302,13 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     @FXML
     public void apiSettingsButtonAction() throws IOException, IllegalStateException {
         try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource("apioptions.fxml"));
-            Parent root = loader.load();
-            // ApiOptionsController controller = loader.getController();
-
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("NordicWatt - API Options");
+            stage.setTitle("NordicWatt - Api options");
             stage.getIcons().add(new Image("file:doc/logo_small.png"));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            for ( RequestControllerListener l : listeners )
+            {
+                l.LoadScene(Scenes.ApiOptions.toString(),stage, 800, 300);
+            }
         } 
         catch (IOException e) {
             System.err.println("[RequestController]: IOException while loading apioptions.fxml");
