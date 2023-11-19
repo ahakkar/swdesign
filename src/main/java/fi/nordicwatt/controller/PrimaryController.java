@@ -168,7 +168,7 @@ public class PrimaryController implements DataManagerListener, SessionController
                 AlertType.ERROR,
                 "Exception from DataManager",
                 "Can't create a chart because of an exception.\nResponse error message below:",
-                e.toString()
+                e.getMessage()
             );
             Logger.log("dataRequestFailure: " + e.toString());
         }); 

@@ -10,6 +10,7 @@ import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
 import fi.nordicwatt.utils.DateTimeConverter;
+import fi.nordicwatt.utils.Logger;
 
 /**
  * FMIApiParser - Parses response from FMI API to WeatherModel.
@@ -31,6 +32,11 @@ public class FmiApiParser implements APIParserInterface<WeatherModel> {
 
         String responseDataAsString = getStringBetween(response, "<gml:doubleOrNilReasonTupleList>",
                 "</gml:doubleOrNilReasonTupleList>");
+        Logger.log("Response data: " + responseDataAsString, "FmiApiParser.log");
+        if (responseDataAsString.isEmpty()) {
+            Logger.log("Data requested from FMI API was empty and contained no values. This means that the data is not available for the requested time period. Returning empty datamodel.", "FmiApiParser.log");
+            return new WeatherModel(request.getDataType(), request.getDataType().getUnit(), request.getStarttime(), request.getLocation(), new Double[0]);
+        }
         List<Double> responseData = extractDoubles(responseDataAsString);
         Double[] responseDataArray = new Double[responseData.size()];
 

@@ -45,6 +45,12 @@ public final class APIQueue {
         new Thread(() -> {
             try {
                 ResponseBundle responses = future.get(Constants.API_TIMEOUT, TimeUnit.SECONDS);
+                for (DataResponse response : responses.getItems()) {
+                    if (response.getData().getDataPoints().isEmpty()) {
+                        Logger.log("APIQueue.getData() failed: Request returned no data on one or more data sources. This means that data is not available for the requested time period.", "APIQueue.log");
+                        throw new Exception("Request returned no data on one or more data sources. This means that data is not available for the requested time period. Try another time period or another data type.");
+                    }
+                }
                 System.out.println(responses.toString());
                 notifyDataRequestSuccess(responses);
                 Logger.log("APIQueue.getData() succeeded" + responses.toString(), "APIQueue.log");
