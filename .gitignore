@@ -11,6 +11,9 @@ settings.json
 # Preset file
 *.conf
 
+# Exception for locations.conf
+!locations.conf
+
 # BlueJ files
 *.ctxt
 
