@@ -270,6 +270,9 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
             Logger.log("request validated, sending to sessioncontroller");
             requestDispatcher.dispatchRequest(chartRequest, toNewTab);
         }
+        else {
+            restoreGenerateButtons();
+        }
     }
 
     /**
