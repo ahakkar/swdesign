@@ -109,12 +109,17 @@ public class SessionController implements DataManagerListener {
     public String addTab() {
         SessionChangeData data = new SessionChangeData(SessionChangeType.TAB_ADDED);
         if (pendingTab == null) {
-            TabInfo newTab = new TabInfo("Tab");
+            String tabTitle = pendingChartRequest.generateTabTitle();
+            TabInfo newTab = new TabInfo(tabTitle);
+
             data.setTabId(newTab.getId());
             data.setTitle(newTab.getTitle());
             this.currentTabId = newTab.getId();
             tabMap.put(newTab.getId(), newTab);
         } else {
+            String tabTitle = pendingChartRequest.generateTabTitle();
+            pendingTab.setTitle(tabTitle);
+
             data.setTabId(pendingTabId);
             data.setTitle(pendingTab.getTitle());
             this.currentTabId = pendingTabId;
