@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -83,8 +82,6 @@ public class XYChartImpl extends ChartImpl {
      /**
      * Populates the Chart object with provided data
      *
-     * 
-     * //TODO refactor to use Chart instead of XYChart (possibly move this to a XYChartImpl subclass)
      */
     public void populateChartData() {
         try {
@@ -219,7 +216,6 @@ public class XYChartImpl extends ChartImpl {
         Map<LocalDateTime, Double> xIntersecting = new HashMap<>();
         Map<LocalDateTime, Double> yIntersecting = new HashMap<>();
 
-        long start = System.currentTimeMillis();
         for (LocalDateTime xKey : xDataPoints.keySet()) {
             for (LocalDateTime yKey : yDataPoints.keySet()) {
                 try {
@@ -241,8 +237,6 @@ public class XYChartImpl extends ChartImpl {
                 }
             }
         }
-        long time = System.currentTimeMillis() - start;
-
 
         intersectingValues.add(xIntersecting);
         intersectingValues.add(yIntersecting);

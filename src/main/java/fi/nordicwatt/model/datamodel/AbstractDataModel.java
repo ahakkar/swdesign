@@ -14,14 +14,11 @@ import fi.nordicwatt.types.MeasurementUnit;
  * 
  * @param <T> - Type of data to be stored.
  * 
- *            This class is used as a base for all data models.
- *            It contains the data type and unit of the data, as well as a map
- *            of data points.
- *            The data points are stored in a LinkedHashMap, which preserves the
- *            order of insertion.
- *            The data points are stored as key-value pairs, where the key is a
- *            timestamp and the value is the data point.
- *            Time is stored as a string in format "yyyy-MM-dd HH:mm:ss".
+ *        This class is used as a base for all data models. It contains the data type and unit of
+ *        the data, as well as a map of data points. The data points are stored in a LinkedHashMap,
+ *        which preserves the order of insertion. The data points are stored as key-value pairs,
+ *        where the key is a timestamp and the value is the data point. Time is stored as a string
+ *        in format "yyyy-MM-dd HH:mm:ss".
  * @author Heikki Hohtari with the help of github copilot
  */
 public abstract class AbstractDataModel<T extends Number> {
@@ -37,24 +34,20 @@ public abstract class AbstractDataModel<T extends Number> {
     }
 
     /**
-     * Constructor for AbstractDataModel
-     * Can be used to initialize data model with data points without making
-     * a map of data points beforehand. User should give the first timestamp and
-     * the interval between data points. The timestamp is then incremented by
-     * the interval for each data point.
+     * Constructor for AbstractDataModel Can be used to initialize data model with data points
+     * without making a map of data points beforehand. User should give the first timestamp and the
+     * interval between data points. The timestamp is then incremented by the interval for each data
+     * point.
      * 
-     * @param dataType            - Data type for example "Temperature"
-     * @param unit                - Unit for example "Celsius"
-     * @param firstEntryTimestamp - Timestamp for the first data point in format
-     *                            "yyyy-MM-dd HH:mm:ss"
-     * @param values              - Array of data points
+     * @param dataType - Data type for example "Temperature"
+     * @param unit - Unit for example "Celsius"
+     * @param firstEntryTimestamp - Timestamp for the first data point in format "yyyy-MM-dd
+     *        HH:mm:ss"
+     * @param values - Array of data points
      * @return AbstractDataModel
      */
-    public AbstractDataModel(
-            DataType dataType,
-            MeasurementUnit unit,
-            LocalDateTime firstEntryTimestamp,
-            T[] values) {
+    public AbstractDataModel(DataType dataType, MeasurementUnit unit,
+            LocalDateTime firstEntryTimestamp, T[] values) {
         this.dataType = dataType;
         this.unit = unit;
         LocalDateTime timestamp = firstEntryTimestamp;
@@ -111,10 +104,12 @@ public abstract class AbstractDataModel<T extends Number> {
      * @param endTimestamp
      * @return
      */
-    public Map<LocalDateTime, T> getDataPointsWithRange(LocalDateTime startTimestamp, LocalDateTime endTimestamp) {
+    public Map<LocalDateTime, T> getDataPointsWithRange(LocalDateTime startTimestamp,
+            LocalDateTime endTimestamp) {
         Map<LocalDateTime, T> dataPoints = new TreeMap<>();
         for (LocalDateTime timestamp : this.dataPoints.keySet()) {
-            if (timestamp.compareTo(startTimestamp) >= 0 && timestamp.compareTo(endTimestamp) <= 0) {
+            if (timestamp.compareTo(startTimestamp) >= 0
+                    && timestamp.compareTo(endTimestamp) <= 0) {
                 dataPoints.put(timestamp, this.dataPoints.get(timestamp));
             }
         }
@@ -124,9 +119,8 @@ public abstract class AbstractDataModel<T extends Number> {
     /**
      * Adds a data point to the data model.
      * 
-     * @param timestamp - Timestamp for the data point in format
-     *                  "yyyy-MM-dd HH:mm:ss"
-     * @param value     - Data point
+     * @param timestamp - Timestamp for the data point in format "yyyy-MM-dd HH:mm:ss"
+     * @param value - Data point
      * @throws IllegalArgumentException if timestamp is not valid
      */
     public boolean addDataPoint(LocalDateTime timestamp, T value) {
@@ -141,9 +135,8 @@ public abstract class AbstractDataModel<T extends Number> {
     }
 
     /**
-     * Checks that there are no missing datapoints in the data model.
-     * Interval is used to check this. Returns true if there are no missing
-     * and false if there are.
+     * Checks that there are no missing datapoints in the data model. Interval is used to check
+     * this. Returns true if there are no missing and false if there are.
      * 
      * @return boolean - True if there are no missing data points, false if there
      */
@@ -168,17 +161,13 @@ public abstract class AbstractDataModel<T extends Number> {
         this.dataPoints.putAll(other.dataPoints);
     }
 
-    public <E extends AbstractDataModel> void combineModels(E model) {
+    public <E extends AbstractDataModel<T>> void combineModels(E model) {
         dataPoints.putAll(model.getDataPoints());
     }
 
     @Override
     public String toString() {
-        return "AbstractDataModel{" +
-                "dataType='" + dataType + '\'' +
-                ", unit='" + unit + '\'' +
-                ", interval=" + Duration.ofHours(1) +
-                ", dataPoints=" + dataPoints +
-                '}';
+        return "AbstractDataModel{" + "dataType='" + dataType + '\'' + ", unit='" + unit + '\''
+                + ", interval=" + Duration.ofHours(1) + ", dataPoints=" + dataPoints + '}';
     }
 }

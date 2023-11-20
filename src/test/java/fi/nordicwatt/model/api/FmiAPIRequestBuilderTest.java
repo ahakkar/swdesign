@@ -20,13 +20,10 @@ import okhttp3.Response;
 /**
  * Test class for FmiAPIRequestBuilder.
  * 
- * Editors note: Result Data from FMI is so awful that it's hard to test the
- * response without parsing it first.
- * Therefore this test can also test (partialy) the FMIApiParser class.
+ * Editors note: Result Data from FMI is so awful that it's hard to test the response without
+ * parsing it first. Therefore this test can also test (partialy) the FMIApiParser class.
  * 
  * @author Heikki Hohtari, with help from ChatGTP
- * 
- * TODO fix broken tests due to missing DataType enum compatibility
  */
 public class FmiAPIRequestBuilderTest {
 
@@ -47,32 +44,28 @@ public class FmiAPIRequestBuilderTest {
         String formattedEndTime = endTimeDate.format(formatter);
 
         // Build the request
-        FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder()
-                .withLocation(place)
-                .withStartTime(formattedStartTime)
-                .withEndTime(formattedEndTime)
+        FmiAPIRequestBuilder builder = new FmiAPIRequestBuilder().withLocation(place)
+                .withStartTime(formattedStartTime).withEndTime(formattedEndTime)
                 .withDataType(DataType.TEMPERATURE.getVariableId());
 
         Response response = builder.execute();
         FmiApiParser parser = new FmiApiParser();
 
-        DataRequest dataRequest = 
-            new DataRequest(
-                DataType.TEMPERATURE, 
-                LocalDateTime.of(2021, 10, 4, 0, 0),
-                LocalDateTime.of(2021, 10, 7, 0, 0),      
-                "tampere"
-                );
+        DataRequest dataRequest =
+                new DataRequest(DataType.TEMPERATURE, LocalDateTime.of(2021, 10, 4, 0, 0),
+                        LocalDateTime.of(2021, 10, 7, 0, 0), "tampere");
 
         WeatherModel responseBody = parser.parseToDataObject(dataRequest, response.body().string());
         assertNotNull(responseBody);
 
         String realLocation = responseBody.getLocation().toLowerCase();
-        assertEquals(place,realLocation);
+        assertEquals(place, realLocation);
 
-/*         String realDataType = responseBody.getDataType();
-        assertEquals(parameters, DataType.CONSUMPTION); */
-        
+        /*
+         * String realDataType = responseBody.getDataType(); assertEquals(parameters,
+         * DataType.CONSUMPTION);
+         */
+
         MeasurementUnit realUnit = responseBody.getUnit();
         assertEquals(unit, realUnit);
 

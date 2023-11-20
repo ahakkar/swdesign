@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import fi.nordicwatt.App;
 import fi.nordicwatt.model.data.ChartRequest;
 import fi.nordicwatt.model.datamodel.SettingsData;
 import fi.nordicwatt.model.service.DataManager;
@@ -21,9 +20,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.Chart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -40,16 +36,17 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 /**
- * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements. Listens to SaveSettingsController and LoadSettingsController.
+ * Controller for mainworkspace(.fxml). Handle only the user inputs from UI elements. Listens to
+ * SaveSettingsController and LoadSettingsController.
  * 
  * @author Antti Hakkarainen
  */
-public class RequestController implements SaveSettingsControllerListener, LoadSettingsControllerListener {
+public class RequestController
+        implements SaveSettingsControllerListener, LoadSettingsControllerListener {
 
     private static final RequestDispatcher requestDispatcher = RequestDispatcher.getInstance();
     private static final SessionController sessionController = SessionController.getInstance();
@@ -121,9 +118,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
     private Button loadPresetButton;
 
     @FXML
-    private Button addNewTabButton;
-
-    @FXML
     private Label xSourceLabel;
 
     @FXML
@@ -148,8 +142,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      * Populate choicebox values and select defaults
      */
     @FXML
-    public void initialize()
-    {
+    public void initialize() {
         observeForTabChanges();
         initializeChartTypeChoiceBox();
         initializeXAxisChoiceBox();
@@ -157,66 +150,31 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         initializeTimeBoxes();
         initializeRelativeTimeToggle();
         initializeDateBoxes();
-        initRemoveCurrentChartButton();
         initLoadPresetButton();
-        exportCurrentButton();
-        showYAverageCheckBoxClick();
-        showYQClick();
         savePresetButton();
         initializeLocationChoiceBox();
     }
 
-    public void addListener(RequestControllerListener listener)
-    {
-        listeners.add(listener);
-    }
-
-    public void removeListener(RequestControllerListener listener)
-    {
-        listeners.remove(listener);
-    }
-    
-    /**
-     * Fills the choice box with values.
-     */
-    private void initializeLocationChoiceBox()
-    {
-        if (dataManager.loadLocations() == null)
-        {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Location initialization error");
-            alert.setContentText("File locations.conf not found.");
-            alert.showAndWait();
-            Stage stage = (Stage) locationChoiceBox.getScene().getWindow();
-            stage.close(); 
-        }
-        locationChoiceBox.getItems().addAll(dataManager.loadLocations());
-        locationChoiceBox.setValue("Tampere");
-    }
 
     /**
-     * Observes changes in mainTabPane and updates the tab id in
-     * SessionController, if tab changes.
+     * Observes changes in mainTabPane and updates the tab id in SessionController, if tab changes.
      */
-    private void observeForTabChanges()
-    {
-        mainTabPane.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldTab, newTab) -> {
-                if (newTab != null) {
-                    String selectedTabId = newTab.getId();
-                    sessionController.setCurrentTabId(selectedTabId);
-                }
-            }
-        );
+    private void observeForTabChanges() {
+        mainTabPane.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldTab, newTab) -> {
+                    if (newTab != null) {
+                        String selectedTabId = newTab.getId();
+                        sessionController.setCurrentTabId(selectedTabId);
+                    }
+                });
 
-        regenDiagramButton.setDisable(true); // initially disable regen button, fix if session restore is implemented
+        regenDiagramButton.setDisable(true); // initially disable regen button, fix if session
+                                             // restore is implemented
         mainTabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> c) -> {
             if (mainTabPane.getTabs().isEmpty()) {
-                System.out.println("No tabs... disabling regen button");                
                 regenDiagramButton.setDisable(true);
                 regenDiagramButton.setStyle("-fx-opacity: 0.4;");
-            } else if(regenDiagramButton.isDisabled()) {
-                System.out.println("At least one tab.. enabling regen button");
+            } else if (regenDiagramButton.isDisabled()) {
                 regenDiagramButton.setDisable(false);
                 regenDiagramButton.setStyle("-fx-opacity: 1.0;");
             }
@@ -228,8 +186,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         regenDiagramButton.setDisable(state);;
     }
 
-    public void restoreGenerateButtons() 
-    {
+    public void restoreGenerateButtons() {
         setGenerateButtonsDisabled(false);
         createDiagramButton.setGraphic(null);
         createDiagramButton.setText("Generate");
@@ -242,91 +199,51 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
      * @param toNewTab replace current chart or add a new chart to new tab?
      */
     private void sendChartRequest(boolean toNewTab) {
-        // figure out tabid
+        Map<AxisType, DataType> axisMap = Map.of(AxisType.X_AXIS, xAxisChoiceBox.getValue(),
+                AxisType.Y_AXIS, yAxisChoiceBox.getValue());
 
-        // either add the chart to new tab or replace an existing tab's content
+        ChartRequest chartRequest = new ChartRequest(chartTypeChoiceBox.getValue(), axisMap, null,
+                locationChoiceBox.getValue(), fromDatePicker.getValue().atStartOfDay(),
+                toDatePicker.getValue().atTime(23, 59, 59));
 
-        // Disable buttons and re-enable them only after failure or success
-        // TODO keep buttons always enabled after implementing frontend support for it        
-        //setGenerateButtonDisabled(true);
-
-        Logger.log("createDiagramButton pressed"); // writes to log.log
-
-        Map<AxisType, DataType> axisMap = Map.of(
-            AxisType.X_AXIS, xAxisChoiceBox.getValue(),
-            AxisType.Y_AXIS, yAxisChoiceBox.getValue()
-        );
-
-        ChartRequest chartRequest = new ChartRequest(
-            chartTypeChoiceBox.getValue(),
-            axisMap,
-            null,
-            locationChoiceBox.getValue(),
-            fromDatePicker.getValue().atStartOfDay(),
-            toDatePicker.getValue().atTime(23, 59, 59)
-        );
-
-        if (requestDispatcher.validateAddChartRequest(chartRequest)) {            
+        if (requestDispatcher.validateAddChartRequest(chartRequest)) {
             Logger.log("request validated, sending to sessioncontroller");
             requestDispatcher.dispatchRequest(chartRequest, toNewTab);
-        }
-        else {
+        } else {
             restoreGenerateButtons();
         }
     }
 
     /**
-     * Called when user clicks the "Generate" button. Creates a ChartRequest
-     * based on user's selections in UI, and sends it with more user choices
-     * to RequestDispatcher for validation. If validation is successful,
-     * RequestDispatcher will send a DataRequest to DataManager.
+     * Called when user clicks the "Generate" button. Creates a ChartRequest based on user's
+     * selections in UI, and sends it with more user choices to RequestDispatcher for validation. If
+     * validation is successful, RequestDispatcher will send a DataRequest to DataManager.
      */
     @FXML
     public void createDiagramButtonAction() {
         setGenerateButtonsDisabled(true);
-        displayProgressIndicator(createDiagramButton);        
+        displayProgressIndicator(createDiagramButton);
         sendChartRequest(true);
     }
 
 
     @FXML
-    public void regenDiagramButtonAction() {    
+    public void regenDiagramButtonAction() {
         setGenerateButtonsDisabled(true);
-        displayProgressIndicator(regenDiagramButton);        
+        displayProgressIndicator(regenDiagramButton);
         sendChartRequest(false);
 
     }
 
-    @FXML 
-    public void addNewTabAction() {        
-        sessionController.addTab();
-    }
-
     @FXML
     public void apiSettingsButtonAction() throws IOException, IllegalStateException {
-        try {
-            Stage stage = new Stage();
-            stage.setTitle("NordicWatt - Api options");
-            stage.getIcons().add(new Image("file:doc/logo_small.png"));
-            for ( RequestControllerListener l : listeners )
-            {
-                l.LoadScene(Scenes.ApiOptions.toString(),stage, 800, 300);
-            }
-        } 
-        catch (IOException e) {
-            System.err.println("[RequestController]: IOException while loading apioptions.fxml");
-            e.printStackTrace();
-        }
-        catch (IllegalStateException e) {
-            System.err.println("[RequestController]: IllegalStateException while loading apioptions.fxml");
-            e.printStackTrace();
-        }
+        PrimaryController pc = PrimaryController.getInstance();
+        pc.displayApiSettingsWindow();
     }
 
     /**
-     * Bound to a tab's contextmenu, this action is called from the tab's 
-     * contextmenu when user wants to close a tab. We forward the info to
-     * SessionManager which decides what to do.
+     * Bound to a tab's contextmenu, this action is called from the tab's contextmenu when user
+     * wants to close a tab. We forward the info to SessionManager which decides what to do.
      * 
      * @param tabId String representation UUID of the tab to be removed
      */
@@ -334,34 +251,9 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         sessionController.removeTab(tabId);
     }
 
-    /**
-     * Adds a new JavaFX Tab element to TabPane mainTabPane. Adds a provided
-     * unique ID for the Tab, so it can be identified later. Adds a right 
-     * click context menu with "Close tab" selection to each Tab.
-     * 
-     * @param data object containing tab's id and title
-     */
-    public void addNewTabToUI(SessionChangeData data) {
-        Tab newTab = new Tab(data.getTitle());
-        newTab.setId(data.getTabId().toString());
-
-        // Contex menu for closing the tab
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem closeItem = new MenuItem("Close tab");
-        closeItem.setOnAction(event -> {
-            removeTabAction(newTab.getId());
-            
-        });
-        contextMenu.getItems().add(closeItem);
-
-        newTab.setContextMenu(contextMenu);
-        mainTabPane.getTabs().add(newTab);
-        mainTabPane.getSelectionModel().select(newTab);
-    }
 
     /**
-     * PrimaryController calls this method to remove a tab from UI. Tab is
-     * found with the unique id.
+     * PrimaryController calls this method to remove a tab from UI. Tab is found with the unique id.
      * 
      * @param tabId String representation UUID of the tab to be removed
      */
@@ -380,7 +272,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
 
         for (Tab tab : mainTabPane.getTabs()) {
             if (tabId.equals(tab.getId())) {
-                // TODO need to change this to support a specific chart in 1-4 chart mode
                 Platform.runLater(() -> {
                     sessionController.removeChart(chartId);
                     tab.setContent(null);
@@ -390,10 +281,36 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         }
     }
 
+
     /**
-     * After a long round trip around the galaxy and half of the program,
-     * PrimaryController finally calls this method to display a generated Chart 
-     * on a tab.
+     * Adds a new JavaFX Tab element to TabPane mainTabPane. Adds a provided unique ID for the Tab,
+     * so it can be identified later. Adds a right click context menu with "Close tab" selection to
+     * each Tab.
+     * 
+     * @param data object containing tab's id and title
+     */
+    public void addNewTabToUI(SessionChangeData data) {
+        Tab newTab = new Tab(data.getTitle());
+        newTab.setId(data.getTabId().toString());
+
+        // Contex menu for closing the tab
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem closeItem = new MenuItem("Close tab");
+        closeItem.setOnAction(event -> {
+            removeTabAction(newTab.getId());
+
+        });
+        contextMenu.getItems().add(closeItem);
+
+        newTab.setContextMenu(contextMenu);
+        mainTabPane.getTabs().add(newTab);
+        mainTabPane.getSelectionModel().select(newTab);
+    }
+
+
+    /**
+     * After a long round trip around the galaxy and half of the program, PrimaryController finally
+     * calls this method to display a generated Chart on a tab.
      * 
      * @param chart Chart a pie/xychart ready to be displayed
      */
@@ -403,101 +320,47 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
                 tab.setContent(chart);
                 mainTabPane.getSelectionModel().select(tab);
                 return;
-            } 
+            }
         }
     }
 
 
     /**
-     * Displays a spinning ProgressIndicator in a tab to indicate that a chart
-     * is being generated.
+     * Displays a spinning ProgressIndicator in a tab to indicate that a chart is being generated.
      * 
      * @param data object containing tabid and chartid where to place the spinner
      */
-    private void displayProgressIndicator(Button button)
-    {   
+    private void displayProgressIndicator(Button button) {
         ProgressIndicator progressIndicator = new ProgressIndicator();
 
         progressIndicator.setMinSize(25, 25);
-        progressIndicator.setMaxSize(25, 25); 
+        progressIndicator.setMaxSize(25, 25);
         progressIndicator.setStyle("-fx-opacity: 1.0; -fx-progress-color: red;");
 
-        button.setStyle("-fx-opacity: 1.0;");        
-        button.setText("");       
-        button.setGraphic(progressIndicator); 
+        button.setStyle("-fx-opacity: 1.0;");
+        button.setText("");
+        button.setGraphic(progressIndicator);
     }
 
 
-    /** TODO what is this method used for? -ah */
+    /**
+     * Triggered every time chart type is changed. Updates the x and y axis choice boxes.
+     */
     @FXML
     private void chartTypeChoiceBoxAction() {
-         System.out.println("Chart type Choice Box: Value " +
-        chartTypeChoiceBox.getValue() + " was selected");
-
-         if (this.selectedChartType != null && this.selectedChartType != chartTypeChoiceBox.getValue()) {
-             System.out.println("UPDATE XY AXIS BOXES");
-             updateXYAxisChoiceBoxes();
-         }
+        if (this.selectedChartType != null
+                && this.selectedChartType != chartTypeChoiceBox.getValue()) {
+            System.out.println("UPDATE XY AXIS BOXES");
+            updateXYAxisChoiceBoxes();
+        }
         this.selectedChartType = chartTypeChoiceBox.getValue();
     }
 
 
     /**
-     * Populates the chartTypeChoiceBox with ChartType enums and sets the default
-     * value to LINE_CHART.
-     */
-    private void initializeChartTypeChoiceBox() {
-        // allows storing ChartType enums directly as values of the ChoiceBox
-        chartTypeChoiceBox.setConverter(new StringConverter<ChartType>() {
-            public String toString(ChartType type) {
-                return (type == null) ? "" : type.toString();
-            }
-
-            public ChartType fromString(String label) {
-                return null;
-            }
-        });
-
-        chartTypeChoiceBox.getItems().addAll(ChartType.values());
-        chartTypeChoiceBox.setValue(ChartType.LINE_CHART);
-    }
-
-
-    /**
-     * Populates the xAxisChoiceBox with String values and sets the default
-     * value to "Time".
+     * Who writes these uncommented methods >:( ? -ah
      * 
-     * TODO replace hardcoded value with actual options
      */
-    private void initializeXAxisChoiceBox() {
-
-        ChartType selectedChart = chartTypeChoiceBox.getValue();
-        System.out.println("InitilaizeXAxisChoiceBox");
-        System.out.println("selected chart: " + selectedChart.toString());
-        xAxisChoiceBox.setConverter(new StringConverter<DataType>() {
-            public String toString(DataType type) {
-                return (type == null) ? "" : type.toString();  
-            }
-
-            public DataType fromString(String label) {
-                return null; 
-            }            
-        });
-
-        // Filter the DataType values to only include those with X_AXIS in their allowedAxes
-        List<DataType> xDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
-
-        xAxisChoiceBox.getItems().addAll(xDataTypeList);
-        xAxisChoiceBox.setValue(DataType.TIME);
-        xAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && oldValue != newValue) {
-                updateXAxisLabels();
-            }
-
-        });
-        updateXAxisLabels();
-    }
-
     private List<DataType> getFilteredDataTypeList(ChartType selectedChart, AxisType axisType) {
         List<DataType> dataTypeList = new ArrayList<>();
         for (DataType dataType : DataType.values()) {
@@ -508,7 +371,12 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         return dataTypeList;
     }
 
-    private void updateXYAxisChoiceBoxes(){
+
+    /**
+     * Who writes these uncommented methods >:( ? -ah
+     * 
+     */
+    private void updateXYAxisChoiceBoxes() {
 
         DataType xSelection = xAxisChoiceBox.getValue();
         DataType ySelection = yAxisChoiceBox.getValue();
@@ -534,6 +402,7 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         } else {
             yAxisChoiceBox.setValue(yData.get(0));
         }
+
         updateXAxisLabels();
         updateYAxisLabels();
     }
@@ -549,35 +418,6 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         xDescriptionTextArea.setText(dataType.getDescription());
     }
 
-    /**
-     * Populates the yAxisChoiceBox with DataType enums and sets the default
-     * value to CONSUMPTION.
-     */
-    private void initializeYAxisChoiceBox() {
-
-        ChartType selectedChart = chartTypeChoiceBox.getValue();
-        yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
-            public String toString(DataType type) {
-                return (type == null) ? "" : type.toString();  
-            }
-
-            public DataType fromString(String label) {
-                return null; 
-            }            
-        });
-
-        // Filter the DataType values to only include those with Y_AXIS in their allowedAxes
-        List<DataType> yDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
-
-        yAxisChoiceBox.getItems().addAll(yDataTypeList);
-        yAxisChoiceBox.setValue(yDataTypeList.get(0));
-        yAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && oldValue != newValue) {
-                updateYAxisLabels();
-            }
-        });
-        updateYAxisLabels();
-    }
 
     /**
      * Triggered every time y label is updated. Updates the y API info in the UI.
@@ -590,164 +430,22 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         yDescriptionTextArea.setText(dataType.getDescription());
     }
 
+
     /**
-     * Populates the relativeTimeChoiceBox with String values and sets the default
-     * value to "Last 24 hours". Also sets the default values for the datepickers.
-     * (which are hidden by default).
+     * Triggered every time x or y axis is changed. Updates the location choice box visibility.
+     * Depends on if the selected DataType enum requires a location or not.
      */
-    private void initializeTimeBoxes()
-    {
-        relativeTimeChoiceBox.getItems().addAll(RelativeTimePeriod.values());
-        relativeTimeChoiceBox.setValue(RelativeTimePeriod.LAST_24_HOURS);
+    private void setLocationChoiceBoxDisabled() {
+        boolean locationRequired = xAxisChoiceBox.getValue().isLocationRequired()
+                || yAxisChoiceBox.getValue().isLocationRequired();
 
-        fromDatePicker.setValue(RelativeTimePeriod.LAST_24_HOURS.getFromDate());            
-        toDatePicker.setValue(LocalDate.now()); 
-
-        relativeTimeChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            fromDatePicker.setValue(newValue.getFromDate());            
-            toDatePicker.setValue(LocalDate.now()); 
-        });
+        locationChoiceBox.setDisable(!locationRequired);
     }
 
 
     /**
-     * TODO adjust default values
-     */
-    private void initializeDateBoxes() {
-        fromDatePicker.setValue(LocalDate.now().minusDays(1));
-        toDatePicker.setValue(LocalDate.now());
-    }
-
-
-    /**
-     * Initializes the relativeTimeToggle and binds it to the relativeTimeChoiceBox.
-     * When the toggle is selected, the choicebox is hidden and vice versa.
-     */
-    private void initializeRelativeTimeToggle() {
-        // TODO these should actually modify the underlying start and end date combo boxes..
-        relativeTimeChoiceBox.visibleProperty().bind(relativeTimeToggle.selectedProperty());
-        relativeTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty());
-        fromDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
-        toDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
-        startTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
-        endTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
-
-        // Update the Button based on the toggle selection
-        relativeTimeToggle.textProperty().bind(Bindings.when(relativeTimeToggle.selectedProperty())
-            .then("Relative time")
-            .otherwise("Real time"));
-
-        // Instantly trigger this event to set the default state
-        relativeTimeToggle.setSelected(!relativeTimeToggle.isSelected());
-    }
-
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to removeCurrentChartButton
-     */
-    private void initRemoveCurrentChartButton() {
-        removeCurrentChartButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText("This action would remove the currently displayed chart tab.");
-            alert.showAndWait();
-        });
-    }
-
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to exportCurrentButton
-     */
-    private void exportCurrentButton() {
-        exportCurrentButton.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText("This action would export the chart we see in the view as image or pdf.");
-            alert.showAndWait();
-        });
-    }
-
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to showYAverageCheckBoxClick
-     */
-    private void showYAverageCheckBoxClick() {
-        showYAverageCheckBox.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would draw a vertical line on the chart where the average of Y value is.");
-            alert.showAndWait();
-        });
-    }
-
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to showYQClick
-     */
-    private void showYQClick() {
-        showYQ.setOnAction((event) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("This is placeholder");
-            alert.setHeaderText(null); // No header
-            alert.setContentText(
-                    "This action would draw two vertical lines on the chart of the upper and lower quartile of Y value.");
-            alert.showAndWait();
-        });
-    }
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to savePresetButton
-     */
-    private void savePresetButton() {
-        savePresetButton.setOnAction((event) -> {
-            try {
-                saveSettingsController = SaveSettingsController.getInstance();
-                saveSettingsController.addListener(this);
-                Stage stage = new Stage();
-                stage.setTitle("NordicWatt - Save preset");
-                stage.getIcons().add(new Image("file:doc/logo_small.png"));
-                for ( RequestControllerListener l : listeners )
-                {
-                    l.LoadScene(Scenes.SaveSettingsWindow.toString(),stage, 400, 200);
-                }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        });
-    }
-
-
-    /**
-     * initiates the button to open up a dialog. Currently only sets
-     * a placeholder text in dialog and does nothing. Dialog should be able
-     * to close on ok and cancel buttons.
-     * 
-     * TODO implement some actual functionality to initLoadPresetButton
+     * Most likely loads the settings from a file. (someone implemented this without documenting it
+     * -ah)
      */
     private void initLoadPresetButton() {
         loadPresetButton.setOnAction((event) -> {
@@ -757,30 +455,206 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
                 Stage stage = new Stage();
                 stage.setTitle("NordicWatt - Load preset");
                 stage.getIcons().add(new Image("file:doc/logo_small.png"));
-                for ( RequestControllerListener l : listeners )
-                {
-                    l.LoadScene(Scenes.LoadSettingsWindow.toString(),stage, 400, 200);
+                for (RequestControllerListener l : listeners) {
+                    l.LoadScene(Scenes.LoadSettingsWindow.toString(), stage, 400, 200);
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
     }
+
+
+    /**
+     * Fills the choice box with values.
+     */
+    private void initializeLocationChoiceBox() {
+        if (dataManager.loadLocations() == null) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Location initialization error");
+            alert.setContentText("File locations.conf not found.");
+            alert.showAndWait();
+            Stage stage = (Stage) locationChoiceBox.getScene().getWindow();
+            stage.close();
+        }
+        locationChoiceBox.getItems().addAll(dataManager.loadLocations());
+        locationChoiceBox.setValue("Tampere");
+        locationChoiceBox.setDisable(true);
+    }
+
+
+    /**
+     * Populates the relativeTimeChoiceBox with String values and sets the default value to "Last 24
+     * hours". Also sets the default values for the datepickers. (which are hidden by default).
+     */
+    private void initializeTimeBoxes() {
+        relativeTimeChoiceBox.getItems().addAll(RelativeTimePeriod.values());
+        relativeTimeChoiceBox.setValue(RelativeTimePeriod.LAST_24_HOURS);
+
+        fromDatePicker.setValue(RelativeTimePeriod.LAST_24_HOURS.getFromDate());
+        toDatePicker.setValue(LocalDate.now());
+
+        relativeTimeChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            fromDatePicker.setValue(newValue.getFromDate());
+            toDatePicker.setValue(LocalDate.now());
+        });
+    }
+
+
+    /**
+     * Sets the default values for the datepickers. (which are hidden by default).
+     */
+    private void initializeDateBoxes() {
+        fromDatePicker.setValue(LocalDate.now().minusDays(1));
+        toDatePicker.setValue(LocalDate.now());
+    }
+
+
+    /**
+     * Initializes the relativeTimeToggle and binds it to the relativeTimeChoiceBox. When the toggle
+     * is selected, the choicebox is hidden and vice versa.
+     */
+    private void initializeRelativeTimeToggle() {
+        relativeTimeChoiceBox.visibleProperty().bind(relativeTimeToggle.selectedProperty());
+        relativeTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty());
+        fromDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        toDatePicker.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        startTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+        endTimeLabel.visibleProperty().bind(relativeTimeToggle.selectedProperty().not());
+
+        // Update the Button based on the toggle selection
+        relativeTimeToggle.textProperty().bind(Bindings.when(relativeTimeToggle.selectedProperty())
+                .then("Relative time").otherwise("Real time"));
+
+        // Instantly trigger this event to set the default state
+        relativeTimeToggle.setSelected(!relativeTimeToggle.isSelected());
+    }
+
+
+    /**
+     * Populates the xAxisChoiceBox with String values from DataTypes enum, and sets the default
+     * value to "Time".
+     */
+    private void initializeXAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        xAxisChoiceBox.setConverter(new StringConverter<DataType>() {
+            public String toString(DataType type) {
+                return (type == null) ? "" : type.toString();
+            }
+
+            public DataType fromString(String label) {
+                return null;
+            }
+        });
+
+        // Filter the DataType values to only include those with X_AXIS in their allowedAxes
+        List<DataType> xDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.X_AXIS);
+
+        xAxisChoiceBox.getItems().addAll(xDataTypeList);
+        xAxisChoiceBox.setValue(DataType.TIME);
+        xAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && oldValue != newValue) {
+                updateXAxisLabels();
+                setLocationChoiceBoxDisabled();
+            }
+
+        });
+
+        updateXAxisLabels();
+    }
+
+
+    /**
+     * Populates the yAxisChoiceBox with DataType enums and sets the default value to CONSUMPTION.
+     */
+    private void initializeYAxisChoiceBox() {
+
+        ChartType selectedChart = chartTypeChoiceBox.getValue();
+        yAxisChoiceBox.setConverter(new StringConverter<DataType>() {
+            public String toString(DataType type) {
+                return (type == null) ? "" : type.toString();
+            }
+
+            public DataType fromString(String label) {
+                return null;
+            }
+        });
+
+        // Filter the DataType values to only include those with Y_AXIS in their allowedAxes
+        List<DataType> yDataTypeList = getFilteredDataTypeList(selectedChart, AxisType.Y_AXIS);
+
+        yAxisChoiceBox.getItems().addAll(yDataTypeList);
+        yAxisChoiceBox.setValue(yDataTypeList.get(0));
+        yAxisChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && oldValue != newValue) {
+                updateYAxisLabels();
+                setLocationChoiceBoxDisabled();
+            }
+        });
+        updateYAxisLabels();
+    }
+
+
+    /**
+     * Populates the chartTypeChoiceBox with ChartType enums and sets the default value to
+     * LINE_CHART.
+     */
+    private void initializeChartTypeChoiceBox() {
+        // allows storing ChartType enums directly as values of the ChoiceBox
+        chartTypeChoiceBox.setConverter(new StringConverter<ChartType>() {
+            public String toString(ChartType type) {
+                return (type == null) ? "" : type.toString();
+            }
+
+            public ChartType fromString(String label) {
+                return null;
+            }
+        });
+
+        chartTypeChoiceBox.getItems().addAll(ChartType.values());
+        chartTypeChoiceBox.setValue(ChartType.LINE_CHART);
+    }
+
+
+    /**
+     * Most likely saves the current settings to a file. (someone implemented this without
+     * documenting it -ah)
+     */
+    private void savePresetButton() {
+        savePresetButton.setOnAction((event) -> {
+            try {
+                saveSettingsController = SaveSettingsController.getInstance();
+                saveSettingsController.addListener(this);
+                Stage stage = new Stage();
+                stage.setTitle("NordicWatt - Save preset");
+                stage.getIcons().add(new Image("file:doc/logo_small.png"));
+                for (RequestControllerListener l : listeners) {
+                    l.LoadScene(Scenes.SaveSettingsWindow.toString(), stage, 400, 200);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
     @Override
-    public void saveSettings(String id)
-    {
+    public void saveSettings(String id) {
         try {
-                SettingsData settingsData = new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(), yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(), relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(), toDatePicker.getValue(),locationChoiceBox.getValue());
-                dataManager.savePreset(id, settingsData);
+            SettingsData settingsData =
+                    new SettingsData(chartTypeChoiceBox.getValue(), xAxisChoiceBox.getValue(),
+                            yAxisChoiceBox.getValue(), relativeTimeToggle.isSelected(),
+                            relativeTimeChoiceBox.getValue(), fromDatePicker.getValue(),
+                            toDatePicker.getValue(), locationChoiceBox.getValue());
+            dataManager.savePreset(id, settingsData);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void loadSettings(SettingsData settingsData)
-    {
+    public void loadSettings(SettingsData settingsData) {
         chartTypeChoiceBox.setValue(settingsData.getChartType());
         xAxisChoiceBox.setValue(settingsData.getXAxis());
         yAxisChoiceBox.setValue(settingsData.getYAxis());
@@ -789,5 +663,14 @@ public class RequestController implements SaveSettingsControllerListener, LoadSe
         fromDatePicker.setValue(settingsData.getStarttime());
         toDatePicker.setValue(settingsData.getEndtime());
         locationChoiceBox.setValue(settingsData.getLocation());
+    }
+
+
+    public void addListener(RequestControllerListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(RequestControllerListener listener) {
+        listeners.remove(listener);
     }
 }

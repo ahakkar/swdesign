@@ -1,10 +1,10 @@
 module fi.nordicwatt {
     exports fi.nordicwatt;
-    
+
     requires transitive javafx.controls;
     requires transitive javafx.graphics;
     requires javafx.fxml;
-    requires okhttp3;
+    requires transitive okhttp3;
 
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
@@ -12,9 +12,10 @@ module fi.nordicwatt {
     requires java.xml;
 
     opens fi.nordicwatt to javafx.fxml;
-    opens fi.nordicwatt.controller to javafx.fxml;    
+    opens fi.nordicwatt.controller to javafx.fxml;
     opens fi.nordicwatt.model.data to com.fasterxml.jackson.databind;
-    opens fi.nordicwatt.model.service to com.fasterxml.jackson.databind, com.fasterxml.jackson.datatype.jsr310;
+    opens fi.nordicwatt.model.service
+            to com.fasterxml.jackson.databind, com.fasterxml.jackson.datatype.jsr310;
     opens fi.nordicwatt.model.datamodel to com.fasterxml.jackson.databind;
 
     exports fi.nordicwatt.utils to com.fasterxml.jackson.databind;

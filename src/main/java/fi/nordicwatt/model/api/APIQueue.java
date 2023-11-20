@@ -10,15 +10,14 @@ import fi.nordicwatt.model.datamodel.ResponseBundle;
 import fi.nordicwatt.utils.Logger;
 
 /**
- * APIQueue
- * Singleton class that handles the API queue
+ * APIQueue Singleton class that handles the API queue
  * 
  * @author ???
  */
 public final class APIQueue {
 
     private static APIQueue instance;
-    private final  ArrayList<APIDataListener> listeners;
+    private final ArrayList<APIDataListener> listeners;
 
     private APIQueue() {
         this.listeners = new ArrayList<>();
@@ -35,8 +34,7 @@ public final class APIQueue {
         return instance;
     }
 
-    public void getData(RequestBundle requests)
-    {
+    public void getData(RequestBundle requests) {
         Logger.log("APIQueue.getData() called", "APIQueue.log");
         Future<ResponseBundle> future = getFuture(requests);
         for (DataRequest request : requests.getItems()) {
@@ -47,8 +45,11 @@ public final class APIQueue {
                 ResponseBundle responses = future.get(Constants.API_TIMEOUT, TimeUnit.SECONDS);
                 for (DataResponse response : responses.getItems()) {
                     if (response.getData().getDataPoints().isEmpty()) {
-                        Logger.log("APIQueue.getData() failed: Request returned no data on one or more data sources. This means that data is not available for the requested time period.", "APIQueue.log");
-                        throw new Exception("Request returned no data on one or more data sources. This means that data is not available for the requested time period. Try another time period or another data type.");
+                        Logger.log(
+                                "APIQueue.getData() failed: Request returned no data on one or more data sources. This means that data is not available for the requested time period.",
+                                "APIQueue.log");
+                        throw new Exception(
+                                "Request returned no data on one or more data sources. This means that data is not available for the requested time period. Try another time period or another data type.");
                     }
                 }
                 System.out.println(responses.toString());
@@ -57,7 +58,6 @@ public final class APIQueue {
 
             } catch (Exception e) {
                 future.cancel(true);
-                // TODO log exception
                 Logger.log("APIQueue.getData() failed" + e, "APIQueue.log");
                 notifyDataRequestFailure(requests, e);
             }
@@ -72,10 +72,10 @@ public final class APIQueue {
             ExecutorService executor = executorWrapper.getExecutor();
 
             future = executor.submit(() -> {
-               ResponseBundle responses = new ResponseBundle(requests.getId());
-               for (DataRequest request : requests.getItems()) {
-                    APIOperator op = new APIOperator();                    
-                    responses.addItem(op.getData(request)); 
+                ResponseBundle responses = new ResponseBundle(requests.getId());
+                for (DataRequest request : requests.getItems()) {
+                    APIOperator op = new APIOperator();
+                    responses.addItem(op.getData(request));
                 }
                 return responses;
             });
@@ -106,6 +106,7 @@ public final class APIQueue {
 
     /**
      * Notify listeners that data request was successful, and provide the responses
+     * 
      * @param responses Bundle of responses containing data for each request
      */
     public void notifyDataRequestSuccess(ResponseBundle responses) {
@@ -117,8 +118,9 @@ public final class APIQueue {
 
     /**
      * Notify listeners that data request failed
+     * 
      * @param requests Bundle of requests containing their individual Status
-     * @param e        Exception that caused the failure
+     * @param e Exception that caused the failure
      */
     public void notifyDataRequestFailure(RequestBundle requests, Exception e) {
         for (APIDataListener listener : listeners) {
@@ -128,6 +130,7 @@ public final class APIQueue {
 
     /**
      * Use to register a class as a listener
+     * 
      * @param listener
      */
     public void registerListener(APIDataListener listener) {
@@ -139,6 +142,7 @@ public final class APIQueue {
 
     /**
      * Remove a listener
+     * 
      * @param listener
      */
     public void removeListener(APIDataListener listener) {
