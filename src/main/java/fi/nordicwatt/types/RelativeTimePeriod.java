@@ -9,10 +9,10 @@ package fi.nordicwatt.types;
 import java.time.LocalDate;
 
 public enum RelativeTimePeriod {
-    LAST_24_HOURS("Last 24 hours") {
+    TODAY("Today") {
         @Override
         public LocalDate getFromDate() {
-            return LocalDate.now().minusDays(1);
+            return LocalDate.now();
         }
     },
     LAST_3_DAYS("Last 3 days") {

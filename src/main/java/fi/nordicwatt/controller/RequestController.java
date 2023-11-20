@@ -488,10 +488,10 @@ public class RequestController
      */
     private void initializeTimeBoxes() {
         relativeTimeChoiceBox.getItems().addAll(RelativeTimePeriod.values());
-        relativeTimeChoiceBox.setValue(RelativeTimePeriod.LAST_24_HOURS);
+        relativeTimeChoiceBox.setValue(RelativeTimePeriod.TODAY);
 
-        fromDatePicker.setValue(RelativeTimePeriod.LAST_24_HOURS.getFromDate());
-        toDatePicker.setValue(LocalDate.now());
+        fromDatePicker.setValue(RelativeTimePeriod.TODAY.getFromDate());            
+        toDatePicker.setValue(LocalDate.now()); 
 
         relativeTimeChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             fromDatePicker.setValue(newValue.getFromDate());
@@ -504,7 +504,7 @@ public class RequestController
      * Sets the default values for the datepickers. (which are hidden by default).
      */
     private void initializeDateBoxes() {
-        fromDatePicker.setValue(LocalDate.now().minusDays(1));
+        fromDatePicker.setValue(LocalDate.now());
         toDatePicker.setValue(LocalDate.now());
     }
 
