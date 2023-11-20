@@ -82,7 +82,7 @@ public enum DataType {
 
     TIME("Time", "Time", APIType.NOAPI, MeasurementUnit.HOUR, Duration.ofHours(1), "Time (1 Hour)",
             "Time used on the x-axis", EnumSet.of(AxisType.X_AXIS),
-            EnumSet.of(ChartType.LINE_CHART), false
+            EnumSet.of(ChartType.LINE_CHART, ChartType.AREA_CHART), false
 
     );
 
