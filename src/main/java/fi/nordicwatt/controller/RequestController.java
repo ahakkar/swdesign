@@ -350,7 +350,6 @@ public class RequestController
     private void chartTypeChoiceBoxAction() {
         if (this.selectedChartType != null
                 && this.selectedChartType != chartTypeChoiceBox.getValue()) {
-            System.out.println("UPDATE XY AXIS BOXES");
             updateXYAxisChoiceBoxes();
         }
         this.selectedChartType = chartTypeChoiceBox.getValue();

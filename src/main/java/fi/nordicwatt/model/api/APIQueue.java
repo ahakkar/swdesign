@@ -52,7 +52,7 @@ public final class APIQueue {
                                 "Request returned no data on one or more data sources. This means that data is not available for the requested time period. Try another time period or another data type.");
                     }
                 }
-                System.out.println(responses.toString());
+
                 notifyDataRequestSuccess(responses);
                 Logger.log("APIQueue.getData() succeeded" + responses.toString(), "APIQueue.log");
 

@@ -68,15 +68,15 @@ public class DataManager implements APIDataListener {
     public void getData(RequestBundle requests) {
         try {
             validateAllRequests(requests);
-            System.out.println("DATAMANAGER: VALIDATION OK");
+            Logger.log("DATAMANAGER: VALIDATION OK");
             ResponseBundle data = getAllDataFromStorage(requests);
             if (data == null) {
-                System.out.println("DATAMANAGER: FETCHING DATA FROM API");
+                Logger.log("DATAMANAGER: FETCHING DATA FROM API");
                 apiQueue.getData(requests);
                 return;
             }
 
-            System.out.println("DATAMANAGER: DATA RETURNED LOCALLY");
+            Logger.log("DATAMANAGER: DATA RETURNED LOCALLY");
             notifyDataRequestSuccess(data);
         } catch (Exception e) {
             Logger.log("[DataManager]: getData() failed: " + e.getMessage());
@@ -169,7 +169,7 @@ public class DataManager implements APIDataListener {
             dataStorage.addData(response.getData());
         }
         notifyDataRequestSuccess(responses);
-        System.out.println("DATAMANAGER: DATA RETURNED FROM API");
+        Logger.log("DATAMANAGER: DATA RETURNED FROM API");
     }
 
     @Override

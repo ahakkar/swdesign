@@ -17,24 +17,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.nordicwatt.Constants;
 import fi.nordicwatt.model.datamodel.SettingsData;
+import fi.nordicwatt.utils.Logger;
 
 /**
- * A Singleton class.
- * Saves the chart settings to a file.
- * Also fetches already stored settings if requested.
+ * A Singleton class. Saves the chart settings to a file. Also fetches already stored settings if
+ * requested.
+ * 
  * @author Markus Hissa, with the help of ChatGPT
  */
-public final class PresetManager
-{   
+public final class PresetManager {
     private static PresetManager instance;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static PresetManager getInstance() 
-    {
-        synchronized (PresetManager.class) 
-        {
-            if (instance == null) 
-            {
+    public static PresetManager getInstance() {
+        synchronized (PresetManager.class) {
+            if (instance == null) {
                 instance = new PresetManager();
             }
             return instance;
@@ -44,12 +41,9 @@ public final class PresetManager
     // Method to serialize a Map of SettingsData objects to JSON and save it to a file
     public void saveSettingsData(String id, SettingsData settingsData) throws IOException {
         Map<String, SettingsData> settingsDataMap;
-        try
-        {
+        try {
             settingsDataMap = readFromFile();
-        }
-        catch(MismatchedInputException | FileNotFoundException e)
-        {
+        } catch (MismatchedInputException | FileNotFoundException e) {
             settingsDataMap = new TreeMap<>();
         }
         settingsDataMap.put(id, settingsData);
@@ -60,38 +54,35 @@ public final class PresetManager
 
         // Serialize the map of settingsData to JSON and save it to a file
         objectMapper.writeValue(fw, settingsDataMap);
-        System.out.println("Preset saved!");
+        Logger.log("Preset saved!");
     }
 
-    
+
     /// Return a specific SettingsData object by ID
     public SettingsData loadSettingsData(String id) throws IOException {
-        Map<String,SettingsData> settingsDataMap = readFromFile();
+        Map<String, SettingsData> settingsDataMap = readFromFile();
         // Retrieve and return the specific SettingsData object by ID
         return settingsDataMap.get(id);
     }
 
     // Method to read JSON data from a file, deserialize it into a map of SettingsData objects
-    private Map<String, SettingsData> readFromFile()
-        throws IOException
-    {
+    private Map<String, SettingsData> readFromFile() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
         // Deserialize JSON from the file into a map of SettingsData objects
-        Map<String, SettingsData> settingsDataMap = mapper.readValue(new File(Constants.PRESETS_FILEPATH), new TypeReference<Map<String, SettingsData>>() {});
+        Map<String, SettingsData> settingsDataMap =
+                mapper.readValue(new File(Constants.PRESETS_FILEPATH),
+                        new TypeReference<Map<String, SettingsData>>() {});
         return settingsDataMap;
     }
-    
+
     // Returns all the IDs
-    public ArrayList<String> getPresetIds()
-        throws IOException
-    {
+    public ArrayList<String> getPresetIds() throws IOException {
         ArrayList<String> keys = new ArrayList<>();
-        Map<String,SettingsData> settingsDataMap = readFromFile();
+        Map<String, SettingsData> settingsDataMap = readFromFile();
         Set<String> set = settingsDataMap.keySet();
-        for (String string : set) 
-        {
+        for (String string : set) {
             keys.add(string);
         }
         return keys;

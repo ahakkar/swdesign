@@ -9,10 +9,10 @@ import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
+import fi.nordicwatt.utils.Logger;
+
 /**
- * @author ???
- * Stores data models and provides methods for accessing them
- * Singleton class
+ * @author ??? Stores data models and provides methods for accessing them Singleton class
  *
  */
 public final class DataStorage {
@@ -25,7 +25,7 @@ public final class DataStorage {
     }
 
     protected static DataStorage getInstance() {
-        synchronized (DataStorage.class){
+        synchronized (DataStorage.class) {
             if (instance == null) {
 
                 instance = new DataStorage();
@@ -38,15 +38,13 @@ public final class DataStorage {
 
         AbstractDataModel<Double> existingModel = getModelByType(dataModel.getDataType());
 
-        if (existingModel == null){
+        if (existingModel == null) {
             dataModels.add(dataModel);
-        }
-        else {
+        } else {
             try {
                 existingModel.merge(dataModel);
-            }
-            catch (IllegalArgumentException e) {
-                System.out.println("DATASTORAGE: MERGE FAILED");
+            } catch (IllegalArgumentException e) {
+                Logger.log("DATASTORAGE: MERGE FAILED");
                 e.printStackTrace();
             }
 
@@ -54,7 +52,7 @@ public final class DataStorage {
 
     }
 
-    private AbstractDataModel<Double> getModelByType(DataType dataType){
+    private AbstractDataModel<Double> getModelByType(DataType dataType) {
         for (AbstractDataModel<Double> model : dataModels) {
             if (model.getDataType().equals(dataType)) {
                 return model;
@@ -67,7 +65,7 @@ public final class DataStorage {
 
         AbstractDataModel<Double> model = getModelByType(query.getDataType());
 
-        if (model != null){
+        if (model != null) {
 
             LocalDateTime start = query.getStarttime();
             LocalDateTime end = query.getEndtime().withMinute(0).withSecond(0);
@@ -76,20 +74,19 @@ public final class DataStorage {
             Double[] values = new Double[dataPoints.size()];
 
             int i = 0;
-            for (Double val : dataPoints.values()){
+            for (Double val : dataPoints.values()) {
                 values[i] = val;
                 ++i;
             }
 
-            if (dataPoints.containsKey(start) && dataPoints.containsKey(end)){
-                if (model instanceof EnergyModel){
+            if (dataPoints.containsKey(start) && dataPoints.containsKey(end)) {
+                if (model instanceof EnergyModel) {
                     return new EnergyModel(model.getDataType(), model.getUnit(), start, values);
+                } else if (model instanceof WeatherModel) {
+                    return new WeatherModel(model.getDataType(), model.getUnit(), start,
+                            ((WeatherModel) model).getLocation(), values);
                 }
-                else if (model instanceof WeatherModel){
-                    return new WeatherModel(model.getDataType(), model.getUnit(), start, ((WeatherModel) model).getLocation(), values);
-                }
-            }
-            else {
+            } else {
                 return null;
             }
         }
