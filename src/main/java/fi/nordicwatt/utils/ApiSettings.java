@@ -35,7 +35,7 @@ public final class ApiSettings {
                 // check again as multiple threads can reach above step
                 if (instance == null) {
                     instance = new ApiSettings();
-                }                
+                }
             }
         }
         return instance;
@@ -70,6 +70,23 @@ public final class ApiSettings {
         ApiSettings.apiKeys = apiKeys;
     }
 
+
+    /**
+     * Check if all required api keys are entered (DOES NOT validate them!)
+     * 
+     * @return true if all required api keys are entered
+     */
+    public static boolean areApiKeysEntered() {
+        for (APIType apiType : APIType.values()) {
+            if (apiType.apiKeyRequired()) {
+                if (apiKeys.get(apiType).isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private static ApiSettings createNewSettingsFile() {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -92,25 +109,18 @@ public final class ApiSettings {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(new File(Constants.APISETTIGS_FILEPATH), ApiSettings.class);
-        } 
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             return createNewSettingsFile();
-        } 
-        catch (JsonMappingException e) {
+        } catch (JsonMappingException e) {
             return createNewSettingsFile();
-        } 
-        catch (IOException e) {
-            CustomAlerts.displayAlert(
-                AlertType.ERROR,
-                "Exception from ApiSettings",
-                "Something went wrong while trying to load .env file:",
-                e.toString()
-            );
+        } catch (IOException e) {
+            CustomAlerts.displayAlert(AlertType.ERROR, "Exception from ApiSettings",
+                    "Something went wrong while trying to load .env file:", e.toString());
             Logger.log("[ApiSettings] load() IOException: " + e.getMessage());
         }
         return null;
     }
-       
+
     /**
      * Save API settings to a JSON file
      * 

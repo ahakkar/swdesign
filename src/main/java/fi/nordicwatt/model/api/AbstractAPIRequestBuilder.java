@@ -1,6 +1,8 @@
 package fi.nordicwatt.model.api;
 
 import java.io.IOException;
+
+import fi.nordicwatt.utils.Logger;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -74,7 +76,7 @@ public abstract class AbstractAPIRequestBuilder<T extends AbstractAPIRequestBuil
         addQueryParameters();
 
         if (!isValid()) {
-            System.out.println("Validation failed. Start Time: " + startTime + ", End Time: " + endTime);
+            Logger.log("Validation failed. Start Time: " + startTime + ", End Time: " + endTime);
             throw new IllegalStateException("Request is not valid");
         }
 

@@ -1,7 +1,6 @@
 package fi.nordicwatt.model.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -10,8 +9,6 @@ import fi.nordicwatt.model.data.DataRequest;
 import fi.nordicwatt.model.datamodel.EnergyModel;
 import fi.nordicwatt.model.datamodel.WeatherModel;
 import fi.nordicwatt.types.DataType;
-import fi.nordicwatt.utils.Logger;
-
 /**
  * @author ???
  * Stores data models and provides methods for accessing them
