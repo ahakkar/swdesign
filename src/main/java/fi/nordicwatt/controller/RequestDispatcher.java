@@ -86,7 +86,7 @@ public final class RequestDispatcher {
 
         String location = chartRequest.getLocation();
         if (location == null || location.trim().isEmpty()
-                || !location.matches("^[a-zA-ZäöåÄÖÅ ]+$")) {
+                || !location.matches("^[a-zA-ZäöåÄÖÅ \\-]+$")) {
             CustomAlerts.displayAlert(AlertType.ERROR, "Error in RequestDispatcher",
                     "Invalid location.\n Location should contain only letters and spaces.");
             return false;
