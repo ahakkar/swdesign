@@ -24,15 +24,17 @@ import java.util.List;
  * @author Antti Hakkarainen
  */
 public enum DataType {
-    CONSUMPTION("Consumption", "124", APIType.FINGRID, MeasurementUnit.MEGA_WATT_HOUR,
-            Duration.ofHours(1), "Electricity Consumption (1 Hour)",
-            "Electricity consumption in Finland", EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+    CONSUMPTION("Total Electricity Consumption", "124", APIType.FINGRID,
+            MeasurementUnit.MEGA_WATT_HOUR, Duration.ofHours(1),
+            "Total Electricity Consumption (1 Hour)", "Total electricity consumption in Finland",
+            EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             false),
 
-    PRODUCTION("Production", "74", APIType.FINGRID, MeasurementUnit.MEGA_WATT_HOUR,
-            Duration.ofHours(1), "Electricity Production (1 Hour)",
-            "Electricity production in Finland", EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+    PRODUCTION("Total Electricity Production", "74", APIType.FINGRID,
+            MeasurementUnit.MEGA_WATT_HOUR, Duration.ofHours(1),
+            "Total Electricity Production (1 Hour)", "Total electricity production in Finland",
+            EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             false),
 
@@ -43,19 +45,19 @@ public enum DataType {
             false),
 
     NUCLEAR("Nuclear Production", "188", APIType.FINGRID, MeasurementUnit.MEGA_WATT,
-            Duration.ofMinutes(3), "Nuclear Productionn (3 minutes)",
+            Duration.ofMinutes(3), "Nuclear Production (3 minutes)",
             "Nuclear Production in Finland", EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             false),
 
     WINDPOWER("Wind power generation", "75", APIType.FINGRID, MeasurementUnit.MEGA_WATT_HOUR,
-            Duration.ofMinutes(3), "Nuclear Productionn (3 minutes)",
-            "Nuclear Production in Finland", EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
+            Duration.ofMinutes(3), "Wind Production (3 minutes)",
+            "Wind power production in Finland", EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             false),
 
     TEMPERATURE("Temperature", "Temperature", APIType.FMI, MeasurementUnit.CELSIUS,
-            Duration.ofHours(1), "Temperature (1 Hour)", "Temperature in Finland",
+            Duration.ofHours(1), "Temperature (1 Hour)", "Temperature in selected location",
             EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             true),
@@ -71,8 +73,6 @@ public enum DataType {
             EnumSet.of(AxisType.X_AXIS, AxisType.Y_AXIS),
             EnumSet.of(ChartType.LINE_CHART, ChartType.SCATTER_DOT_CHART, ChartType.AREA_CHART),
             true),
-
-
 
     AIR_PRESSURE("Air pressure", "Pressure", APIType.FMI, MeasurementUnit.HPA, Duration.ofHours(1),
             "Air pressure (1 Hour)", "Air pressure in selected location",
