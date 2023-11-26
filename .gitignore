@@ -1,6 +1,7 @@
 # Enviroment variables like API keys
 .env
 settings.json
+presets.json
 
 # Compiled class file
 *.class

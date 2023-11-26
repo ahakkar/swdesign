@@ -1,7 +1,9 @@
 package fi.nordicwatt.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
+import fi.nordicwatt.model.service.PresetManager;
+import fi.nordicwatt.utils.CustomAlerts;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -11,10 +13,11 @@ import javafx.stage.Stage;
 
 /**
  * Controller for savesettingswindow.fxml
+ * 
  * @author Markus Hissa
  */
-public class SaveSettingsController 
-{
+public class SaveSettingsController {
+    private static final PresetManager presetManager = PresetManager.getInstance();
     private static SaveSettingsController instance;
     private static final ArrayList<SaveSettingsControllerListener> listeners = new ArrayList<>();
 
@@ -27,42 +30,46 @@ public class SaveSettingsController
     @FXML
     private TextField presetIdField;
 
-    public static SaveSettingsController getInstance() 
-    {
-        if (instance == null) 
-        {
+    public static SaveSettingsController getInstance() {
+        if (instance == null) {
             instance = new SaveSettingsController();
         }
         return instance;
     }
 
-    public void addListener(SaveSettingsControllerListener listener)
-    {
+    public void addListener(SaveSettingsControllerListener listener) {
         listeners.add(listener);
     }
 
     @FXML
-    public void saveButtonAction()
-    {
-        if ( presetIdField.getCharacters().toString().trim().equals("") )
-        {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Save error");
-            alert.setContentText("Please enter a name for your preset.");
-            alert.showAndWait();
+    public void saveButtonAction() throws IOException {
+        String currentPresetId = presetIdField.toString().trim();
+
+        // Check if preset name is empty
+        if (currentPresetId.equals("")) {
+            CustomAlerts.displayAlert(AlertType.ERROR, "Save error",
+                    "Please enter a name for your preset.");
             return;
         }
-        for ( SaveSettingsControllerListener listener : listeners )
-        {
-            listener.saveSettings(presetIdField.getCharacters().toString().trim()); 
+
+        // Check if ID already exists
+        ArrayList<String> existingIds = presetManager.getPresetIds();
+        if (existingIds.contains(currentPresetId)) {
+            CustomAlerts.displayAlert(AlertType.ERROR, "Error while saving a preset", "Preset"
+                    + currentPresetId + " already exists.\n Please use another name for a preset.");
+            return;
         }
+
+        for (SaveSettingsControllerListener listener : listeners) {
+            listener.saveSettings(presetIdField.getCharacters().toString().trim());
+        }
+
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
     }
-    
+
     @FXML
-    public void cancelSaveButtonAction()
-    {
+    public void cancelSaveButtonAction() {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
