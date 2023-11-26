@@ -38,7 +38,14 @@ public final class PresetManager {
         }
     }
 
-    // Method to serialize a Map of SettingsData objects to JSON and save it to a file
+
+    /**
+     * Save the settings to a file
+     * 
+     * @param id The ID of the preset
+     * @param settingsData The SettingsData object to save
+     * @throws IOException If the file is not found
+     */
     public void saveSettingsData(String id, SettingsData settingsData) throws IOException {
         Map<String, SettingsData> settingsDataMap;
         try {
@@ -58,14 +65,26 @@ public final class PresetManager {
     }
 
 
-    /// Return a specific SettingsData object by ID
+    /**
+     * Load a preset from the file
+     * 
+     * @param id The ID of the preset to load
+     * @return The SettingsData object
+     * @throws IOException
+     */
     public SettingsData loadSettingsData(String id) throws IOException {
         Map<String, SettingsData> settingsDataMap = readFromFile();
         // Retrieve and return the specific SettingsData object by ID
         return settingsDataMap.get(id);
     }
 
-    // Method to read JSON data from a file, deserialize it into a map of SettingsData objects
+
+    /**
+     * Read the presets from a preset file defined in Constants
+     * 
+     * @return A map of SettingsData objects
+     * @throws IOException If the file is not found
+     */
     private Map<String, SettingsData> readFromFile() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -77,7 +96,13 @@ public final class PresetManager {
         return settingsDataMap;
     }
 
-    // Returns all the IDs
+
+    /**
+     * Get the IDs of all the presets
+     * 
+     * @return An ArrayList of preset IDs
+     * @throws IOException
+     */
     public ArrayList<String> getPresetIds() throws IOException {
         ArrayList<String> keys = new ArrayList<>();
         Map<String, SettingsData> settingsDataMap = readFromFile();
