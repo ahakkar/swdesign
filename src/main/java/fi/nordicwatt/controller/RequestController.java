@@ -435,6 +435,11 @@ public class RequestController
      * Depends on if the selected DataType enum requires a location or not.
      */
     private void setLocationChoiceBoxDisabled() {
+        // These boxes should always have a value, but in some cases they don't.. weird. -ah
+        if (xAxisChoiceBox.getValue() == null || yAxisChoiceBox.getValue() == null) {
+            return;
+        }
+
         boolean locationRequired = xAxisChoiceBox.getValue().isLocationRequired()
                 || yAxisChoiceBox.getValue().isLocationRequired();
 
@@ -490,8 +495,8 @@ public class RequestController
         relativeTimeChoiceBox.getItems().addAll(RelativeTimePeriod.values());
         relativeTimeChoiceBox.setValue(RelativeTimePeriod.TODAY);
 
-        fromDatePicker.setValue(RelativeTimePeriod.TODAY.getFromDate());            
-        toDatePicker.setValue(LocalDate.now()); 
+        fromDatePicker.setValue(RelativeTimePeriod.TODAY.getFromDate());
+        toDatePicker.setValue(LocalDate.now());
 
         relativeTimeChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             fromDatePicker.setValue(newValue.getFromDate());
