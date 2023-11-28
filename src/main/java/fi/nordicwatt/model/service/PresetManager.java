@@ -105,7 +105,12 @@ public final class PresetManager {
      */
     public ArrayList<String> getPresetIds() throws IOException {
         ArrayList<String> keys = new ArrayList<>();
-        Map<String, SettingsData> settingsDataMap = readFromFile();
+        Map<String, SettingsData> settingsDataMap;
+        try {
+            settingsDataMap = readFromFile();
+        } catch (FileNotFoundException | MismatchedInputException e) {
+            return new ArrayList<>();
+        }
         Set<String> set = settingsDataMap.keySet();
         for (String string : set) {
             keys.add(string);

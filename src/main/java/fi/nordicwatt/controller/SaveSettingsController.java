@@ -2,10 +2,10 @@ package fi.nordicwatt.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import fi.nordicwatt.model.service.PresetManager;
+
+import fi.nordicwatt.model.service.DataManager;
 import fi.nordicwatt.utils.CustomAlerts;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -17,7 +17,7 @@ import javafx.stage.Stage;
  * @author Markus Hissa
  */
 public class SaveSettingsController {
-    private static final PresetManager presetManager = PresetManager.getInstance();
+    private final DataManager dataManager = DataManager.getInstance();
     private static SaveSettingsController instance;
     private static final ArrayList<SaveSettingsControllerListener> listeners = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class SaveSettingsController {
         }
 
         // Check if ID already exists
-        ArrayList<String> existingIds = presetManager.getPresetIds();
+        ArrayList<String> existingIds = dataManager.getPresetIds();
         if (existingIds.contains(currentPresetId)) {
             CustomAlerts.displayAlert(AlertType.ERROR, "Error while saving a preset", "Preset"
                     + currentPresetId + " already exists.\n Please use another name for a preset.");
