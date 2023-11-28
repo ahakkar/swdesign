@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -109,6 +110,11 @@ public final class PresetManager {
         try {
             settingsDataMap = readFromFile();
         } catch (FileNotFoundException | MismatchedInputException e) {
+            return new ArrayList<>();
+        } catch (JsonParseException e) {
+            File presetFile = new File(Constants.PRESETS_FILEPATH);
+            presetFile.delete();
+            System.out.println("Error! File presets.json is corrupted, file deleted.");
             return new ArrayList<>();
         }
         Set<String> set = settingsDataMap.keySet();
