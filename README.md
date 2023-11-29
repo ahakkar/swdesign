@@ -35,8 +35,6 @@ The latest version of the design document and it's attachments can be found from
 
 - Java Runtime Environment (JRE) 11 or newer
 - JavaFX runtime 11 or newer
-- .env file with following contents:
-  - FINGRID=E54NatJoP14O81oHjpF1R3y4typLrLAL2cfYVdqW`
 
 ### Option 1: Using an IDE
 
@@ -45,7 +43,11 @@ The latest version of the design document and it's attachments can be found from
 2. Open the project in an IDE (e.g. IntelliJ IDEA)
 3. Build and run the program
 
-### Option 2:
-TODO
+### Option 2: TUNI Virtual Linux Desktop Client
+
+1. Log in to TUNI's virtual Linux desktop service
+2. Clone the git repository where ever you see fit
+3. Open terminal and navigate to projects `java` folder (when you run `ls` you should see the pom.cml file)
+4. run `mvn clean javafx:run`
 
 
