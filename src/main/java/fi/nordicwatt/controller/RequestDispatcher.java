@@ -83,6 +83,13 @@ public final class RequestDispatcher {
             return false;
         }
 
+        // dont allow longer than 6 month period (and couple of days leeway 
+        // to avoid problems with month changes)
+        if (startTime.plusMonths(6).plusDays(2).isBefore(endTime)) {
+            CustomAlerts.displayAlert(AlertType.ERROR, "Error in RequestDispatcher",
+                    "Maximum time period is 6 months.");
+            return false;
+        }
 
         String location = chartRequest.getLocation();
         if (location == null || location.trim().isEmpty()

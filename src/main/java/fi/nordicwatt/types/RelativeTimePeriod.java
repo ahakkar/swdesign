@@ -32,13 +32,8 @@ public enum RelativeTimePeriod {
         public LocalDate getFromDate() {
             return LocalDate.now().minusMonths(1);
         }
-    },
-    LAST_YEAR("Last year") {
-        @Override
-        public LocalDate getFromDate() {
-            return LocalDate.now().minusYears(1);
-        }
     };
+
 
     private final String displayValue;
 
