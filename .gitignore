@@ -2,6 +2,7 @@
 .env
 settings.json
 presets.json
+.VsCodeCounter/
 
 # Compiled class file
 *.class
